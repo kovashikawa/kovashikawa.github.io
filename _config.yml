@@ -12,7 +12,7 @@
 
 # theme                  : "minimal-mistakes-jekyll"
 # remote_theme           : "mmistakes/minimal-mistakes"
-minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+minimal_mistakes_skin    : "dark" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
 locale                   : "en-US"
@@ -20,13 +20,13 @@ rtl                      : # true, false (default) # turns direction of the page
 title                    : "Rafael Kovashikawa"
 title_separator          : "|"
 subtitle                 : "Economics | Data Science | Engineering"
-name                     : "Rafael Kovashikawa"
+name                     : # "Rafael Kovashikawa"
 description              : "Projects, blog posts and resources on data engineering, ML, and macro-analytics."
 url                      : "https://kovashikawa.github.io" 
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : "kovashikawa/kovashikawa.github.io"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
-logo                     : # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
+logo                     : # '/assets/images/selfie.jpeg' # path of logo image, e.g. "/assets/images/logo.png"
 masthead_title           : # overrides the website title displayed in the masthead, use " " for no title
 breadcrumbs              : # true, false (default)
 words_per_minute         : 200
@@ -95,7 +95,7 @@ facebook:
   username               :
   app_id                 :
   publisher              :
-og_image                 : # Open Graph/Twitter default site image
+og_image                 : "/assets/images/selfie.jpeg"
 # For specifying social profiles
 # - https://developers.google.com/structured-data/customize/social-profiles
 social:
@@ -113,8 +113,8 @@ analytics:
 
 # Site Author
 author:
-  name             : "Rafael Kovashikawa"
-  avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  name             : # "Rafael Kovashikawa"
+  avatar           : '/assets/images/selfie.jpeg'
   bio              : "I am an **data** professional. I work with data science, data engineering, data visualization, and LLM/AI. I also love to write about my experiences and share knowledge with others."
   location         : "Washington DC"
   email            :
