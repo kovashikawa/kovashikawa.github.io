@@ -10,6 +10,7 @@ toc:  false                    # turn on if the page gets long
 I’m Rafael Kovashikawa—economist-turned-data-engineer with a soft spot for macro signals, low-latency pipelines and making AWS bills disappear.
 
 ### What I do best
+* **Data Science & Modeling** · Develop and productionize time‑series (ARIMA, VaR), tree‑based and econometric models for CPI forecasts, credit risk and trading signals.
 * **Data Engineering** · Build and orchestrate ETL on Airflow + Kubernetes.
 * **ML in Production** · Deploy credit-risk and anomaly-detection models (FastAPI, Docker).
 * **LLMs** · RAG pipelines for legal doc analysis, LangChain + vector DBs.
