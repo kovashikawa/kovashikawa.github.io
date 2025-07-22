@@ -23,32 +23,32 @@ I’m Rafael Kovashikawa—economist-turned-data-engineer with a soft spot for m
 **Languages:** Native Portuguese; fluent English and Spanish
 
 ### Professional Experience
-**GYRA+ — Senior Data Scientist**  
+**[GYRA+](https://gyramais.com.br/) — Senior Data Scientist**  
 _Aug 2024 – Jan 2025 · Brazil_  
 - Led the strategic re‑architecture of data models and ETL/ELT pipelines (Python, Airflow, AWS), cutting AWS costs for the data team by **50 %**.  
 - Built a high‑performance simulation API (FastAPI, Polars, MongoDB) deployed on Kubernetes, enabling rapid credit‑portfolio stress testing.  
 - Delivered a production‑ready RAG pipeline (LangChain, MongoDB) that extracts and structures key information from legal documents.
 
-**JGP Asset Management — Macro Data Scientist**  
+**[JGP Asset Management](https://www.jgp.com.br/en/home/) — Macro Data Scientist**  
 _Jan 2021 – Jul 2024 · Brazil_  
 - Designed LATAM CPI forecasting models and global macro dashboards that out‑sped Bloomberg.  
 - Engineered resilient pipelines (Python, SQL, Airflow) to ingest and curate macro datasets for trading research.  
 - Developed NLP models to score Brazilian Central Bank communications and integrate sentiment into trading strategies.  
 - Automated data workflows, eliminating manual steps and improving data timeliness.
 
-**Órama (acquired by BTG Pactual) — Data Analytics**  
+**[Órama (acquired by BTG Pactual)](https://orama.com.br/)— Data Analytics**  
 _Sep 2019 – Aug 2020_  
 - Mined client data with Python and SQL, applying NLP and k‑means clustering to improve investment recommendations.
 
-**IBM — Data Operations**  
+**[IBM](https://www.ibm.com/) — Data Operations**  
 _Apr 2019 – Aug 2019_
 - Automated ticket‑management workflows with Python, Selenium, and SQL, eliminating +90% of manual effort
 
 ### Education
-**MIT — Data Science & Statistics MicroMasters (edX)**  
+**[MIT — Data Science & Statistics MicroMasters (edX)](https://micromasters.mit.edu/ds/)**  
 _May 2024 – Oct 2025 (expected)_
 
-**Fundação Getúlio Vargas (EPGE) — B.Sc. Economics**  
+**[Fundação Getúlio Vargas (EPGE)](https://epge.fgv.br/en) — B.Sc. Economics**  
 _2017 – 2021_
 
 ### Grants & Awards

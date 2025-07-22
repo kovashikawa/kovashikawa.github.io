@@ -28,14 +28,6 @@ bundle exec jekyll serve
 
 Pushing to **`main`** triggers an automatic GitHub Pages build and deploy.
 
-## House‑cleaning notes
-
-The upstream Minimal Mistakes README shipped with sections about skins, demo pages, screenshots, and installation instructions for the theme itself.  
-Those are no longer relevant to *this* repo and have been removed. Files that can also be safely ignored or deleted:
-
-* `screenshot.png`, `screenshot-layouts.png`
-* `CHANGELOG.md`, original `docs/` demo content
-
 ## License
 
 * Theme: MIT (see <https://github.com/mmistakes/minimal-mistakes>).  
