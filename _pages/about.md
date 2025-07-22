@@ -59,6 +59,10 @@ _2017 – 2021_
 
 ### Outside the terminal
 🦮 dogs · 🏃 running · ⚽ Fluminense fan
+<div style="display: flex; gap: 10px;">
+  <img src="/assets/images/benito_sunset.jpeg" alt="Benito at sunset" style="width: 48%; border-radius: 8px;" />
+  <img src="/assets/images/selfie_run.jpeg" alt="Post-run selfie" style="width: 48%; border-radius: 8px;" />
+</div>
 
 > **Need a hand with data problems?**  
 > Hit me on [LinkedIn](https://www.linkedin.com/in/rkovashikawa/) or open an [issue](https://github.com/kovashikawa/kovashikawa.github.io/issues) and let’s chat.
