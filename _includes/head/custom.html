@@ -1,5 +1,17 @@
 <!-- start custom head snippets -->
 
 <!-- insert favicons. use https://realfavicongenerator.net/ -->
+<!-- MathJax config: allow $...$ inline math -->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],   // enable $…$ and \(…\)
+      processEscapes: true                       // allow \$ to escape
+    },
+    svg: { fontCache: 'global' }                 // keep the default SVG output
+  };
+</script>
 
+<!-- Local MathJax bundle -->
+<script defer src="{{ '/assets/js/mathjax/tex-svg.js' | relative_url }}"></script>
 <!-- end custom head snippets -->

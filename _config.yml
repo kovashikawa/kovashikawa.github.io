@@ -16,6 +16,7 @@ minimal_mistakes_skin    : "dark" # "air", "aqua", "contrast", "dark", "dirt", "
 
 # Site Settings
 locale                   : "en-US"
+mathjax                  : true
 rtl                      : # true, false (default) # turns direction of the page into right to left for RTL languages
 title                    : "Rafael Kovashikawa"
 title_separator          : "|"
@@ -214,7 +215,9 @@ incremental: false
 
 # Markdown Processing
 kramdown:
-  input: GFM
+  math_engine: mathjax        
+  syntax_highlighter: rouge
+  # input: GFM
   hard_wrap: false
   auto_ids: true
   footnote_nr: 1
