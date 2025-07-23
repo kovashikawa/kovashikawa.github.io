@@ -116,7 +116,7 @@ analytics:
 author:
   name             : # "Rafael Kovashikawa"
   avatar           : '/assets/images/selfie.jpeg'
-  bio              : "I am an **data** professional. I work with data science, data engineering, data visualization, and LLM/AI. I also love to write about my experiences and share knowledge with others."
+  bio              : "I am an **data** professional. I work with data science, data engineering, data visualization, and LLM/AI."
   location         : "Washington DC"
   email            :
   links:
@@ -263,6 +263,10 @@ pagination:
     before: 2
     after: 2
 
+collections:
+  projects:
+    output: true
+    permalink: /projects/:path/
 
 # Plugins (previously gems:)
 plugins:
