@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Volatility Smile Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
+    <!-- Chosen Palette: Calm Neutral Analytics -->
+    <!-- Application Structure Plan: The application is designed as a four-part interactive journey, departing from the report's linear format to enhance user engagement and understanding. The structure is: 1) Foundations: Explaining 'why' the smile exists through an interactive comparison. 2) Calculation: A hands-on 'how-to' with a Black-Scholes and Implied Volatility calculator. 3) Applications: A comparative view showing 'where' the smile appears across different asset classes (Equities, FX, Fixed Income) using a tabbed interface. 4) Playground: A fully interactive simulation environment to 'play' with and generate 2D smiles and 3D surfaces. This task-oriented, non-linear flow allows users to explore concepts at their own pace and focus on areas of interest, making the complex information more digestible and memorable than a static report. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Black-Scholes assumptions vs. reality. -> Goal: Inform/Compare. -> Viz/Method: Interactive HTML/CSS cards with JS toggle. -> Interaction: Click to reveal. -> Justification: Makes the core theoretical conflict immediately engaging and clear. -> Library/Method: Vanilla JS, Tailwind CSS.
+        - Report Info: Black-Scholes & Implied Volatility formulas. -> Goal: Inform/Calculate. -> Viz/Method: HTML form-based calculators. -> Interaction: User input triggers JS calculation and output display. -> Justification: Turns abstract formulas into practical tools, aiding comprehension. -> Library/Method: Vanilla JS.
+        - Report Info: Smile differences across asset classes. -> Goal: Compare. -> Viz/Method: Tabbed content with representative Chart.js plots. -> Interaction: Click tabs to switch views. -> Justification: Provides a clear, side-by-side comparison of a key concept. -> Library/Method: Chart.js, Vanilla JS.
+        - Report Info: Smile/Surface generation code. -> Goal: Explore/Relate. -> Viz/Method: Interactive 2D (Chart.js) and 3D (Plotly.js) plots. -> Interaction: Sliders and buttons control parameters to dynamically regenerate plots. -> Justification: The capstone experience, allowing users to directly manipulate variables and see their impact, fostering deep understanding. -> Library/Method: Chart.js, Plotly.js, Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        .plotly-chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px;
+            max-height: 60vh;
+        }
+        .tab-button.active {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-900">Volatility Smile Explorer</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#foundations" class="text-gray-600 hover:text-blue-500 transition">Foundations</a>
+                <a href="#calculator" class="text-gray-600 hover:text-blue-500 transition">Calculator</a>
+                <a href="#applications" class="text-gray-600 hover:text-blue-500 transition">Applications</a>
+                <a href="#playground" class="text-gray-600 hover:text-blue-500 transition">Playground</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <section id="foundations" class="my-16 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900">The Foundations of the Smile</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Why does the volatility smile exist? It emerges from the gap between the elegant assumptions of the Black-Scholes model and the complex realities of financial markets. This section lets you explore that fundamental conflict.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4">Black-Scholes Assumptions</h3>
+                    <p class="text-gray-600 mb-6">The model's elegance comes from its simplifying assumptions. Click on each one to see how it compares to market reality.</p>
+                    <div id="assumptions-container" class="space-y-3"></div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4">Market Reality</h3>
+                    <div id="reality-display" class="prose max-w-none p-4 bg-blue-50 rounded-lg text-gray-700 min-h-[200px] flex items-center justify-center">
+                        <p class="text-center text-gray-500">Click an assumption on the left to see the corresponding market reality.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="calculator" class="my-16 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900">Interactive Calculators</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Go from theory to practice. Use these tools to calculate an option's price using the Black-Scholes formula or, more importantly, to find the implied volatility from a market price.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4">Black-Scholes Pricer</h3>
+                    <form id="bs-form" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium text-gray-700">Spot Price (S)</label><input type="number" id="bs_S" value="100" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-700">Strike Price (K)</label><input type="number" id="bs_K" value="105" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-700">Maturity (T, years)</label><input type="number" step="0.01" id="bs_T" value="0.5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-700">Risk-Free Rate (r, %)</label><input type="number" step="0.01" id="bs_r" value="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div class="col-span-2"><label class="block text-sm font-medium text-gray-700">Volatility (σ, %)</label><input type="number" step="0.1" id="bs_sigma" value="20" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition">Calculate Price</button>
+                    </form>
+                    <div id="bs-result" class="mt-6 text-center font-semibold text-lg bg-gray-100 p-4 rounded-md"></div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4">Implied Volatility Solver</h3>
+                    <form id="iv-form" class="space-y-4">
+                         <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium text-gray-700">Spot Price (S)</label><input type="number" id="iv_S" value="100" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-700">Strike Price (K)</label><input type="number" id="iv_K" value="105" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-700">Maturity (T, years)</label><input type="number" step="0.01" id="iv_T" value="0.5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-700">Risk-Free Rate (r, %)</label><input type="number" step="0.01" id="iv_r" value="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div class="col-span-2"><label class="block text-sm font-medium text-gray-700">Market Call Price</label><input type="number" step="0.01" id="iv_price" value="4.02" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition">Find Implied Volatility</button>
+                    </form>
+                    <div id="iv-result" class="mt-6 text-center font-semibold text-lg bg-gray-100 p-4 rounded-md"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="applications" class="my-16 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900">Smile Across the Markets</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">The volatility smile isn't one-size-fits-all. Its shape reveals unique risk perceptions in different asset classes. Explore the characteristic patterns for equities, foreign exchange, and fixed income.</p>
+            </div>
+            <div>
+                <div class="mb-6 flex justify-center border-b border-gray-200">
+                    <button data-tab="equities" class="tab-button px-6 py-3 font-medium text-lg border-b-2 border-transparent hover:bg-gray-100 transition active">Equities</button>
+                    <button data-tab="fx" class="tab-button px-6 py-3 font-medium text-lg border-b-2 border-transparent hover:bg-gray-100 transition">FX</button>
+                    <button data-tab="fixed-income" class="tab-button px-6 py-3 font-medium text-lg border-b-2 border-transparent hover:bg-gray-100 transition">Fixed Income</button>
+                </div>
+                <div id="applications-content" class="bg-white p-6 rounded-lg shadow-md">
+                </div>
+            </div>
+        </section>
+
+        <section id="playground" class="my-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900">Interactive Playground</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">This is where theory becomes tangible. Adjust market parameters to generate and visualize your own 2D volatility smiles and 3D surfaces. See for yourself how different factors shape the market's view of risk.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div>
+                        <label for="baseVol" class="block text-sm font-medium text-gray-700">Base Volatility (<span id="baseVolLabel">20</span>%)</label>
+                        <input id="baseVol" type="range" min="5" max="50" value="20" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <div>
+                        <label for="smileFactor" class="block text-sm font-medium text-gray-700">Smile Factor (<span id="smileFactorLabel">0.15</span>)</label>
+                        <input id="smileFactor" type="range" min="0" max="0.5" value="0.15" step="0.01" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <div>
+                        <label for="maturitySelect" class="block text-sm font-medium text-gray-700">Maturity (Days)</label>
+                        <select id="maturitySelect" multiple class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 h-24">
+                            <option value="30" selected>30</option>
+                            <option value="90" selected>90</option>
+                            <option value="180">180</option>
+                            <option value="365">365</option>
+                            <option value="730">730</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-center gap-4 mb-8">
+                    <button id="generateSmile" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-md hover:bg-blue-700 transition">Generate 2D Smile</button>
+                    <button id="generateSurface" class="bg-purple-600 text-white font-bold py-2 px-6 rounded-md hover:bg-purple-700 transition">Generate 3D Surface</button>
+                </div>
+                <div id="playground-output">
+                    <p class="text-center text-gray-500">Select at least one maturity and click a button to generate a visualization.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto p-6 text-center">
+            <p>Interactive Volatility Smile Explorer. Inspired by the work of Rene Carmona and the broader field of quantitative finance.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const norm = {
+        cdf: (x) => {
+            return (1.0 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * Math.pow(x, 3)))) / 2.0;
+        },
+        pdf: (x) => {
+            return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * x * x);
+        }
+    };
+
+    function black_scholes_call(S, K, T, r, sigma) {
+        if (sigma <= 1e-9) {
+            return Math.max(0, S - K * Math.exp(-r * T));
+        }
+        if (T <= 0) {
+            return Math.max(0, S - K);
+        }
+        const d1 = (Math.log(S / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * Math.sqrt(T));
+        const d2 = d1 - sigma * Math.sqrt(T);
+        return S * norm.cdf(d1) - K * Math.exp(-r * T) * norm.cdf(d2);
+    }
+
+    function vega(S, K, T, r, sigma) {
+        if (sigma <= 1e-9 || T <= 0) return 0;
+        const d1 = (Math.log(S / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * Math.sqrt(T));
+        return S * norm.pdf(d1) * Math.sqrt(T);
+    }
+
+    function implied_volatility_call(market_price, S, K, T, r, initial_sigma = 0.5, tol = 1e-6, maxiter = 100) {
+        if (market_price <= Math.max(0, S - K * Math.exp(-r * T))) return NaN;
+        let sigma = initial_sigma;
+        for (let i = 0; i < maxiter; i++) {
+            const price = black_scholes_call(S, K, T, r, sigma);
+            const v = vega(S, K, T, r, sigma);
+            const diff = price - market_price;
+            if (Math.abs(diff) < tol) {
+                return sigma;
+            }
+            if (v < 1e-9) { 
+                break; // Vega is too small, Newton's method is unstable
+            }
+            sigma = sigma - diff / v;
+        }
+        
+        // Fallback to bisection if Newton fails
+        let low = 0.001;
+        let high = 5.0;
+        for(let i=0; i<maxiter; i++) {
+            let mid = (low + high) / 2;
+            if (mid < 1e-9) mid = 1e-9;
+            let price = black_scholes_call(S, K, T, r, mid);
+            if (price > market_price) {
+                high = mid;
+            } else {
+                low = mid;
+            }
+            if(Math.abs(high - low) < tol) {
+                return (low + high) / 2;
+            }
+        }
+        return NaN;
+    }
+
+    const assumptionsData = [
+        { title: "Constant Volatility", reality: "Volatility is not constant; it fluctuates dynamically and is influenced by market sentiment and events. This is the primary reason for the smile's existence." },
+        { title: "Lognormal Price Distribution", reality: "Empirical asset returns exhibit 'fat tails' and skewness, meaning extreme events are more common than a lognormal distribution predicts." },
+        { title: "No Dividends", reality: "Many stocks pay dividends, which must be accounted for in pricing models." },
+        { title: "No Transaction Costs", reality: "Trading involves costs (commissions, bid-ask spreads) that affect realized profits and hedging strategies." },
+        { title: "Constant Risk-Free Rate", reality: "Interest rates are not constant; they vary over time, creating a term structure that affects option pricing." },
+        { title: "European Exercise Only", reality: "Many popular options are American-style, allowing for early exercise, which adds a layer of complexity to valuation." }
+    ];
+
+    const assumptionsContainer = document.getElementById('assumptions-container');
+    const realityDisplay = document.getElementById('reality-display');
+    assumptionsData.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.className = 'w-full text-left p-4 bg-gray-100 rounded-md hover:bg-blue-100 hover:ring-2 hover:ring-blue-300 transition focus:outline-none';
+        button.textContent = item.title;
+        button.onclick = () => {
+            realityDisplay.innerHTML = `<p class="text-lg">${item.reality}</p>`;
+            document.querySelectorAll('#assumptions-container button').forEach(btn => btn.classList.remove('bg-blue-200', 'ring-2', 'ring-blue-500'));
+            button.classList.add('bg-blue-200', 'ring-2', 'ring-blue-500');
+        };
+        assumptionsContainer.appendChild(button);
+    });
+
+    document.getElementById('bs-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const S = parseFloat(document.getElementById('bs_S').value);
+        const K = parseFloat(document.getElementById('bs_K').value);
+        const T = parseFloat(document.getElementById('bs_T').value);
+        const r = parseFloat(document.getElementById('bs_r').value) / 100;
+        const sigma = parseFloat(document.getElementById('bs_sigma').value) / 100;
+        const price = black_scholes_call(S, K, T, r, sigma);
+        document.getElementById('bs-result').innerHTML = `Calculated Call Price: <span class="text-blue-700">$${price.toFixed(4)}</span>`;
+    });
+    
+    document.getElementById('iv-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const S = parseFloat(document.getElementById('iv_S').value);
+        const K = parseFloat(document.getElementById('iv_K').value);
+        const T = parseFloat(document.getElementById('iv_T').value);
+        const r = parseFloat(document.getElementById('iv_r').value) / 100;
+        const price = parseFloat(document.getElementById('iv_price').value);
+        const iv = implied_volatility_call(price, S, K, T, r);
+        const resultText = isNaN(iv) ? '<span class="text-red-600">Could not converge. Check inputs.</span>' : `Implied Volatility: <span class="text-green-700">${(iv * 100).toFixed(2)}%</span>`;
+        document.getElementById('iv-result').innerHTML = resultText;
+    });
+
+    const applicationsContent = {
+        equities: {
+            title: "The Equity 'Smirk'",
+            description: "In equity markets, the smile is typically skewed, forming a 'smirk'. Implied volatility is highest for low-strike (out-of-the-money) puts and decreases as the strike price rises. This reflects two main factors: <strong>Leverage</strong> (as a company's stock falls, its debt-to-equity ratio rises, increasing risk) and <strong>'Crashophobia'</strong> (investors pay a premium for puts to protect against market crashes).",
+            chartData: {
+                labels: [80, 85, 90, 95, 100, 105, 110, 115, 120],
+                values: [0.35, 0.31, 0.28, 0.25, 0.23, 0.22, 0.215, 0.21, 0.208]
+            }
+        },
+        fx: {
+            title: "The FX 'Smile'",
+            description: "Foreign exchange markets typically exhibit a more symmetrical 'smile'. Implied volatility is lowest at-the-money and increases for both out-of-the-money calls and puts. This suggests that traders believe large moves are equally likely in either direction (i.e., the currency could either appreciate or depreciate significantly). This reflects the two-sided risk inherent in currency pairs, where geopolitical events or central bank actions can cause sharp moves up or down.",
+             chartData: {
+                labels: [80, 85, 90, 95, 100, 105, 110, 115, 120],
+                values: [0.28, 0.25, 0.23, 0.21, 0.20, 0.215, 0.235, 0.255, 0.285]
+            }
+        },
+        'fixed-income': {
+            title: "Fixed Income & Interest Rate Volatility",
+            description: "The smile in fixed income (e.g., options on bond futures) is also crucial for pricing and risk management. The shape can vary but often shows higher volatility for out-of-the-money options, reflecting uncertainty about the future path of interest rates. Central bank policies, inflation expectations, and economic data can all cause significant shifts in the yield curve, leading traders to price in the risk of large rate movements in either direction. The smile is used to derive the market-implied probability distribution of future interest rates.",
+            chartData: {
+                labels: [95, 96, 97, 98, 99, 100, 101, 102, 103],
+                values: [0.18, 0.16, 0.145, 0.13, 0.12, 0.125, 0.14, 0.155, 0.175]
+            }
+        }
+    };
+    
+    let currentAppChart = null;
+    function renderApplicationTab(tab) {
+        const content = applicationsContent[tab];
+        const container = document.getElementById('applications-content');
+        container.innerHTML = `
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h4 class="text-2xl font-bold mb-3">${content.title}</h4>
+                    <p class="text-gray-600 leading-relaxed">${content.description}</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="app-chart"></canvas>
+                </div>
+            </div>
+        `;
+        
+        const ctx = document.getElementById('app-chart').getContext('2d');
+        if(currentAppChart) currentAppChart.destroy();
+        currentAppChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: content.chartData.labels,
+                datasets: [{
+                    label: 'Implied Volatility',
+                    data: content.chartData.values,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { title: { display: true, text: 'Strike Price / Moneyness' } },
+                    y: { title: { display: true, text: 'Implied Volatility' } }
+                }
+            }
+        });
+    }
+
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            renderApplicationTab(button.dataset.tab);
+        });
+    });
+
+    renderApplicationTab('equities');
+
+    const baseVolSlider = document.getElementById('baseVol');
+    const smileFactorSlider = document.getElementById('smileFactor');
+    const baseVolLabel = document.getElementById('baseVolLabel');
+    const smileFactorLabel = document.getElementById('smileFactorLabel');
+
+    baseVolSlider.addEventListener('input', () => baseVolLabel.textContent = baseVolSlider.value);
+    smileFactorSlider.addEventListener('input', () => smileFactorLabel.textContent = smileFactorSlider.value);
+    
+    let playgroundChart = null;
+
+    function simulateSmileData(maturitiesDays, baseVol, smileFactor) {
+        const S = 100.0;
+        const r = 0.02;
+        const strikes = Array.from({length: 17}, (_, i) => 80 + i * 2.5);
+        
+        let surfaceData = [];
+        let smileData = [];
+
+        maturitiesDays.forEach(days => {
+            const T = days / 365.0;
+            let ivs = [];
+            strikes.forEach(K => {
+                const moneyness = K / S;
+                let sim_iv = (baseVol/100) + parseFloat(smileFactor) * (moneyness - 1)**2;
+                sim_iv += (Math.random() - 0.5) * 0.01; // noise
+                sim_iv = Math.max(0.01, sim_iv);
+                ivs.push(sim_iv);
+                surfaceData.push({ T: T, K: K, iv: sim_iv });
+            });
+            smileData.push({
+                label: `${days} Days to Maturity`,
+                data: ivs,
+                tension: 0.3,
+                fill: false
+            });
+        });
+        return { strikes, smileData, surfaceData };
+    }
+
+    document.getElementById('generateSmile').addEventListener('click', () => {
+        const selectedOptions = Array.from(document.getElementById('maturitySelect').selectedOptions).map(opt => parseInt(opt.value));
+        if (selectedOptions.length === 0) {
+            document.getElementById('playground-output').innerHTML = `<p class="text-center text-red-500">Please select at least one maturity for the 2D smile.</p>`;
+            return;
+        }
+
+        const baseVol = baseVolSlider.value;
+        const smileFactor = smileFactorSlider.value;
+        const { strikes, smileData } = simulateSmileData(selectedOptions, baseVol, smileFactor);
+        
+        const outputContainer = document.getElementById('playground-output');
+        outputContainer.innerHTML = `<div class="chart-container"><canvas id="playground-chart-2d"></canvas></div>`;
+
+        const ctx = document.getElementById('playground-chart-2d').getContext('2d');
+        if(playgroundChart) playgroundChart.destroy();
+        
+        const colors = ['#3b82f6', '#16a34a', '#ef4444', '#eab308', '#8b5cf6'];
+        smileData.forEach((ds, i) => {
+            ds.borderColor = colors[i % colors.length];
+        });
+
+        playgroundChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: strikes,
+                datasets: smileData
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } },
+                scales: {
+                    x: { title: { display: true, text: 'Strike Price (K)' } },
+                    y: { title: { display: true, text: 'Implied Volatility (σ)' } }
+                }
+            }
+        });
+    });
+
+    document.getElementById('generateSurface').addEventListener('click', () => {
+        const selectedOptions = Array.from(document.getElementById('maturitySelect').selectedOptions).map(opt => parseInt(opt.value));
+        if (selectedOptions.length < 2) {
+            document.getElementById('playground-output').innerHTML = `<p class="text-center text-red-500">Please select at least two maturities to generate a surface.</p>`;
+            return;
+        }
+        
+        const baseVol = baseVolSlider.value;
+        const smileFactor = smileFactorSlider.value;
+        const { surfaceData } = simulateSmileData(selectedOptions, baseVol, smileFactor);
+
+        const outputContainer = document.getElementById('playground-output');
+        outputContainer.innerHTML = `<div id="playground-chart-3d" class="plotly-chart-container"></div>`;
+        
+        const T_vals = [...new Set(surfaceData.map(d => d.T))].sort((a,b) => a-b);
+        const K_vals = [...new Set(surfaceData.map(d => d.K))].sort((a,b) => a-b);
+        const z_data = T_vals.map(t => 
+            K_vals.map(k => {
+                const point = surfaceData.find(d => d.T === t && d.K === k);
+                return point ? point.iv : null;
+            })
+        );
+
+        const plotData = [{
+            z: z_data,
+            x: T_vals.map(t => (t*365).toFixed(0)),
+            y: K_vals,
+            type: 'surface',
+            colorscale: 'Viridis'
+        }];
+
+        const layout = {
+            title: 'Implied Volatility Surface',
+            scene: {
+                xaxis: { title: 'Time to Maturity (Days)' },
+                yaxis: { title: 'Strike Price (K)' },
+                zaxis: { title: 'Implied Volatility (σ)' }
+            },
+            autosize: true,
+            margin: { l: 40, r: 40, b: 40, t: 80 }
+        };
+
+        Plotly.newPlot('playground-chart-3d', plotData, layout, {responsive: true});
+    });
+
+});
+</script>
+</body>
+</html>
