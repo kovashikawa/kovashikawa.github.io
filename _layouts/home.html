@@ -4,17 +4,20 @@ layout: archive
 
 {{ content }}
 
-<h3 class="archive__subtitle">{{ site.data.ui-text[site.locale].recent_posts | default: "Recent Posts" }}</h3>
+<h3 class="archive__subtitle">{{ site.data.ui-text[site.locale].recent_posts | default: "Latest Updates" }}</h3>
 
-{% if paginator %}
-  {% assign posts = paginator.posts %}
-{% else %}
-  {% assign posts = site.posts %}
-{% endif %}
+{% comment %}
+  1. Use 'concat' to correctly merge posts and projects into one flat array.
+{% endcomment %}
+{% assign combined_documents = site.posts | concat: site.projects %}
+
+{% comment %}
+  2. Sort the combined array by date, then reverse it to get newest first.
+{% endcomment %}
+{% assign sorted_documents = combined_documents | sort: "date" | reverse %}
+
 
 {% assign entries_layout = page.entries_layout | default: 'list' %}
 <div class="entries-{{ entries_layout }}">
-  {% include documents-collection.html entries=posts type=entries_layout %}
+  {% include documents-collection.html entries=sorted_documents type=entries_layout %}
 </div>
-
-{% include paginator.html %}
