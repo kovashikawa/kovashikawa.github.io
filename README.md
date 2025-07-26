@@ -1,7 +1,7 @@
 # Rafael Kovashikawa — Personal Site
 
 This repository contains the source for **[kovashikawa.github.io](https://kovashikawa.github.io)**, my portfolio and blog.  
-It runs on the excellent **[Minimal Mistakes](https://github.com/mmistakes/minimal-mistakes)** Jekyll theme with a few custom tweaks.
+It runs on the nice **[Minimal Mistakes](https://github.com/mmistakes/minimal-mistakes)** Jekyll theme with custom tweaks.
 
 ## What’s inside
 

@@ -41,30 +41,30 @@ layout: single
         background-color: #3b82f6;
         color: white !important; /* Use !important to override theme link colors */
     }
-    /* Style overrides for dark mode Plotly charts */
-    .theme--dark .plotly .bg {
+    /* Style overrides for Plotly charts (always dark mode) */
+    .plotly .bg {
         fill: #252a34; /* Match dark background */
     }
-    .theme--dark .plotly text {
+    .plotly text {
         fill: #e0e0e0 !important; /* Light text for dark background */
     }
-    .theme--dark .plotly .gridlayer .grid .zeroline {
+    .plotly .gridlayer .grid .zeroline {
         stroke: #9ca3af !important;
     }
-    .theme--dark .plotly .gridlayer .grid path {
+    .plotly .gridlayer .grid path {
         stroke: #4b5563 !important;
     }
 </style>
 
 <div class="text-gray-800 dark:text-gray-200">
 
-    <nav class="sticky top-0 z-50 py-3 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 -mx-4 sm:-mx-6 px-4 sm:px-6">
+    <nav class="sticky top-0 z-50 py-3 bg-gray-900/80 backdrop-blur-md border-b border-gray-700 -mx-4 sm:-mx-6 px-4 sm:px-6">
         <div class="max-w-screen-xl mx-auto flex justify-center items-center">
              <div class="flex space-x-8">
-                <a href="#foundations" class="text-gray-600 dark:text-gray-400 hover:text-blue-500 transition">Foundations</a>
-                <a href="#calculator" class="text-gray-600 dark:text-gray-400 hover:text-blue-500 transition">Calculator</a>
-                <a href="#applications" class="text-gray-600 dark:text-gray-400 hover:text-blue-500 transition">Applications</a>
-                <a href="#playground" class="text-gray-600 dark:text-gray-400 hover:text-blue-500 transition">Playground</a>
+                <a href="#foundations" class="text-gray-400 dark:text-gray-400 hover:text-blue-500 transition">Foundations</a>
+                <a href="#calculator" class="text-gray-400 dark:text-gray-400 hover:text-blue-500 transition">Calculator</a>
+                <a href="#applications" class="text-gray-400 dark:text-gray-400 hover:text-blue-500 transition">Applications</a>
+                <a href="#playground" class="text-gray-400 dark:text-gray-400 hover:text-blue-500 transition">Playground</a>
             </div>
         </div>
     </nav>
@@ -73,19 +73,19 @@ layout: single
         
         <section id="foundations" class="my-16 scroll-mt-20">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-gray-100">The Foundations of the Smile</h2>
-                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">Why does the volatility smile exist? It emerges from the gap between the elegant assumptions of the Black-Scholes model and the complex realities of financial markets.</p>
+                <h2 class="text-4xl font-bold text-gray-100 dark:text-gray-100">The Foundations of the Smile</h2>
+                <p class="mt-4 text-lg text-gray-400 dark:text-gray-400 max-w-3xl mx-auto">Why does the volatility smile exist? It emerges from the gap between the elegant assumptions of the Black-Scholes model and the complex realities of financial markets.</p>
             </div>
             <div class="grid md:grid-cols-2 gap-8 items-start">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Black-Scholes Assumptions</h3>
-                    <p class="text-gray-600 dark:text-gray-400 mb-6">Click on each one to see how it compares to market reality.</p>
+                <div class="bg-gray-800 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-100 dark:text-gray-100">Black-Scholes Assumptions</h3>
+                    <p class="text-gray-400 dark:text-gray-400 mb-6">Click on each one to see how it compares to market reality.</p>
                     <div id="assumptions-container" class="space-y-3"></div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Market Reality</h3>
-                    <div id="reality-display" class="prose max-w-none p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-gray-700 dark:text-gray-300 min-h-[200px] flex items-center justify-center">
-                        <p class="text-center text-gray-500 dark:text-gray-400">Click an assumption on the left to see the corresponding market reality.</p>
+                <div class="bg-gray-800 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-100 dark:text-gray-100">Market Reality</h3>
+                    <div id="reality-display" class="prose max-w-none p-4 bg-gray-800 dark:bg-blue-900/20 rounded-lg text-gray-400 dark:text-gray-300 min-h-[200px] flex items-center justify-center">
+                        <p class="text-center text-gray-400 dark:text-gray-400">Click an assumption on the left to see the corresponding market reality.</p>
                     </div>
                 </div>
             </div>
@@ -93,75 +93,75 @@ layout: single
 
         <section id="calculator" class="my-16 scroll-mt-20">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-gray-100">Interactive Calculators</h2>
-                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">Go from theory to practice. Use these tools to calculate an option's price using the Black-Scholes formula or find the implied volatility from a market price.</p>
+                <h2 class="text-4xl font-bold text-gray-100 dark:text-gray-100">Interactive Calculators</h2>
+                <p class="mt-4 text-lg text-gray-400 dark:text-gray-400 max-w-3xl mx-auto">Go from theory to practice. Use these tools to calculate an option's price using the Black-Scholes formula or find the implied volatility from a market price.</p>
             </div>
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Black-Scholes Pricer</h3>
+                <div class="bg-gray-800 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-100 dark:text-gray-100">Black-Scholes Pricer</h3>
                     <form id="bs-form" class="space-y-4">
                         <div class="grid grid-cols-2 gap-4">
-                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Spot Price (S)</label><input type="number" id="bs_S" value="100" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Strike Price (K)</label><input type="number" id="bs_K" value="105" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Maturity (T, years)</label><input type="number" step="0.01" id="bs_T" value="0.5" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Risk-Free Rate (r, %)</label><input type="number" step="0.01" id="bs_r" value="2" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
-                            <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Volatility (σ, %)</label><input type="number" step="0.1" id="bs_sigma" value="20" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Spot Price (S)</label><input type="number" id="bs_S" value="100" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Strike Price (K)</label><input type="number" id="bs_K" value="105" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Maturity (T, years)</label><input type="number" step="0.01" id="bs_T" value="0.5" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Risk-Free Rate (r, %)</label><input type="number" step="0.01" id="bs_r" value="2" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div class="col-span-2"><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Volatility (σ, %)</label><input type="number" step="0.1" id="bs_sigma" value="20" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
                         </div>
                         <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition">Calculate Price</button>
                     </form>
-                    <div id="bs-result" class="mt-6 text-center font-semibold text-lg bg-gray-100 dark:bg-gray-700 p-4 rounded-md"></div>
+                    <div id="bs-result" class="mt-6 text-center font-semibold text-lg bg-gray-800 dark:bg-gray-700 p-4 rounded-md"></div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Implied Volatility Solver</h3>
+                <div class="bg-gray-800 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-100 dark:text-gray-100">Implied Volatility Solver</h3>
                     <form id="iv-form" class="space-y-4">
                          <div class="grid grid-cols-2 gap-4">
-                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Spot Price (S)</label><input type="number" id="iv_S" value="100" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Strike Price (K)</label><input type="number" id="iv_K" value="105" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Maturity (T, years)</label><input type="number" step="0.01" id="iv_T" value="0.5" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Risk-Free Rate (r, %)</label><input type="number" step="0.01" id="iv_r" value="2" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
-                            <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Market Call Price</label><input type="number" step="0.01" id="iv_price" value="4.02" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Spot Price (S)</label><input type="number" id="iv_S" value="100" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Strike Price (K)</label><input type="number" id="iv_K" value="105" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Maturity (T, years)</label><input type="number" step="0.01" id="iv_T" value="0.5" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Risk-Free Rate (r, %)</label><input type="number" step="0.01" id="iv_r" value="2" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
+                            <div class="col-span-2"><label class="block text-sm font-medium text-gray-400 dark:text-gray-300">Market Call Price</label><input type="number" step="0.01" id="iv_price" value="4.02" class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500"></div>
                         </div>
-                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition">Find Implied Volatility</button>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition">Find Implied Volatility</button>
                     </form>
-                    <div id="iv-result" class="mt-6 text-center font-semibold text-lg bg-gray-100 dark:bg-gray-700 p-4 rounded-md"></div>
+                    <div id="iv-result" class="mt-6 text-center font-semibold text-lg bg-gray-800 dark:bg-gray-700 p-4 rounded-md"></div>
                 </div>
             </div>
         </section>
 
         <section id="applications" class="my-16 scroll-mt-20">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-gray-100">Smile Across the Markets</h2>
-                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">The volatility smile isn't one-size-fits-all. Explore the characteristic patterns for equities, foreign exchange, and fixed income.</p>
+                <h2 class="text-4xl font-bold text-gray-100 dark:text-gray-100">Smile Across the Markets</h2>
+                <p class="mt-4 text-lg text-gray-400 dark:text-gray-400 max-w-3xl mx-auto">The volatility smile isn't one-size-fits-all. Explore the characteristic patterns for equities, foreign exchange, and fixed income.</p>
             </div>
             <div>
-                <div class="mb-6 flex justify-center border-b border-gray-200 dark:border-gray-700">
-                    <button data-tab="equities" class="tab-button px-6 py-3 font-medium text-lg border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition active">Equities</button>
-                    <button data-tab="fx" class="tab-button px-6 py-3 font-medium text-lg border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition">FX</button>
-                    <button data-tab="fixed-income" class="tab-button px-6 py-3 font-medium text-lg border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition">Fixed Income</button>
+                <div class="mb-6 flex justify-center border-b border-gray-700 dark:border-gray-700">
+                    <button data-tab="equities" class="tab-button px-6 py-3 font-medium text-lg border-b-2 border-transparent text-gray-400 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 transition active">Equities</button>
+                    <button data-tab="fx" class="tab-button px-6 py-3 font-medium text-lg border-b-2 border-transparent text-gray-400 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 transition">FX</button>
+                    <button data-tab="fixed-income" class="tab-button px-6 py-3 font-medium text-lg border-b-2 border-transparent text-gray-400 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 transition">Fixed Income</button>
                 </div>
-                <div id="applications-content" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <div id="applications-content" class="bg-gray-800 dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 </div>
             </div>
         </section>
 
         <section id="playground" class="my-24 scroll-mt-20">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-gray-100">Interactive Playground</h2>
-                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">Adjust market parameters to generate and visualize your own 2D volatility smiles and 3D surfaces.</p>
+                <h2 class="text-4xl font-bold text-gray-100 dark:text-gray-100">Interactive Playground</h2>
+                <p class="mt-4 text-lg text-gray-400 dark:text-gray-400 max-w-3xl mx-auto">Adjust market parameters to generate and visualize your own 2D volatility smiles and 3D surfaces.</p>
             </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+            <div class="bg-gray-800 dark:bg-gray-800 p-6 rounded-lg shadow-lg">
                 <div class="grid md:grid-cols-3 gap-6 mb-8">
                     <div>
-                        <label for="baseVol" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Base Volatility (<span id="baseVolLabel">20</span>%)</label>
-                        <input id="baseVol" type="range" min="5" max="50" value="20" class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer">
+                        <label for="baseVol" class="block text-sm font-medium text-gray-400 dark:text-gray-300">Base Volatility (<span id="baseVolLabel">20</span>%)</label>
+                        <input id="baseVol" type="range" min="5" max="50" value="20" class="w-full h-2 bg-gray-600 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer">
                     </div>
                     <div>
-                        <label for="smileFactor" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Smile Factor (<span id="smileFactorLabel">0.15</span>)</label>
-                        <input id="smileFactor" type="range" min="0" max="0.5" value="0.15" step="0.01" class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer">
+                        <label for="smileFactor" class="block text-sm font-medium text-gray-400 dark:text-gray-300">Smile Factor (<span id="smileFactorLabel">0.15</span>)</label>
+                        <input id="smileFactor" type="range" min="0" max="0.5" value="0.15" step="0.01" class="w-full h-2 bg-gray-600 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer">
                     </div>
                     <div>
-                        <label for="maturitySelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Maturity (Days)</label>
-                        <select id="maturitySelect" multiple class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500 h-24">
+                        <label for="maturitySelect" class="block text-sm font-medium text-gray-400 dark:text-gray-300">Maturity (Days)</label>
+                        <select id="maturitySelect" multiple class="mt-1 block w-full rounded-md border-gray-600 dark:border-gray-600 bg-gray-800 dark:bg-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500 h-24">
                             <option value="30" selected>30</option>
                             <option value="90" selected>90</option>
                             <option value="180">180</option>
@@ -187,7 +187,7 @@ layout: single
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    const isDarkMode = document.body.classList.contains('theme--dark');
+    const isDarkMode = true;
 
     const norm = {
         cdf: (x) => {
@@ -305,8 +305,8 @@ document.addEventListener('DOMContentLoaded', function() {
         container.innerHTML = `
             <div class="grid md:grid-cols-2 gap-8 items-center">
                 <div>
-                    <h4 class="text-2xl font-bold mb-3 text-gray-900 dark:text-gray-100">${content.title}</h4>
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">${content.description}</p>
+                    <h4 class="text-2xl font-bold mb-3 text-gray-100 dark:text-gray-100">${content.title}</h4>
+                    <p class="text-gray-400 dark:text-gray-400 leading-relaxed">${content.description}</p>
                 </div>
                 <div class="chart-container">
                     <canvas id="app-chart"></canvas>
@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 zaxis: { title: 'Implied Volatility (σ)'}
             },
             autosize: true, margin: { l: 40, r: 40, b: 40, t: 80 },
-            paper_bgcolor: isDarkMode ? '#1f2937' : '#fff', // Use a dark gray for paper
+            paper_bgcolor: isDarkMode ? '#111827' : '#ffffff', // Match page bg for dark/light
             font: { color: isDarkMode ? '#e0e0e0' : '#333' }
         }, {responsive: true});
     });

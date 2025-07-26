@@ -7,7 +7,11 @@ toc:  false                    # turn on if the page gets long
 ---
 
 <!-- Kick-off blurb -->
-I’m Rafael Kovashikawa—economist-turned-data-engineer with a soft spot for macro signals, low-latency pipelines and making AWS bills disappear.
+I’m Rafael Kovashikawa, an economist-turned-data-professional with a soft spot for macro signals, efficient pipelines and making cloud bills disappear.
+
+Always curious about _tech, data and dogs_.
+
+I will use this space to post about things that I've found interesting along the journey and, of course, my projects.
 
 ### What I do best
 * **Data Science & Modeling** · Develop and productionize time‑series (ARIMA, VaR), tree‑based and econometric models for CPI forecasts, credit risk and trading signals.
@@ -58,7 +62,12 @@ _2017 – 2021_
 ----
 
 ### Outside the terminal
-🦮 dogs · 🏃 running · ⚽ Fluminense fan
+
+I was born and raised in Rio de Janeiro, Brazil 🇧🇷
+
+My favorite things are:
+
+  🦮 dogs · 🏃 running · ⚽ Fluminense fan
 <div style="display: flex; gap: 10px;">
   <img src="/assets/images/benito_sunset.jpeg" alt="Benito at sunset" style="width: 48%; border-radius: 8px;" />
   <img src="/assets/images/selfie_run.jpeg" alt="Post-run selfie" style="width: 48%; border-radius: 8px;" />

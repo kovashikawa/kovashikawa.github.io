@@ -20,7 +20,7 @@ mathjax                  : true
 rtl                      : # true, false (default) # turns direction of the page into right to left for RTL languages
 title                    : "Rafael Kovashikawa"
 title_separator          : "|"
-subtitle                 : "Economics | Data Science | Engineering"
+subtitle                 : "Economics | Data Science | SWE"
 name                     : # "Rafael Kovashikawa"
 description              : "Projects, blog posts and resources on data engineering, ML, and macro-analytics."
 url                      : "https://kovashikawa.github.io" 
