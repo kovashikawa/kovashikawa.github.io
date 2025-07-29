@@ -1,5 +1,5 @@
 ---
-title: "Volatility Smile Explorer\n"
+title: "[WIP] Volatility Smile Explorer\n"
 layout: volatility-smile
 collection: projects
 permalink: /projects/volatility-smile/
