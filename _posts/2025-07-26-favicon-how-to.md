@@ -2,6 +2,7 @@
 title: "How to Add a Favicon to Your Jekyll Site"
 author_profile: true
 read_time: true
+excerpt: "favicon is a small icon that appears next to your site’s title in browser tabs"
 categories: [front]
 tags: [dogs, benito, portfolio, favicon]
 share: true
