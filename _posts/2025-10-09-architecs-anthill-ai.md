@@ -8,8 +8,6 @@ tags: [philosophy, chemistry]
 toc: true       
 ---
 
-# Architects, Anthills, and AI: A Nobel Prize's Lesson on Scientific Progress
-
 The 2025 Nobel Prize in Chemistry has been awarded to Susumu Kitagawa, Richard Robson, and Omar M. Yaghi for their creation of an entirely new class of materials: **metal-organic frameworks (MOFs)** [[1]](https://www.nobelprize.org/prizes/chemistry/2025/popular-information/).
 
 These remarkable materials can be thought of as molecular sponges or programmable crystals. Built from metal ions and organic linkers, their defining feature is a vast internal porosity, allowing just a few grams to have a surface area the size of a football pitch. This unique property has unlocked potential solutions to some of humanity's biggest challenges, from capturing carbon dioxide and harvesting water from desert air to filtering pollutants and delivering drugs.

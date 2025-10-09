@@ -1,6 +1,6 @@
 ---
 title:  "Why Lack of Correlation Doesn’t Mean Independence"
-excerpt: "Pearson’s ρ drops to zero for X vs |X|—a neat example of hidden dependence."
+excerpt: "pearson’s ρ drops to zero for X vs |X|—a neat example of hidden dependence."
 author: rafael            # matches whatever you have in _config.yml > authors
 categories: [statistics]
 tags: [correlation, independence, statistics, python]
