@@ -67,7 +67,7 @@ Built with **Gradio 4.0** and **Plotly**, the dashboard features 5 interactive t
 1. **🌍 Global Overview**: Choropleth map showing supply-demand gaps
 2. **📊 Country Comparison**: Multi-country trend analysis (default: Brazil, Argentina, USA, Japan)
 3. **🏆 Rankings**: Top countries by AI job demand, skills supply, investment, startups
-4. **🔮 Forecasts**: 2024-2025 predictions using Ridge regression
+4. **🔮 Forecasts**: 2024-2025 projections built with a minimalist linear trend baseline after richer models proved unreliable under the time and data constraints
 5. **🔬 Country Deep Dive**: Detailed statistics for individual countries
 
 ---
@@ -138,7 +138,7 @@ The global AI job market shows:
 - **Presentation**: [Canva slides](https://www.canva.com/design/DAG6ftQIfSA/pW-b5By0racKOTOgHcUY6A/view)
 - **Code**: [GitHub repository](https://github.com/datacommunitydc/DataDive25)
 
-While our forecasting model didn't achieve production-ready accuracy, the **exploratory dashboard successfully visualizes historical trends** and provides policymakers with actionable insights on global AI skills gaps.
+Forecasting was the toughest part: with only a few hours to wrangle unfamiliar data, every richer model we tried failed to be accurate, robust, or remotely reliable. I fell back to a simplistic linear trend model so the projections stayed within clearly understood limitations. Even so, the **exploratory dashboard successfully visualizes historical trends** and provides policymakers with actionable insights on global AI skills gaps.
 
 ---
 
