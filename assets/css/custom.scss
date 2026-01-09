@@ -1,0 +1,50 @@
+/* ===============================
+   Global Typography (Technical)
+   =============================== */
+
+   html {
+    font-size: 18px;
+  }
+  
+  /* Content body */
+  .page__content {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: #e6e6e6;
+  }
+  
+  /* Paragraphs and lists */
+  .page__content p,
+  .page__content li {
+    font-size: 1.05rem;
+  }
+  
+  /* Headings */
+  .page__content h1 {
+    font-size: 2.3rem;
+    margin-top: 2.5rem;
+  }
+  
+  .page__content h2 {
+    font-size: 1.9rem;
+    margin-top: 2.2rem;
+  }
+  
+  .page__content h3 {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  /* Blockquotes (very important) */
+  .page__content blockquote {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    border-left-width: 4px;
+  }
+  
+  /* Code blocks readability */
+  .page__content pre,
+  .page__content code {
+    font-size: 0.95rem;
+  }
+  
