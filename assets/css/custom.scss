@@ -3,81 +3,57 @@
    =============================== */
 
    html {
-    font-size: 18px;
+    font-size: 16px; /* Reduced from 18px to the standard base */
   }
   
   /* Content body */
   .page__content {
-    font-size: 1.05rem;
-    line-height: 1.75;
+    font-size: 1rem; /* Reduced from 1.05rem */
+    line-height: 1.6;
     color: #e6e6e6;
   }
   
   /* Paragraphs and lists */
   .page__content p,
   .page__content li {
-    font-size: 1.05rem;
+    font-size: 1rem; /* Reduced from 1.05rem */
   }
   
-  /* Headings */
+  /* Headings - slightly reduced for better scale */
   .page__content h1 {
-    font-size: 2.3rem;
-    margin-top: 2.5rem;
-  }
-  
-  .page__content h2 {
-    font-size: 1.9rem;
-    margin-top: 2.2rem;
-  }
-  
-  .page__content h3 {
-    font-size: 1.5rem;
+    font-size: 2rem; /* Reduced from 2.3rem */
     margin-top: 2rem;
   }
   
-  /* Blockquotes (very important) */
-  .page__content blockquote {
-    font-size: 1.15rem;
-    line-height: 1.7;
-    border-left-width: 4px;
+  .page__content h2 {
+    font-size: 1.75rem; /* Reduced from 1.9rem */
+    margin-top: 1.75rem;
   }
   
-  /* Code blocks readability */
-  .page__content pre,
-  .page__content code {
-    font-size: 0.95rem;
-  }
   /* ===============================
-   Fix list font-size issues
-   =============================== */
-
-/* Ordered + unordered lists */
-.page__content ul,
-.page__content ol {
-  font-size: 1.05rem;
-}
-
-/* List items themselves */
-.page__content ul li,
-.page__content ol li {
-  font-size: 1.05rem;
-  line-height: 1.7;
-}
-
-/* VERY important: list items that contain paragraphs */
-.page__content li p {
-  font-size: 1.05rem;
-  margin-bottom: 0.4rem;
-}
-
-/* Nested lists */
-.page__content ul ul,
-.page__content ul ol,
-.page__content ol ul,
-.page__content ol ol {
-  font-size: 1.05rem;
-}
-.page__content li {
-    margin-bottom: 0.5rem;
+     Fix list font-size issues
+     =============================== */
+  
+  /* Consolidate all list-related elements to 1rem */
+  .page__content ul,
+  .page__content ol,
+  .page__content li,
+  .page__content li p,
+  .page__content ul ul,
+  .page__content ul ol,
+  .page__content ol ul,
+  .page__content ol ol {
+    font-size: 1rem; /* Normalized to standard size */
+    line-height: 1.6;
   }
   
+  /* Ensure spacing between list items */
+  .page__content li {
+    margin-bottom: 0.25rem; /* Reduced from 0.5rem */
+  }
+  
+  /* Spacing for paragraphs inside list items */
+  .page__content li p {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
