@@ -1,0 +1,50 @@
+<div class="sidebar sticky">
+    <div class="stripe-metadata">
+        <h3 class="metadata-header">/ METADATA</h3>
+
+        <div class="metadata-group">
+            <div class="metadata-label">DATE</div>
+            <div class="metadata-value">{{ page.date | date: "%B %d, %Y" | upcase }}</div>
+        </div>
+
+        {% if page.author or site.author.name %}
+        <div class="metadata-group">
+            <div class="metadata-label">AUTHOR</div>
+            <div class="metadata-value">{{ page.author | default: site.author.name | upcase }}</div>
+        </div>
+        {% endif %}
+
+        {% if page.read_time %}
+        <div class="metadata-group">
+            <div class="metadata-label">READ TIME</div>
+            <div class="metadata-value">{% include read-time.html %}</div>
+        </div>
+        {% endif %}
+
+        {% if page.categories.size > 0 %}
+        <div class="metadata-group">
+            <div class="metadata-label">CATEGORIES</div>
+            <div class="metadata-tags">
+                {% for category in page.categories %}
+                <a href="{{ '/categories/' | relative_url }}#{{ category | slugify }}" class="metadata-tag">
+                    [{{ category | upcase | slice: 0 }}] {{ category | upcase }}
+                </a><br>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="metadata-group share-section">
+            <div class="metadata-label">SHARE</div>
+            <div class="share-buttons">
+                <a href="https://twitter.com/intent/tweet?text={{ page.title | url_encode }}&url={{ page.url | absolute_url | url_encode }}"
+                    class="btn--share" title="Share on Twitter"><i class="fab fa-fw fa-twitter"
+                        aria-hidden="true"></i></a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ page.url | absolute_url | url_encode }}"
+                    class="btn--share" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin"
+                        aria-hidden="true"></i></a>
+            </div>
+        </div>
+
+    </div>
+</div>

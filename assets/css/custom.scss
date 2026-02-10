@@ -1,59 +1,173 @@
+/* Metadata Sidebar */
+.stripe-metadata {
+  font-family: 'JetBrains Mono', monospace;
+  padding-right: 20px;
+}
+
+.metadata-header {
+  font-size: 0.85rem;
+  color: #888 !important;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #1E1E1E;
+  padding-bottom: 0.5rem;
+  font-weight: normal;
+}
+
+.metadata-group {
+  margin-bottom: 2rem;
+}
+
+.metadata-label {
+  font-size: 0.7rem;
+  color: #888;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.05em;
+}
+
+.metadata-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1E1E1E;
+}
+
+.metadata-tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: #1E1E1E;
+  text-decoration: none;
+  border-bottom: 1px dotted #1E1E1E;
+  margin-bottom: 0.25rem;
+}
+
+.metadata-tag:hover {
+  background-color: #1E1E1E;
+  color: #fff;
+}
+
+.btn--share {
+  color: #1E1E1E;
+  font-size: 1.2rem;
+  margin-right: 1rem;
+}
+
+.btn--share:hover {
+  color: #555;
+}
+
 /* ===============================
-   Global Typography (Technical)
+   Stripe Aesthetic Overrides
    =============================== */
 
-   html {
-    font-size: 16px; /* Reduced from 18px to the standard base */
-  }
-  
-  /* Content body */
-  .page__content {
-    font-size: 1rem; /* Reduced from 1.05rem */
-    line-height: 1.6;
-    color: #e6e6e6;
-  }
-  
-  /* Paragraphs and lists */
-  .page__content p,
-  .page__content li {
-    font-size: 1rem; /* Reduced from 1.05rem */
-  }
-  
-  /* Headings - slightly reduced for better scale */
-  .page__content h1 {
-    font-size: 2rem; /* Reduced from 2.3rem */
-    margin-top: 2rem;
-  }
-  
-  .page__content h2 {
-    font-size: 1.75rem; /* Reduced from 1.9rem */
-    margin-top: 1.75rem;
-  }
-  
-  /* ===============================
-     Fix list font-size issues
-     =============================== */
-  
-  /* Consolidate all list-related elements to 1rem */
-  .page__content ul,
-  .page__content ol,
-  .page__content li,
-  .page__content li p,
-  .page__content ul ul,
-  .page__content ul ol,
-  .page__content ol ul,
-  .page__content ol ol {
-    font-size: 1rem; /* Normalized to standard size */
-    line-height: 1.6;
-  }
-  
-  /* Ensure spacing between list items */
-  .page__content li {
-    margin-bottom: 0.25rem; /* Reduced from 0.5rem */
-  }
-  
-  /* Spacing for paragraphs inside list items */
-  .page__content li p {
-    font-size: 1rem;
-    margin-bottom: 0.2rem;
-  }
+/* Grid Background */
+body {
+  background-color: #E8E8E8;
+  background-image:
+    linear-gradient(#ccc 1px, transparent 1px),
+    linear-gradient(90deg, #ccc 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: -1px -1px;
+}
+
+/* Vignette / Blue Glow */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  box-shadow: inset 0 0 150px rgba(0, 50, 200, 0.08);
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.8;
+}
+
+/* Typography Overrides */
+body {
+  font-family: 'Inter', sans-serif;
+  color: #1E1E1E;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+  color: #1E1E1E;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Specific Header Styling */
+.page__title {
+  font-weight: 900;
+  font-size: 2.5rem;
+  line-height: 1;
+  text-transform: uppercase;
+  margin-bottom: 0.5em;
+  letter-spacing: -0.04em;
+}
+
+/* Navigation & Header */
+.masthead {
+  background: transparent;
+  border-bottom: 2px solid #1E1E1E;
+}
+
+.masthead__menu-item {
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.masthead__inner-wrap {
+  background-color: transparent !important;
+}
+
+/* Cards / Teasers */
+.archive__item-teaser {
+  border-radius: 4px;
+}
+
+/* ===============================
+   Global Content Typography Fixes
+   =============================== */
+
+/* Force consistent body text size */
+.page__content,
+.page__content p,
+.page__content li,
+.page__content dl,
+.page__content ol,
+.page__content ul,
+.archive__item-excerpt {
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+}
+
+/* Ensure spacing between paragraphs */
+.page__content p,
+.page__content ul,
+.page__content ol {
+  margin-bottom: 1.5em;
+}
+
+/* Fix tiny TOC items */
+.toc li {
+  font-size: 0.85rem !important;
+}
+
+/* Fix lists inside content */
+.page__content li {
+  margin-bottom: 0.5em;
+}

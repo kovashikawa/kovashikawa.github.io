@@ -1,0 +1,32 @@
+/* ==========================================================================
+   Stripe Developer Blog Skin
+   ========================================================================== */
+
+/* Colors */
+$background-color: #E8E8E8 !default;
+$text-color: #1E1E1E !default;
+$muted-text-color: #555 !default;
+$primary-color: #1E1E1E !default;
+$border-color: #1E1E1E !default;
+$footer-background-color: transparent !default;
+
+$code-background-color: #fff !default;
+$code-background-color-dark: #1E1E1E !default;
+
+$link-color: #1E1E1E !default;
+$link-color-hover: #555 !default;
+$link-color-visited: #1E1E1E !default;
+$masthead-link-color: #1E1E1E !default;
+$masthead-link-color-hover: #555 !default;
+$navicon-link-color-hover: #555 !default;
+
+/* Typography */
+$sans-serif: 'Inter', sans-serif !default;
+$monospace: 'JetBrains Mono', monospace !default;
+
+$global-font-family: $sans-serif !default;
+$header-font-family: $sans-serif !default;
+$caption-font-family: $monospace !default;
+
+/* Layout */
+$max-width: 1400px !default;
