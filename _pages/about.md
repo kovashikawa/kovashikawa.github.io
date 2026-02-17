@@ -7,7 +7,7 @@ toc:  false                    # turn on if the page gets long
 ---
 
 <!-- Kick-off blurb -->
-I’m Rafael Kovashikawa, an economist-turned-data-professional with a soft spot for macro signals, efficient pipelines and making cloud bills disappear.
+I’m Rafael Kovashikawa, an economist-turned-data-professional with a soft spot for macro signals, efficient pipelines and making cool things with LLMs.
 
 Always curious about _tech, data and dogs_.
 
@@ -17,16 +17,25 @@ I will use this space to post about things that I've found interesting along the
 * **Data Science & Modeling** · Develop and productionize time‑series (ARIMA, VaR), tree‑based and econometric models for CPI forecasts, credit risk and trading signals.
 * **Data Engineering** · Build and orchestrate ETL on Airflow + Kubernetes.
 * **ML in Production** · Deploy credit-risk and anomaly-detection models (FastAPI, Docker).
-* **LLMs** · RAG pipelines for legal doc analysis, LangChain + vector DBs.
+* **LLMs** · RAG pipeline, LangChain + vector DBs.
 
 ### Tech Stack
-**Programming:** Python, R, MongoDB, SQL, JavaScript, TypeScript, CSS, HTML  
+**Programming:** Python, R, MongoDB, SQL, JavaScript, TypeScript, CSS, HTML, MCP (Model Context Protocol), Pydantic AI, Django Q2  
 **Data Viz & Analysis:** Plotly, Matplotlib, Tableau, Excel, Bloomberg Terminal  
-**Cloud & Automation:** AWS, Apache Airflow, GitHub Actions (CI/CD), Google Cloud Platform  
-**ML & AI:** scikit‑learn, XGBoost, LightGBM, Econometrics (Statsmodels), LLMs, NLP  
+**Cloud & Automation:** AWS, Redis (Pub/Sub), Apache Airflow, GitHub Actions (CI/CD), Google Cloud Platform  
+**ML & AI:** scikit‑learn, XGBoost, LightGBM, Econometrics (Statsmodels), LLMs, NLP, MCP Servers, Context Engineering, AI Agent Development  
 **Languages:** Native Portuguese; fluent English and Spanish
 
 ### Professional Experience
+**[Fuse](https://fuse.is/) — AI Data Strategy for Marketers — AI Engineer**  
+_Jan 2026 – Present_  
+- Architected end-to-end TikTok Ads integration (OAuth, sync, AI agent) enabling analysis of a 5th major ad platform.
+- Built statistical anomaly detection library exposed via MCP for LLM-powered analysis across Google, Meta, GA4, and TikTok.
+- Developed TikTok Ads MCP server with complexity classification and streaming, adhering to Anthropic's specifications.
+- Engineered context system to prevent LLM hallucinations, reducing API errors by enforcing valid field references and dimensions.
+- Implemented sandboxed Python executor with module detection to ensure LLMs use valid APIs.
+
+
 **[GYRA+](https://gyramais.com.br/) — Senior Data Scientist**  
 _Aug 2024 – Jan 2025 · Brazil_  
 - Led the strategic re‑architecture of data models and ETL/ELT pipelines (Python, Airflow, AWS), cutting AWS costs for the data team by **50 %**.  
@@ -55,15 +64,18 @@ _May 2024 – Oct 2025 (expected)_
 **[Fundação Getúlio Vargas (EPGE)](https://epge.fgv.br/en) — B.Sc. Economics**  
 _2017 – 2021_
 
-### Grants & Awards
+### Awards
+- **Google Cloud AI Hackathon** (Dec 2025) – Built MedAnnotator, a multimodal medical annotation system. [Post](/projects/ai/google-cloud-ai-hackathon-winner/) | [Code](https://github.com/ODSCGoogleHackhathon/googol)
 - **Big Data Hackathon** (Sep 2021, XP Inc. & Microsoft Azure) – built a 14 GB big‑data application on Azure.  
-- **2nd Place – Cryptocurrency Datathon** (Sep 2020, FGV & Ripple) – ML strategies for Bitcoin trading with NLP on news and Reddit.
+- **Cryptocurrency Datathon** (Sep 2020, FGV & Ripple) – ML strategies for Bitcoin trading with NLP on news and Reddit.
 
 ----
 
 ### Outside the terminal
 
 I was born and raised in Rio de Janeiro, Brazil 🇧🇷
+
+Now I live in Washington, DC 🇺🇸
 
 My favorite things are:
 
@@ -73,5 +85,5 @@ My favorite things are:
   <img src="/assets/images/selfie_run.jpeg" alt="Post-run selfie" style="width: 48%; border-radius: 8px;" />
 </div>
 
-> **Need a hand with data problems?**  
+> **Need a hand with AI and data problems?**  
 > Hit me on [LinkedIn](https://www.linkedin.com/in/rkovashikawa/) or open an [issue](https://github.com/kovashikawa/kovashikawa.github.io/issues) and let’s chat.
