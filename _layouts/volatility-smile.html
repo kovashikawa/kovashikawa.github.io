@@ -71,6 +71,33 @@ layout: single
     .plotly .gridlayer .grid path {
         stroke: #d4d4d4 !important;
     }
+
+    /* Range slider styling — stripe palette */
+    input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 6px;
+        background: #d4d4d4;
+        border-radius: 3px;
+        outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #1E1E1E;
+        cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #1E1E1E;
+        cursor: pointer;
+        border: none;
+    }
 </style>
 
 <div class="text-gray-900">
@@ -506,16 +533,16 @@ layout: single
             const { strikes, smileData } = simulateSmileData(selectedOptions, baseVolSlider.value, smileFactorSlider.value);
             document.getElementById('playground-output').innerHTML = `<div class="chart-container"><canvas id="playground-chart-2d"></canvas></div>`;
             if (playgroundChart) playgroundChart.destroy();
-            const colors = ['#3b82f6', '#16a34a', '#ef4444', '#eab308', '#8b5cf6'];
-            smileData.forEach((ds, i) => { ds.borderColor = colors[i % colors.length]; });
+            const colors = ['#1E1E1E', '#555', '#888', '#aaa', '#ccc'];
+            smileData.forEach((ds, i) => { ds.borderColor = colors[i % colors.length]; ds.backgroundColor = 'transparent'; });
             playgroundChart = new Chart(document.getElementById('playground-chart-2d').getContext('2d'), {
                 type: 'line', data: { labels: strikes, datasets: smileData },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top', labels: { color: '#4b5563' } } },
+                    plugins: { legend: { position: 'top', labels: { color: '#555' } } },
                     scales: {
-                        x: { title: { display: true, text: 'Strike Price (K)', color: '#4b5563' }, ticks: { color: '#4b5563' }, grid: { color: 'rgba(0,0,0,0.1)' } },
-                        y: { title: { display: true, text: 'Implied Volatility (σ)', color: '#4b5563' }, ticks: { color: '#4b5563' }, grid: { color: 'rgba(0,0,0,0.1)' } }
+                        x: { title: { display: true, text: 'Strike Price (K)', color: '#555' }, ticks: { color: '#555' }, grid: { color: 'rgba(0,0,0,0.08)' } },
+                        y: { title: { display: true, text: 'Implied Volatility (σ)', color: '#555' }, ticks: { color: '#555' }, grid: { color: 'rgba(0,0,0,0.08)' } }
                     }
                 }
             });
@@ -537,7 +564,7 @@ layout: single
             }));
             Plotly.newPlot('playground-chart-3d', [{
                 z: z_data, x: T_vals.map(t => (t * 365).toFixed(0)), y: K_vals,
-                type: 'surface', colorscale: 'Viridis'
+                type: 'surface', colorscale: 'Greys'
             }], {
                 title: 'Implied Volatility Surface',
                 scene: {
