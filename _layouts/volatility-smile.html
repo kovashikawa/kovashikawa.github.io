@@ -3,6 +3,7 @@
 layout: single
 ---
 
+<script>tailwind.config = { corePlugins: { preflight: false } }</script>
 <script src="https://cdn.tailwindcss.com?plugins=typography,forms"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
@@ -48,42 +49,40 @@ layout: single
     }
 
     .tab-button.active {
-        border-color: #3b82f6;
-        background-color: #3b82f6;
+        border-color: #1E1E1E;
+        background-color: #1E1E1E;
         color: white !important;
-        /* Use !important to override theme link colors */
     }
 
-    /* Style overrides for Plotly charts (always dark mode) */
+    /* Style overrides for Plotly charts */
     .plotly .bg {
         fill: #ffffff;
         /* Match light background */
     }
 
     .plotly text {
-        fill: #4b5563 !important;
-        /* Dark text for light background */
+        fill: #555 !important;
     }
 
     .plotly .gridlayer .grid .zeroline {
-        stroke: #e5e7eb !important;
+        stroke: #d4d4d4 !important;
     }
 
     .plotly .gridlayer .grid path {
-        stroke: #e5e7eb !important;
+        stroke: #d4d4d4 !important;
     }
 </style>
 
-<div class="text-gray-900 dark:text-gray-900">
+<div class="text-gray-900">
 
     <nav
         class="sticky top-0 z-50 py-3 bg-gray-100/90 backdrop-blur-md border-b border-gray-300 -mx-4 sm:-mx-6 px-4 sm:px-6">
         <div class="max-w-screen-xl mx-auto flex justify-center items-center">
             <div class="flex space-x-8">
-                <a href="#foundations" class="text-gray-600 hover:text-blue-600 transition">Foundations</a>
-                <a href="#calculator" class="text-gray-600 hover:text-blue-600 transition">Calculator</a>
-                <a href="#applications" class="text-gray-600 hover:text-blue-600 transition">Applications</a>
-                <a href="#playground" class="text-gray-600 hover:text-blue-600 transition">Playground</a>
+                <a href="#foundations" class="text-gray-500 hover:text-gray-900 transition font-medium">Foundations</a>
+                <a href="#calculator" class="text-gray-500 hover:text-gray-900 transition font-medium">Calculator</a>
+                <a href="#applications" class="text-gray-500 hover:text-gray-900 transition font-medium">Applications</a>
+                <a href="#playground" class="text-gray-500 hover:text-gray-900 transition font-medium">Playground</a>
             </div>
         </div>
     </nav>
@@ -91,16 +90,16 @@ layout: single
     <main class="py-8 scroll-smooth">
 
 
-        <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+        <p class="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
             This a work in progress, but it will eventually cover the Black-Scholes model, its assumptions, and how they
             lead to the volatility smile, with python code examples to illustrate the concepts.
         </p>
 
         <section id="foundations" class="my-16 scroll-mt-20">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-gray-100">The Foundations of the Volatility Smile
+                <h2 class="text-4xl font-bold text-gray-900">The Foundations of the Volatility Smile
                 </h2>
-                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                <p class="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
                     Why does the volatility smile exist? It emerges from the gap between the elegant assumptions of the
                     Black-Scholes model and the complex realities of financial markets.
                 </p>
@@ -136,7 +135,7 @@ layout: single
                 <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                     <h3 class="text-2xl font-bold mb-4 text-gray-900">Market Reality</h3>
                     <div id="reality-display"
-                        class="prose max-w-none p-4 bg-blue-50 rounded-lg text-gray-900 min-h-[200px] flex items-center justify-center">
+                        class="prose max-w-none p-4 bg-gray-50 rounded-lg text-gray-900 min-h-[200px] flex items-center justify-center">
                         <p class="text-center text-gray-500">Click an assumption on the left to see the corresponding
                             market reality.</p>
                     </div>
@@ -146,14 +145,14 @@ layout: single
 
         <section id="calculator" class="my-16 scroll-mt-20">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-gray-100">Interactive Calculators</h2>
-                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">Go from theory to practice.
+                <h2 class="text-4xl font-bold text-gray-900">Interactive Calculators</h2>
+                <p class="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">Go from theory to practice.
                     Use these tools to calculate an option's price using the Black-Scholes formula or find the implied
                     volatility from a market price.</p>
             </div>
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Black-Scholes Pricer</h3>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">Black-Scholes Pricer</h3>
                     <form id="bs-form" class="space-y-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div><label class="block text-sm font-medium text-gray-700">Spot Price
@@ -179,11 +178,11 @@ layout: single
                             </div>
                         </div>
                         <button type="submit"
-                            class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition">Calculate
+                            class="w-full bg-[#1E1E1E] text-white font-medium py-2 px-4 rounded-md hover:bg-[#555] transition">Calculate
                             Price</button>
                     </form>
                     <div id="bs-result"
-                        class="mt-6 text-center font-semibold text-lg bg-blue-50 p-4 rounded-md border border-blue-100 text-gray-900">
+                        class="mt-6 text-center font-semibold text-lg bg-gray-100 p-4 rounded-md border border-gray-200 text-gray-900">
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
@@ -212,11 +211,11 @@ layout: single
                             </div>
                         </div>
                         <button type="submit"
-                            class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition">Find
+                            class="w-full bg-[#1E1E1E] text-white font-medium py-2 px-4 rounded-md hover:bg-[#555] transition">Find
                             Implied Volatility</button>
                     </form>
                     <div id="iv-result"
-                        class="mt-6 text-center font-semibold text-lg bg-blue-50 p-4 rounded-md border border-blue-100 text-gray-900">
+                        class="mt-6 text-center font-semibold text-lg bg-gray-100 p-4 rounded-md border border-gray-200 text-gray-900">
                     </div>
                 </div>
             </div>
@@ -279,10 +278,10 @@ layout: single
                 </div>
                 <div class="flex justify-center gap-4 mb-8">
                     <button id="generateSmile"
-                        class="bg-blue-600 text-white font-bold py-2 px-6 rounded-md hover:bg-blue-700 transition">Generate
+                        class="bg-[#1E1E1E] text-white font-medium py-2 px-6 rounded-md hover:bg-[#555] transition">Generate
                         2D Smile</button>
                     <button id="generateSurface"
-                        class="bg-purple-600 text-white font-bold py-2 px-6 rounded-md hover:bg-purple-700 transition">Generate
+                        class="bg-[#555] text-white font-medium py-2 px-6 rounded-md hover:bg-[#1E1E1E] transition">Generate
                         3D Surface</button>
                 </div>
                 <div id="playground-output">
@@ -377,13 +376,13 @@ layout: single
         const realityDisplay = document.getElementById('reality-display');
         assumptionsData.forEach((item, index) => {
             const button = document.createElement('button');
-            button.className = 'w-full text-left p-4 bg-gray-100 dark:bg-gray-700/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:ring-2 hover:ring-blue-300 transition focus:outline-none';
+            button.className = 'w-full text-left p-4 bg-gray-100 rounded-md hover:bg-gray-200 hover:ring-2 hover:ring-gray-300 transition focus:outline-none';
             button.textContent = item.title;
             button.onclick = () => {
                 realityDisplay.innerHTML = `<p class="text-lg">${item.reality}</p>`;
                 if (window.MathJax && window.MathJax.typesetPromise) { MathJax.typesetPromise([realityDisplay]); }
-                document.querySelectorAll('#assumptions-container button').forEach(btn => btn.classList.remove('bg-blue-200', 'dark:bg-blue-800', 'ring-2', 'ring-blue-500'));
-                button.classList.add('bg-blue-200', 'dark:bg-blue-800', 'ring-2', 'ring-blue-500');
+                document.querySelectorAll('#assumptions-container button').forEach(btn => btn.classList.remove('bg-gray-200', 'ring-2', 'ring-gray-400'));
+                button.classList.add('bg-gray-200', 'ring-2', 'ring-gray-400');
             };
             assumptionsContainer.appendChild(button);
         });
@@ -396,7 +395,7 @@ layout: single
             const r = parseFloat(document.getElementById('bs_r').value) / 100;
             const sigma = parseFloat(document.getElementById('bs_sigma').value) / 100;
             const price = black_scholes_call(S, K, T, r, sigma);
-            document.getElementById('bs-result').innerHTML = `Calculated Call Price: <span class="text-blue-700 dark:text-blue-400">$${price.toFixed(4)}</span>`;
+            document.getElementById('bs-result').innerHTML = `Calculated Call Price: <span class="text-gray-900">$${price.toFixed(4)}</span>`;
         });
 
         document.getElementById('iv-form').addEventListener('submit', function (e) {
@@ -407,7 +406,7 @@ layout: single
             const r = parseFloat(document.getElementById('iv_r').value) / 100;
             const price = parseFloat(document.getElementById('iv_price').value);
             const iv = implied_volatility_call(price, S, K, T, r);
-            const resultText = isNaN(iv) ? '<span class="text-red-600 dark:text-red-400">Could not converge. Check inputs.</span>' : `Implied Volatility: <span class="text-green-700 dark:text-green-400">${(iv * 100).toFixed(2)}%</span>`;
+            const resultText = isNaN(iv) ? '<span class="text-red-600">Could not converge. Check inputs.</span>' : `Implied Volatility: <span class="text-gray-900">${(iv * 100).toFixed(2)}%</span>`;
             document.getElementById('iv-result').innerHTML = resultText;
         });
 
@@ -453,16 +452,16 @@ layout: single
                     datasets: [{
                         label: 'Implied Volatility',
                         data: content.chartData.values,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderColor: '#1E1E1E',
+                        backgroundColor: 'rgba(30, 30, 30, 0.06)',
                         fill: true, tension: 0.3
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
                     scales: {
-                        x: { title: { display: true, text: 'Strike Price / Moneyness', color: '#4b5563' }, ticks: { color: '#4b5563' }, grid: { color: 'rgba(0,0,0,0.1)' } },
-                        y: { title: { display: true, text: 'Implied Volatility', color: '#4b5563' }, ticks: { color: '#4b5563' }, grid: { color: 'rgba(0,0,0,0.1)' } }
+                        x: { title: { display: true, text: 'Strike Price / Moneyness', color: '#555' }, ticks: { color: '#555' }, grid: { color: 'rgba(0,0,0,0.08)' } },
+                        y: { title: { display: true, text: 'Implied Volatility', color: '#555' }, ticks: { color: '#555' }, grid: { color: 'rgba(0,0,0,0.08)' } }
                     }
                 }
             });
