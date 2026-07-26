@@ -27,7 +27,7 @@ I will use this space to post about things that I've found interesting along the
 **Languages:** Native Portuguese; fluent English and Spanish
 
 ### Professional Experience
-**[Fuse](https://fuse.is/) — AI Data Strategy for Marketers — AI Engineer**  
+**[Fuse](https://fuse.is/) — AI Data Strategy for Marketers — Data Scientist & AI Engineer**  
 _Jan 2026 – Present_  
 - Architected end-to-end TikTok Ads integration (OAuth, sync, AI agent) enabling analysis of a 5th major ad platform.
 - Built statistical anomaly detection library exposed via MCP for LLM-powered analysis across Google, Meta, GA4, and TikTok.
@@ -36,7 +36,7 @@ _Jan 2026 – Present_
 - Implemented sandboxed Python executor with module detection to ensure LLMs use valid APIs.
 
 
-**[GYRA+](https://gyramais.com.br/) — Senior Data Scientist**  
+**[GYRA+](https://gyramais.com.br/) — Head of Data**  
 _Aug 2024 – Jan 2025 · Brazil_  
 - Led the strategic re‑architecture of data models and ETL/ELT pipelines (Python, Airflow, AWS), cutting AWS costs for the data team by **50 %**.  
 - Built a high‑performance simulation API (FastAPI, Polars, MongoDB) deployed on Kubernetes, enabling rapid credit‑portfolio stress testing.  
@@ -59,7 +59,7 @@ _Apr 2019 – Aug 2019_
 
 ### Education
 **[MIT — Data Science & Statistics MicroMasters (edX)](https://micromasters.mit.edu/ds/)**  
-_May 2024 – Oct 2025 (expected)_
+_May 2024 – Feb 2026_
 
 **[Fundação Getúlio Vargas (EPGE)](https://epge.fgv.br/en) — B.Sc. Economics**  
 _2017 – 2021_
