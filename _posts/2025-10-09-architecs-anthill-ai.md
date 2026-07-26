@@ -1,7 +1,7 @@
 ---
 layout: single
 title: "Architects, Anthills, and AI: A Nobel Prize's Lesson on Scientific Progress"
-excerpt: "chemistry nobel prize offers a profound lesson on scientific progress, with the the AI acceleration"
+excerpt: "chemistry nobel prize offers a profound lesson on scientific progress, with the AI acceleration"
 author: rafael
 categories: [ai]
 tags: [philosophy, chemistry]
