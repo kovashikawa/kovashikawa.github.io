@@ -1,6 +1,8 @@
 ---
 title: "Analysing the impact of AI jobs at World Bank DataDive 2025"
 date: 2025-12-08
+layout: single
+author_profile: true
 categories:
   - ai
   - data-science
