@@ -20,10 +20,10 @@ I will use this space to post about things that I've found interesting along the
 * **LLMs** · RAG pipeline, LangChain + vector DBs.
 
 ### Tech Stack
-**Programming:** Python, R, MongoDB, SQL, JavaScript, TypeScript, CSS, HTML, MCP (Model Context Protocol), Pydantic AI, Django Q2  
-**Data Viz & Analysis:** Plotly, Matplotlib, Tableau, Excel, Bloomberg Terminal  
-**Cloud & Automation:** AWS, Redis (Pub/Sub), Apache Airflow, GitHub Actions (CI/CD), Google Cloud Platform  
-**ML & AI:** scikit‑learn, XGBoost, LightGBM, Econometrics (Statsmodels), LLMs, NLP, MCP Servers, Context Engineering, AI Agent Development  
+**Programming:** Python, R, MongoDB, SQL, JavaScript, TypeScript, CSS, HTML, MCP (Model Context Protocol), Pydantic AI, Django  
+**Data Viz & Analysis:** Plotly, Matplotlib, Tableau, Excel, Bloomberg Terminal  
+**Cloud & Automation:** AWS, Redis (Pub/Sub), Apache Airflow, GitHub Actions (CI/CD), Google Cloud Platform  
+**ML & AI:** scikit‑learn, XGBoost, LightGBM, Econometrics (Statsmodels), LLMs, NLP, MCP Servers, Context Engineering, AI Agent Development  
 **Languages:** Native Portuguese; fluent English and Spanish
 
 ### Professional Experience
@@ -65,9 +65,12 @@ _May 2024 – Feb 2026_
 _2017 – 2021_
 
 ### Awards
-- **Google Cloud AI Hackathon** (Dec 2025) – Built MedAnnotator, a multimodal medical annotation system. [Post](/projects/ai/google-cloud-ai-hackathon-winner/) | [Code](https://github.com/ODSCGoogleHackhathon/googol)
-- **Big Data Hackathon** (Sep 2021, XP Inc. & Microsoft Azure) – built a 14 GB big‑data application on Azure.  
-- **Cryptocurrency Datathon** (Sep 2020, FGV & Ripple) – ML strategies for Bitcoin trading with NLP on news and Reddit.
+
+| Award | What I Built |
+|-------|-------------|
+| 🏆 **Google Cloud AI Hackathon** (Dec 2025) | Built MedAnnotator, a multimodal medical annotation system. [[Post](/projects/ai/google-cloud-ai-hackathon-winner/)] [[Code](https://github.com/ODSCGoogleHackhathon/googol)] |
+| 🏆 **Big Data Hackathon** (Sep 2021) | XP Inc. & Microsoft Azure — built a 14 GB big‑data application on Azure. |
+| 🏆 **Cryptocurrency Datathon** (Sep 2020) | FGV & Ripple — ML strategies for Bitcoin trading with NLP on news and Reddit. |
 
 ----
 

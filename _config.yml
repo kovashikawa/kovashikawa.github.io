@@ -116,7 +116,7 @@ analytics:
 author:
   name             : # "Rafael Kovashikawa"
   avatar           : '/assets/images/selfie.jpeg'
-  bio              : "I am an **data** professional. I work with data science, data engineering, data visualization, and LLM/AI."
+  bio              : "I am a data professional. I work across data science, data engineering, ML/AI, and LLM systems."
   location         : "Washington DC"
   email            :
   links:
