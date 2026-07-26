@@ -533,8 +533,9 @@ layout: single
             const { strikes, smileData } = simulateSmileData(selectedOptions, baseVolSlider.value, smileFactorSlider.value);
             document.getElementById('playground-output').innerHTML = `<div class="chart-container"><canvas id="playground-chart-2d"></canvas></div>`;
             if (playgroundChart) playgroundChart.destroy();
-            const colors = ['#1E1E1E', '#555', '#888', '#aaa', '#ccc'];
-            smileData.forEach((ds, i) => { ds.borderColor = colors[i % colors.length]; ds.backgroundColor = 'transparent'; });
+            const colors = ['#1E1E1E', '#3A5068', '#5C7A9A', '#8BA4BC', '#B8C9DA'];
+            const dashes = [[], [8,4], [2,2], [8,4,2,4], [4,4]];
+            smileData.forEach((ds, i) => { ds.borderColor = colors[i % colors.length]; ds.borderDash = dashes[i % dashes.length]; ds.backgroundColor = 'transparent'; ds.borderWidth = 2; });
             playgroundChart = new Chart(document.getElementById('playground-chart-2d').getContext('2d'), {
                 type: 'line', data: { labels: strikes, datasets: smileData },
                 options: {
@@ -564,7 +565,14 @@ layout: single
             }));
             Plotly.newPlot('playground-chart-3d', [{
                 z: z_data, x: T_vals.map(t => (t * 365).toFixed(0)), y: K_vals,
-                type: 'surface', colorscale: 'Greys'
+                type: 'surface',
+                colorscale: [
+                    [0, '#f5f5f5'],
+                    [0.25, '#B8C9DA'],
+                    [0.5, '#5C7A9A'],
+                    [0.75, '#3A5068'],
+                    [1, '#1E1E1E']
+                ]
             }], {
                 title: 'Implied Volatility Surface',
                 scene: {
