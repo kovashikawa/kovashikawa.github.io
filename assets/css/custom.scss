@@ -72,6 +72,26 @@
   color: #555;
 }
 
+/* Tables
+   thead uses $border-color as bg — in the stripe skin that's black on black.
+   Override to a light rule color so headers are readable. */
+thead {
+  background-color: var(--rule, #e6e6e3);
+  color: var(--ink, #1E1E1E);
+}
+
+thead th {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted, #555555);
+  font-weight: 600;
+}
+
+td {
+  border-bottom: 1px solid var(--rule, #e6e6e3);
+}
+
 /* ===============================
    Stripe Aesthetic Overrides
    =============================== */

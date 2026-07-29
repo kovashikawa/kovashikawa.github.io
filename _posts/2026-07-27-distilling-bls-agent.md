@@ -1,6 +1,6 @@
 ---
 title: "I Found a Surprising Result Fine-Tuning a Tool-Calling Model, Then Disproved It"
-excerpt: "I distilled a 1.7B model into a BLS data agent. I shipped a fake 93%, replaced it with an honest 13%, discovered that val loss was lying to me, then disproved my own discovery — and finally got to 94% by changing what the model says rather than how it trains."
+excerpt: "I distilled a 1.7B model into a BLS data agent. I shipped a fake 93%, replaced it with an honest 13%, discovered that val loss was lying to me, then disproved my own discovery, and got to 94% by changing what the model says rather than how it trains."
 date: 2026-07-27
 last_modified_at: 2026-07-28
 categories:
@@ -32,7 +32,7 @@ training examples, MLX LoRA, a 67MB adapter, six tools.
 
 That part worked. Everything I initially believed about *how well* it worked was
 wrong, in several separate ways, and finding each one required disproving the
-previous one. The measurement was harder than the model — and the fix, when it
+previous one. The measurement was harder than the model. The fix, when it
 finally came, was not a hyperparameter but a change to what the model was asked
 to say.
 
@@ -42,26 +42,26 @@ Round one looked clean. Train loss fell from 3.4 to 0.027. Fifteen held-out
 examples, 87% accuracy. I fixed some data issues, retrained, got 93%. Base model
 scored roughly zero. Ship it.
 
-Then I had Claude Code audit the pipeline adversarially, and none of it survived.
+Then I ran a separate adversarial review of the pipeline, and none of it survived.
 
 **The held-out set was not held out.** I had split the seeds before expanding
-them, which sounds right. But the expander drew from shared pools — a list of
-series IDs, a list of search terms — regardless of which split a seed belonged
+them, which sounds right. But the expander drew from shared pools (a list of
+series IDs, a list of search terms) regardless of which split a seed belonged
 to. So a training seed and a test seed could independently emit byte-identical
 rows. 34% of my validation set appeared verbatim in training. Worse, the eval
 file itself was stale: it was the *first* round's holdout, and the second round's
 reshuffle had moved all 15 of those questions into training. The 93% was
 measured on training data.
 
-**The metric was the easy half.** "Accuracy" meant *did it pick the right tool* —
+**The metric was the easy half.** "Accuracy" meant *did it pick the right tool*:
 a 6-way classification. Whether the emitted call was actually correct was never
 scored.
 
 **A ninth of the labels were wrong.** Eleven series IDs named the wrong concept.
 `CUUR0000SETG01` was mapped to "energy"; the BLS catalog calls it **airline
 fares**. `CUUR0000SAH1` was "housing" but means *shelter*; `CUUR0000SAM1` was
-"medical care" but means *medical care commodities*. Four IDs — `SAR1`, `SAC1`,
-`SAS1`, `SEHA01` — do not exist in any BLS catalog at all. I had invented them by
+"medical care" but means *medical care commodities*. Four IDs (`SAR1`, `SAC1`,
+`SAS1`, `SEHA01`) do not exist in any BLS catalog at all. I had invented them by
 pattern-matching the real ones.
 
 Honest number, measured properly: **13.3% exact match.**
@@ -86,8 +86,8 @@ first principles; it can only be recalled. So the split should hold out
 - Remaining phrasings go to val/test
 - The build **fails** if any concept is held out entirely
 
-I rewrote the seed data as concept tables — 82 concepts, each with 2+ distinct
-phrasings — and added build-time assertions: every series ID must exist in the
+I rewrote the seed data as concept tables (82 concepts, each with 2+ distinct
+phrasings) and added build-time assertions: every series ID must exist in the
 bundled 8,103-row catalog, no example may appear in two splits, no concept may be
 missing from train. Assertions, not intentions. Two of them have fired on me
 since.
@@ -134,7 +134,7 @@ dataset, and a ~19-token tool call. And I was training with prompt loss
 
 **87.7% of every gradient was the model re-predicting a fixed preamble.**
 
-That explains all of it. Train loss of 0.027 was never impressive — most of it
+That explains all of it. Train loss of 0.027 was never impressive: most of it
 was copying a constant. And validation loss was ~88% a measurement of *preamble
 reproduction*, which is uncorrelated with whether the tool call is right. The two
 curves weren't in tension for any deep reason. One of them was mostly noise.
@@ -166,9 +166,9 @@ The trap was self-inflicted. Mask the prompt and standard practice works fine.
 
 Switching to chat-format data to enable masking fixed two other things I had been
 carrying without noticing: Qwen3's chat template emits an empty
-`<think></think>` block, which is the *actual* mechanism for non-thinking mode —
+`<think></think>` block, which is the *actual* mechanism for non-thinking mode;
 I had been asking for it in English in the system prompt, which is not the same
-thing — and it removed a stray leading space before every tool call that made the
+thing. It also removed a stray leading space before every tool call that made the
 training target tokenize differently from anything an inference path would
 produce.
 
@@ -189,8 +189,8 @@ different random seeds, changing nothing else:
 **Mean 84.3%, standard deviation 6.4 points, range 14 points.**
 
 90.7% was not the result. It was the best of four draws. At this dataset size a
-single run tells you almost nothing, and every comparison I had made — including
-one where I concluded a data fix had caused a 14-point regression — was inside
+single run tells you almost nothing, and every comparison I had made (including
+one where I concluded a data fix had caused a 14-point regression) was inside
 the noise. That "regression" was seed 0 landing at the bottom of the
 distribution. I nearly reverted a correct fix because of it.
 
@@ -215,13 +215,13 @@ in this project was a *measurement* mistake, not a modelling one:
 
 The model was never the hard part. None of these were visible from the loss
 curve. The first six all made the number look *better* than reality, which is why
-they survived so long — nobody debugs a pleasant surprise. The seventh made it
-look catastrophically worse, and I nearly abandoned a good idea because of it.
+they all survived. The seventh made it look catastrophically worse, and I nearly
+abandoned a good idea because of it.
 
 ## Act 6: the part hyperparameters couldn't fix
 
 The config work moved 84% to 88% and stalled. Every remaining failure was sibling
-confusion between near-identical codes — `CUUR0000SAF11` (food at home) vs
+confusion between near-identical codes: `CUUR0000SAF11` (food at home) vs
 `CUUR0000SAF1` (food), `CUUR0000SAM` (medical care) vs `CUUR0000SEMD` (hospital
 services). Those aren't bugs. That's what memorizing a codebook into weights looks
 like at the margin, and no learning rate fixes it.
@@ -238,10 +238,10 @@ is really **400 distinct items repeated across ~20 area and seasonal-adjustment
 combinations**. "Housing" matches 120 titles because the same concept appears for
 US city average, Northeast, New England, Chicago, seasonally adjusted and not.
 
-Constrained to the namespace every one of my seeds actually uses — US city
-average, not seasonally adjusted — the corpus is **400 rows, and the item name is
+Constrained to the namespace every one of my seeds actually uses (US city
+average, not seasonally adjusted): the corpus is **400 rows, and the item name is
 a unique key**. That reframes the problem: not 8,103 codes to memorize, but 400
-well-named items to *look up*. Still 11× more than the 35 I could afford to
+well-named items to *look up*. Still 11x more than the 35 I could afford to
 teach, but a completely different kind of problem.
 
 So I built a ~30-line BM25 index over those 400 item names and measured recall of
@@ -254,7 +254,7 @@ the correct series ID on the same 43 held-out questions:
 
 The first row says the retriever has no ceiling problem: given a decent query it
 is perfect. The second row is the uncomfortable one. Throwing the user's raw
-question at BM25 — no model, no training, no GPU, no adapter — retrieves the
+question at BM25 (no model, no training, no GPU, no adapter) retrieves the
 correct series 84.4% of the time, against 88.4% for the fine-tuned model. Those
 are within noise of each other.
 
@@ -268,7 +268,7 @@ want  Medical care                          from "Show me healthcare CPI..."
 want  Owners' equivalent rent of primary…   from "What did OER do between…"
 ```
 
-Both are vocabulary gaps — "healthcare" and "OER" don't appear in the official
+Both are vocabulary gaps: "healthcare" and "OER" don't appear in the official
 item names. So the obvious move is to have the model rewrite the user's words
 into catalog vocabulary and let retrieval do the lookup. Much easier than
 emitting a 13-character code from memory, and it generalizes to all 400 items.
@@ -283,7 +283,7 @@ I tested that too, and it does not work yet:
 | **my fine-tuned model rewrites it** | **62.5%** | 71.9% |
 
 Every model in the chain makes retrieval *worse*. The base model degrades good
-queries — asked about "tuition, other school fees, and childcare", which is
+queries. Asked about "tuition, other school fees, and childcare", which is
 verbatim the official item name, it helpfully rewrites it to "Education
 expenses". Asked about OER it expands the acronym to "Educational Resources
 (OER)", which is a real term from a different field entirely.
@@ -303,7 +303,7 @@ mapping. It just can't express it in a form the retriever can use, because the
 index is over item names and it only speaks in IDs.
 
 That is a useful negative result. It means retrieval cannot be bolted onto this
-adapter — the memorization fine-tune destroyed the exact capability retrieval
+adapter: the memorization fine-tune destroyed the exact capability retrieval
 depends on. The two-step system has to be trained from base, on traces that
 include the search step, and Anthropic's caution about small models and query
 formulation is now something I've measured on my own data rather than quoted.
@@ -314,7 +314,7 @@ The agent ecosystem has converged on retrieval for a structurally identical
 problem one level up. Hermes Agent, mcp-sieve, and various tool-router plugins
 all replace "load every tool schema" with a `search` → `describe` → `call`
 bridge. Anthropic's MCP evaluations show accuracy *improving* when tools are
-deferred rather than preloaded — 49% → 74% on Opus 4 — because large catalogs
+deferred rather than preloaded (49% → 74% on Opus 4) because large catalogs
 cause decision paralysis.
 
 Their bottleneck is too many tools. Mine was 400 values in one argument slot. So
@@ -326,7 +326,7 @@ get_series(series_id="CUUR0000SAF11")   →   get_series(item="Food at home")
 ```
 
 The model names the item; forty lines of code resolve the name to an ID. This
-works only because of the 400-item finding above — item name is a *unique key*
+works only because of the 400-item finding above: item name is a *unique key*
 in that namespace, so the resolution is deterministic, not a guess.
 
 Why it helps is the same reason the failures were what they were. `SAF11` vs
@@ -349,7 +349,7 @@ Five seeds, same 43 held-out phrasings:
 {% include bls-progression.html %}
 
 The hierarchy rule is small: when a bare term is a whole-word prefix of several
-catalog entries, prefer the general one — "tobacco prices" means *Tobacco and
+catalog entries, prefer the general one: "tobacco prices" means *Tobacco and
 smoking products*, not *Tobacco products other than cigarettes*.
 
 Two things I want to be precise about.
@@ -357,8 +357,8 @@ Two things I want to be precise about.
 **I did not add the alias table.** The only remaining failures are "healthcare" →
 *Medical care* and "OER" → *Owners' equivalent rent*. Two lines would fix both
 and push this past 98%. I know those two are failing *only because I read the
-test failures*, so adding them is fitting the test set — the exact move this
-entire post is about not making. They stay in as honest error.
+test failures*, so adding them is fitting the test set. That is the exact move
+this post is about not making. They stay in as honest error.
 
 **And the first run of this experiment reported 23.3%.** A catastrophic
 regression that would have killed the idea. It was a scoring bug: the held-out
@@ -381,13 +381,13 @@ benchmarks.
 The retrieval work is now *narrower*, not cancelled:
 
 1. **Enumerate the catalog in context.** All 400 item names fit in ~2,274 tokens.
-   That removes recall from the problem entirely — the model selects from a
+   That removes recall from the problem entirely: the model selects from a
    visible list instead of remembering. Cheapest remaining win.
 2. **A general alias table**, built from domain vocabulary rather than from test
    failures, validated on the val split.
 3. **BM25 / retrieval** only if the catalog outgrows the context window. It's the
-   answer to "the list doesn't fit", which at 2,274 tokens isn't my problem — and
-   it *requires* the query-formulation step I measured as actively harmful.
+   answer to "the list doesn't fit", which at 2,274 tokens isn't my problem; it
+   *requires* the query-formulation step I measured as actively harmful.
 
 Judge anything new against both 84.4% (no model at all) and 94.4% (current).
 Keeping that first baseline visible is the discipline: for most of this project I
@@ -402,8 +402,8 @@ curve is suspect.
 
 **Report a distribution, not a run.** Three seeds minimum, five if the difference
 matters. At n=43 with 6 points of seed variance, a single number is close to
-meaningless — and if you only rerun
-the results you dislike, you will systematically publish your luckiest draws.
+meaningless. If you only rerun the results you dislike, you will systematically
+publish your luckiest draws.
 
 **Write assertions, not intentions.** "The splits are disjoint" is a claim. A
 build that fails when they aren't is a guarantee. Mine now refuses to run if any
@@ -415,7 +415,7 @@ doesn't.
 hold out phrasings. Holding out concepts measures the impossible.
 
 **Ask what you're making the model say, not just how you're training it.** The
-single largest improvement in this project — +5.6 points, variance halved — came
+single largest improvement in this project (+5.6 points, variance halved) came
 from changing the output format from an opaque ID to a name, not from any
 hyperparameter. Errors that are one character apart are hard for a language
 model; errors that are semantically apart are easy. And a name can fail loudly
@@ -427,34 +427,34 @@ I was comparing my results against nothing. If the baseline had come out ahead,
 the right answer would have been to delete the model.
 
 **Be most suspicious of results you like.** Six of the seven bugs above inflated
-my numbers. That is not coincidence — it is selection: unpleasant surprises get
-debugged, pleasant ones get published.
+my numbers. That is not coincidence: unpleasant surprises get debugged, pleasant
+ones get published.
 
 ## Results
 
 43 held-out phrasings, none seen in training, every referenced concept present.
-Mean over five training seeds, ± one standard deviation across seeds:
+Mean over five training seeds, +/- one standard deviation across seeds:
 
 | | tool | entity | exact |
 |---|------|--------|-------|
 | base Qwen3-1.7B | 72.1% | 9.3% | 9.3% |
-| fine-tuned, emitting series IDs | 99.1% ± 1.3 | 89.8% ± 2.1 | 88.8% ± 3.0 |
-| **fine-tuned, emitting item names** | **99.1% ± 1.3** | **94.4% ± 1.3** | **94.4% ± 1.3** |
-| raw BM25 over 400 items, no model | — | — | 84.4% |
+| fine-tuned, emitting series IDs | 99.1% +/- 1.3 | 89.8% +/- 2.1 | 88.8% +/- 3.0 |
+| **fine-tuned, emitting item names** | **99.1% +/- 1.3** | **94.4% +/- 1.3** | **94.4% +/- 1.3** |
+| raw BM25 over 400 items, no model | -- | -- | 84.4% |
 
 - **tool** — correct function chosen, out of six
 - **entity** — plus the load-bearing argument (series ID / query / survey)
 - **exact** — every argument identical
 
 A 67MB adapter on an M4 Mini, for the 35 concepts it was taught. I want to
-resist rounding that 99.1% to "100%" — four of five seeds hit 43/43 and the
+resist rounding that 99.1% to "100%"; four of five seeds hit 43/43 and the
 temptation to quote the clean number is exactly the reflex this whole exercise
 was about.
 
 Worth stating the cost honestly: the config fix took the adapter from 19MB to
 67MB, because it raised LoRA rank from 8 to 16 and adapted all 28 transformer
-blocks instead of the last 16. So +4.5 points of exact match came with 3.5× the
-adapter size. I did not sweep that tradeoff — rank 8 across all layers might get
+blocks instead of the last 16. So +4.5 points of exact match came with 3.5x the
+adapter size. I did not sweep that tradeoff; rank 8 across all layers might get
 most of the gain at half the size, and I have not checked.
 
 The third row is there because a serious writeup should include the baseline
@@ -462,7 +462,7 @@ that embarrasses it.
 
 One last operational note, learned the annoying way: I ran an evaluation
 concurrently with a training job on the same GPU and got different numbers for
-identical weights. Not non-determinism — two isolated runs are byte-identical —
+identical weights. Not non-determinism (two isolated runs are byte-identical),
 but under memory pressure MLX returned different results rather than simply
 running slower. I nearly wrote up a phantom regression from it. Score on a quiet
 machine.
@@ -475,18 +475,18 @@ Code: [github.com/kovashikawa/bls_data](https://github.com/kovashikawa/bls_data)
   Loss Matter?" EMNLP 2024. [arXiv:2401.13586](https://arxiv.org/abs/2401.13586)
 - Guo, H., Dennis, S., Patil, R., & Shabahang, K. (2026). "When Mean CE Fails:
   Median CE Can Better Track Language Model Quality."
-  [arXiv:2605.24667](https://arxiv.org/abs/2605.24667) — finds mean cross-entropy
+  [arXiv:2605.24667](https://arxiv.org/abs/2605.24667). Finds mean cross-entropy
   rising while held-out accuracy stays near peak, in Qwen2.5-1.5B SFT.
 - Apicella, A., Isgrò, F., Pollastro, A., & Prevete, R. (2026). "Don't stop me
   now: Rethinking Validation Criteria for Model Parameter Selection."
-  [arXiv:2602.22107](https://arxiv.org/abs/2602.22107) — finds early stopping on
+  [arXiv:2602.22107](https://arxiv.org/abs/2602.22107). Finds early stopping on
   validation *accuracy* performs worst for neural classifiers, favouring
   loss-based criteria. Worth reading against this post: their objection is to
   early stopping specifically, and they find post-hoc selection across all epochs
   comparable to loss-based selection.
 - Chatterjee, A., Renduchintala, H. S. V. N. S. K., Bhatia, S., & Chakraborty, T.
   (2025). "On the Effect of Instruction Tuning Loss on Generalization."
-  [arXiv:2507.07817](https://arxiv.org/abs/2507.07817) — finds fully masking
+  [arXiv:2507.07817](https://arxiv.org/abs/2507.07817). Finds fully masking
   prompt tokens is rarely optimal either; a low-to-moderate prompt weight usually
   beats both extremes.
 - Vaughn, D. (2024). "To Mask or Not to Mask: The Effect of Prompt Tokens on
