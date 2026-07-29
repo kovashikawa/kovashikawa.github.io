@@ -1,0 +1,179 @@
+<!--
+  Accuracy progression figure for the BLS distillation post.
+  Usage in a post:  include bls-progression.html
+
+  Self-contained and fully scoped under .bls-fig — no :root variables, no bare
+  element selectors, so it cannot leak into the minimal-mistakes theme. Light
+  only, matching the site (the theme defines no prefers-color-scheme). Ink and
+  mono face follow assets/css/custom.scss (#1E1E1E, #888, JetBrains Mono).
+
+  Blue ordinal ramp validated for a white surface: monotone lightness, adjacent
+  dL >= 0.06, light end 2.11:1 vs surface, single hue.
+-->
+<figure class="bls-fig">
+  <style>
+    .bls-fig {
+      /* Pull from site palette defined in custom.scss :root.
+         Falls back to the same hex if the stylesheet isn't loaded (e.g. email). */
+      --bls-ink:    var(--ink,    #1E1E1E);
+      --bls-muted:  var(--muted-lt, #888888);
+      --bls-rule:   var(--rule,   #e6e6e3);
+      --bls-axis:   var(--baseline, #c9c9c4);
+      --bls-hover:  rgba(42,120,214,0.08);
+      --bls-1: var(--blue-1, #86b6ef);
+      --bls-2: var(--blue-2, #5598e7);
+      --bls-3: var(--blue-3, #2a78d6);
+      --bls-4: var(--blue-4, #184f95);
+      --bls-base: var(--baseline, #c9c9c4);
+      display: block; /* override Minimal Mistakes figure { display: flex } */
+      margin: 2.2em 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--bls-ink);
+    }
+    .bls-fig .bls-rows { width: 100%; } /* give the nested grid a definite width for 1fr */
+    .bls-fig .bls-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.2em; }
+    .bls-fig .bls-sub { font-size: 0.8rem; color: var(--bls-muted); margin: 0 0 1.1em; line-height: 1.45; }
+    .bls-fig .bls-rows { display: flex; flex-direction: column; gap: 2px; }
+    .bls-fig .bls-row {
+      display: grid; grid-template-columns: 190px 1fr; align-items: center;
+      gap: 12px; padding: 2px 0; border-radius: 4px;
+    }
+    .bls-fig .bls-row:hover { background: var(--bls-hover); }
+    .bls-fig .bls-lab { font-size: 0.76rem; line-height: 1.3; text-align: right; color: var(--bls-muted); }
+    .bls-fig .bls-lab b { display: block; color: var(--bls-ink); font-weight: 700; font-size: 0.79rem; }
+    .bls-fig .bls-track { position: relative; height: 24px; }
+    .bls-fig .bls-bar { position: absolute; left: 0; top: 5px; height: 14px; border-radius: 0 4px 4px 0; }
+    .bls-fig .bls-err { position: absolute; top: 11px; height: 2px; background: var(--bls-muted); }
+    .bls-fig .bls-err::before, .bls-fig .bls-err::after {
+      content: ""; position: absolute; top: -4px; width: 2px; height: 10px; background: var(--bls-muted);
+    }
+    .bls-fig .bls-err::before { left: 0; } .bls-fig .bls-err::after { right: 0; }
+    .bls-fig .bls-val {
+      position: absolute; top: 2px; font-size: 0.76rem; font-weight: 700; white-space: nowrap;
+      font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums;
+    }
+    .bls-fig .bls-val span { color: var(--bls-muted); font-weight: 400; }
+    .bls-fig .bls-axis { display: grid; grid-template-columns: 190px 1fr; gap: 12px; margin-top: 4px; }
+    .bls-fig .bls-ticks { position: relative; height: 18px; border-top: 1px solid var(--bls-axis); }
+    .bls-fig .bls-tick {
+      position: absolute; top: 3px; transform: translateX(-50%);
+      font-size: 0.68rem; color: var(--bls-muted);
+      font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums;
+    }
+    .bls-fig .bls-key { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 1em; font-size: 0.74rem; color: var(--bls-muted); }
+    .bls-fig .bls-sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+    .bls-fig .bls-tv { margin-top: 0.9em; }
+    .bls-fig .bls-tv summary { font-size: 0.74rem; color: var(--bls-muted); cursor: pointer; }
+    .bls-fig .bls-tv summary:focus-visible { outline: 2px solid var(--bls-3); outline-offset: 2px; }
+    .bls-fig .bls-tv table { width: 100%; border-collapse: collapse; margin-top: 0.7em; font-size: 0.76rem; }
+    .bls-fig .bls-tv th, .bls-fig .bls-tv td { padding: 5px 8px; border-bottom: 1px solid var(--bls-rule); text-align: left; }
+    .bls-fig .bls-tv th { font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--bls-muted); }
+    .bls-fig .bls-tv td.n {
+      text-align: right; font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums;
+    }
+    .bls-fig figcaption { font-size: 0.74rem; color: var(--bls-muted); margin-top: 1em; line-height: 1.5; }
+    @media (max-width: 600px) {
+      .bls-fig .bls-row, .bls-fig .bls-axis { grid-template-columns: 1fr; gap: 1px; }
+      .bls-fig .bls-lab { text-align: left; }
+    }
+  </style>
+
+  <p class="bls-title">Exact match on 43 held-out phrasings</p>
+  <p class="bls-sub">Same held-out set throughout. The originally reported 93% is not shown — it was measured on training data. The final row (+alias) is the same model with the resolver alias table; see Act 8 on why it is not the headline number.</p>
+
+  <div class="bls-rows">
+    <div class="bls-row" title="base Qwen3-1.7B — 9.3%, no fine-tuning">
+      <div class="bls-lab"><b>base Qwen3-1.7B</b>no fine-tuning</div>
+      <div class="bls-track">
+        <div class="bls-bar" style="width:9.3%;background:var(--bls-base)"></div>
+        <div class="bls-val" style="left:calc(9.3% + 9px)">9.3%</div>
+      </div>
+    </div>
+    <div class="bls-row" title="V2 honestly measured — 13.3%">
+      <div class="bls-lab"><b>V2, honestly measured</b>the real starting point</div>
+      <div class="bls-track">
+        <div class="bls-bar" style="width:13.3%;background:var(--bls-1)"></div>
+        <div class="bls-val" style="left:calc(13.3% + 9px)">13.3%</div>
+      </div>
+    </div>
+    <div class="bls-row" title="BM25 over 400 item names — 84.4%, no model at all">
+      <div class="bls-lab"><b>BM25 over 400 items</b>no model at all</div>
+      <div class="bls-track">
+        <div class="bls-bar" style="width:84.4%;background:var(--bls-base)"></div>
+        <div class="bls-val" style="left:calc(84.4% + 9px)">84.4%</div>
+      </div>
+    </div>
+    <div class="bls-row" title="+ prompt masking, all layers, rank 16 — 88.8% ±3.0 across 5 seeds">
+      <div class="bls-lab"><b>+ prompt masking, r16</b>config fixes</div>
+      <div class="bls-track">
+        <div class="bls-bar" style="width:88.8%;background:var(--bls-2)"></div>
+        <div class="bls-err" style="left:85.8%;width:6.0%"></div>
+        <div class="bls-val" style="left:calc(91.8% + 9px)">88.8% <span>±3.0</span></div>
+      </div>
+    </div>
+    <div class="bls-row" title="+ item-name targets — 92.1% ±1.3 across 5 seeds">
+      <div class="bls-lab"><b>+ item-name targets</b>output format</div>
+      <div class="bls-track">
+        <div class="bls-bar" style="width:92.1%;background:var(--bls-3)"></div>
+        <div class="bls-err" style="left:90.8%;width:2.6%"></div>
+        <div class="bls-val" style="left:calc(93.4% + 9px)">92.1% <span>±1.3</span></div>
+      </div>
+    </div>
+    <div class="bls-row" title="+ hierarchy-aware resolver — 94.4% ±1.3 across 5 seeds (current)">
+      <div class="bls-lab"><b>+ hierarchy resolver</b>current</div>
+      <div class="bls-track">
+        <div class="bls-bar" style="width:94.4%;background:var(--bls-4)"></div>
+        <div class="bls-err" style="left:93.1%;width:2.6%"></div>
+        <div class="bls-val" style="left:calc(95.7% + 9px)">94.4% <span>±1.3</span></div>
+      </div>
+    </div>
+    <div class="bls-row" title="+ resolver alias table — 96.7% ±1.3 — contaminated; see Act 8">
+      <div class="bls-lab"><b>+ alias table</b><span style="color:var(--bls-muted);font-size:0.7rem">†see Act 8</span></div>
+      <div class="bls-track">
+        <div class="bls-bar" style="width:96.7%;background:var(--bls-base)"></div>
+        <div class="bls-err" style="left:95.4%;width:2.6%"></div>
+        <div class="bls-val" style="left:calc(97.3% + 9px)">96.7% <span>±1.3</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bls-axis">
+    <div></div>
+    <div class="bls-ticks">
+      <span class="bls-tick" style="left:0%">0%</span>
+      <span class="bls-tick" style="left:25%">25%</span>
+      <span class="bls-tick" style="left:50%">50%</span>
+      <span class="bls-tick" style="left:75%">75%</span>
+      <span class="bls-tick" style="left:100%">100%</span>
+    </div>
+  </div>
+
+  <div class="bls-key">
+    <span><span class="bls-sw" style="background:var(--bls-4)"></span>fine-tuned, successive fixes</span>
+    <span><span class="bls-sw" style="background:var(--bls-base)"></span>baseline, no fine-tuning</span>
+    <span><span style="display:inline-block;width:13px;border-top:2px solid var(--bls-muted);vertical-align:4px;margin-right:5px"></span>±1 sd across 5 seeds</span>
+  </div>
+
+  <details class="bls-tv">
+    <summary>Table view</summary>
+    <table>
+      <thead><tr><th>Stage</th><th class="n">Exact</th><th class="n">sd</th><th>Kind</th></tr></thead>
+      <tbody>
+        <tr><td>base Qwen3-1.7B</td><td class="n">9.3%</td><td class="n">&mdash;</td><td>baseline</td></tr>
+        <tr><td>V2, honestly measured</td><td class="n">13.3%</td><td class="n">&mdash;</td><td>fine-tuned</td></tr>
+        <tr><td>BM25 over 400 items, no model</td><td class="n">84.4%</td><td class="n">&mdash;</td><td>baseline</td></tr>
+        <tr><td>+ prompt masking, all layers, rank 16</td><td class="n">88.8%</td><td class="n">±3.0</td><td>fine-tuned</td></tr>
+        <tr><td>+ item-name targets</td><td class="n">92.1%</td><td class="n">±1.3</td><td>fine-tuned</td></tr>
+        <tr><td>+ hierarchy-aware resolver</td><td class="n">94.4%</td><td class="n">±1.3</td><td>fine-tuned</td></tr>
+        <tr><td>+ alias table <sup>†</sup></td><td class="n">96.7%</td><td class="n">±1.3</td><td>fine-tuned</td></tr>
+      </tbody>
+    </table>
+  </details>
+
+  <figcaption>
+    Held-out phrasings absent from training, every referenced concept present.
+    Fine-tuned rows are means over five training seeds; the three single-measurement
+    rows carry no error bar rather than an invented one.
+  </figcaption>
+</figure>
