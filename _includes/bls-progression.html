@@ -1,6 +1,6 @@
 <!--
   Accuracy progression figure for the BLS distillation post.
-  Usage in a post:  {% include bls-progression.html %}
+  Usage in a post:  include bls-progression.html
 
   Self-contained and fully scoped under .bls-fig — no :root variables, no bare
   element selectors, so it cannot leak into the minimal-mistakes theme. Light
@@ -25,11 +25,13 @@
       --bls-3: var(--blue-3, #2a78d6);
       --bls-4: var(--blue-4, #184f95);
       --bls-base: var(--baseline, #c9c9c4);
+      display: block; /* override Minimal Mistakes figure { display: flex } */
       margin: 2.2em 0;
       padding: 0;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       color: var(--bls-ink);
     }
+    .bls-fig .bls-rows { width: 100%; } /* give the nested grid a definite width for 1fr */
     .bls-fig .bls-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.2em; }
     .bls-fig .bls-sub { font-size: 0.8rem; color: var(--bls-muted); margin: 0 0 1.1em; line-height: 1.45; }
     .bls-fig .bls-rows { display: flex; flex-direction: column; gap: 2px; }
