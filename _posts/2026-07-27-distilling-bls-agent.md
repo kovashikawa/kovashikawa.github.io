@@ -344,8 +344,11 @@ Five seeds, same 43 held-out phrasings:
 | `get_series(item="Food at home")` | 92.1% | 1.3 |
 | **+ hierarchy-aware resolver** | **94.4%** | **1.3** |
 
-**+5.6 points, t = 3.8, p ≈ 0.005**, and seed variance more than halved. The
-hierarchy rule is small: when a bare term is a whole-word prefix of several
+**+5.6 points, t = 3.8, p ≈ 0.005**, and seed variance more than halved.
+
+{% include bls-progression.html %}
+
+The hierarchy rule is small: when a bare term is a whole-word prefix of several
 catalog entries, prefer the general one — "tobacco prices" means *Tobacco and
 smoking products*, not *Tobacco products other than cigarettes*.
 
