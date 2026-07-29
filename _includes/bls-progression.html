@@ -80,7 +80,7 @@
   </style>
 
   <p class="bls-title">Exact match on 43 held-out phrasings</p>
-  <p class="bls-sub">Same held-out set throughout. The originally reported 93% is not shown — it was measured on training data.</p>
+  <p class="bls-sub">Same held-out set throughout. The originally reported 93% is not shown — it was measured on training data. The final row (+alias) is the same model with the resolver alias table; see Act 8 on why it is not the headline number.</p>
 
   <div class="bls-rows">
     <div class="bls-row" title="base Qwen3-1.7B — 9.3%, no fine-tuning">
@@ -128,6 +128,14 @@
         <div class="bls-val" style="left:calc(95.7% + 9px)">94.4% <span>±1.3</span></div>
       </div>
     </div>
+    <div class="bls-row" title="+ resolver alias table — 96.7% ±1.3 — contaminated; see Act 8">
+      <div class="bls-lab"><b>+ alias table</b><span style="color:var(--bls-muted);font-size:0.7rem">†see Act 8</span></div>
+      <div class="bls-track">
+        <div class="bls-bar" style="width:96.7%;background:var(--bls-base)"></div>
+        <div class="bls-err" style="left:95.4%;width:2.6%"></div>
+        <div class="bls-val" style="left:calc(97.3% + 9px)">96.7% <span>±1.3</span></div>
+      </div>
+    </div>
   </div>
 
   <div class="bls-axis">
@@ -158,6 +166,7 @@
         <tr><td>+ prompt masking, all layers, rank 16</td><td class="n">88.8%</td><td class="n">±3.0</td><td>fine-tuned</td></tr>
         <tr><td>+ item-name targets</td><td class="n">92.1%</td><td class="n">±1.3</td><td>fine-tuned</td></tr>
         <tr><td>+ hierarchy-aware resolver</td><td class="n">94.4%</td><td class="n">±1.3</td><td>fine-tuned</td></tr>
+        <tr><td>+ alias table <sup>†</sup></td><td class="n">96.7%</td><td class="n">±1.3</td><td>fine-tuned</td></tr>
       </tbody>
     </table>
   </details>

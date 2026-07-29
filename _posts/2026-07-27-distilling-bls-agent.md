@@ -1,8 +1,8 @@
 ---
-title: "I Found a Surprising Result Fine-Tuning a Tool-Calling Model, Then Disproved It"
-excerpt: "I distilled a 1.7B model into a BLS data agent. I shipped a fake 93%, replaced it with an honest 13%, discovered that val loss was lying to me, then disproved my own discovery, and got to 94% by changing what the model says rather than how it trains."
+title: "The Measurement Was Harder Than the Model"
+excerpt: "I distilled a 1.7B model into a BLS tool-calling agent. Six measurement mistakes in a row, a val-loss trap that was a config bug, a fix that came from changing what the model says rather than how it trains, and a lesson about what happens when your test failures and your usability requirements overlap."
 date: 2026-07-27
-last_modified_at: 2026-07-28
+last_modified_at: 2026-07-29
 categories:
   - ai
   - projects
@@ -352,13 +352,11 @@ The hierarchy rule is small: when a bare term is a whole-word prefix of several
 catalog entries, prefer the general one: "tobacco prices" means *Tobacco and
 smoking products*, not *Tobacco products other than cigarettes*.
 
-Two things I want to be precise about.
-
-**I did not add the alias table.** The only remaining failures are "healthcare" →
-*Medical care* and "OER" → *Owners' equivalent rent*. Two lines would fix both
-and push this past 98%. I know those two are failing *only because I read the
-test failures*, so adding them is fitting the test set. That is the exact move
-this post is about not making. They stay in as honest error.
+The only remaining failures at this point are "healthcare" → *Medical care* and
+"OER" → *Owners' equivalent rent*. Both are vocabulary gaps the resolver cannot
+bridge without knowing which official term the user meant. The alias table was
+the obvious fix, and the obvious problem: both failures are visible from
+reading the test set.
 
 **And the first run of this experiment reported 23.3%.** A catastrophic
 regression that would have killed the idea. It was a scoring bug: the held-out
@@ -376,22 +374,46 @@ validation data generated the same way as its training data. Both are the same
 species of number as my original 93%. Copy the architecture; don't quote the
 benchmarks.
 
-### What's actually left
+### Act 8: the alias table
 
-The retrieval work is now *narrower*, not cancelled:
+The two failures were "healthcare" → *Medical care* and "OER" → *Owners'
+equivalent rent*. I said I was leaving them in. Then I shipped the alias table.
 
-1. **Enumerate the catalog in context.** All 400 item names fit in ~2,274 tokens.
-   That removes recall from the problem entirely: the model selects from a
-   visible list instead of remembering. Cheapest remaining win.
-2. **A general alias table**, built from domain vocabulary rather than from test
-   failures, validated on the val split.
-3. **BM25 / retrieval** only if the catalog outgrows the context window. It's the
-   answer to "the list doesn't fit", which at 2,274 tokens isn't my problem; it
-   *requires* the query-formulation step I measured as actively harmful.
+The number, same five adapters, model untouched:
 
-Judge anything new against both 84.4% (no model at all) and 94.4% (current).
-Keeping that first baseline visible is the discipline: for most of this project I
-was assuming I'd beaten a number I had never measured.
+| | exact | sd |
+|---|---|---|
+| fine-tuned, item names | 94.4% | 1.3 |
+| + resolver alias table | 96.7% | 1.3 |
+
+The accounting matters. There are roughly 50 aliases in the table: groceries,
+gas, core CPI, airfare, public transport. Against this eval they move nothing;
+its 43 questions don't use that vocabulary. The entire +2.3pp is `healthcare`.
+That alias was added knowing it was one of my two held-out failures.
+
+Which makes it contaminated by the definition this post uses. I reported 94.4%
+as the model's number and put the alias row in a footnote.
+
+The tension is that `healthcare` is simultaneously the most obvious synonym a
+real user types and one of my two known test failures. Omitting it from a
+user-facing resolver to protect a benchmark would be absurd. So no option was
+both maximally useful and maximally clean.
+
+What that means more broadly: once you've read your test failures, you can't
+un-read them. The honest options narrow permanently. The stricter path was to
+build the alias table from general domain vocabulary, validate it on the val
+split, and leave test untouched. I didn't do that. I reported both numbers and
+disclosed which one was contaminated. Honest, but not maximally rigorous, and
+the distinction is real.
+
+OER is still failing. The model emits `item="Education and communication"`, a
+hallucination the resolver cannot repair. That is a model error, not a vocabulary
+gap, and an alias does nothing for it.
+
+One item remains genuinely open: enumerate all 400 names in context and let the
+model select from a visible list rather than recall from memory. At 2,274 tokens
+it fits, and it removes the lookup problem entirely for anything the model can
+phrase correctly.
 
 ## What I would do differently
 
@@ -430,6 +452,11 @@ the right answer would have been to delete the model.
 my numbers. That is not coincidence: unpleasant surprises get debugged, pleasant
 ones get published.
 
+**Once you've read your test failures, you can't un-read them.** The honest
+options narrow. If you're building something that touches items you know failed,
+validate it on val, not test. I didn't; I reported both numbers and disclosed the
+contamination. Honest, not maximally rigorous. The difference matters.
+
 ## Results
 
 43 held-out phrasings, none seen in training, every referenced concept present.
@@ -440,11 +467,15 @@ Mean over five training seeds, +/- one standard deviation across seeds:
 | base Qwen3-1.7B | 72.1% | 9.3% | 9.3% |
 | fine-tuned, emitting series IDs | 99.1% +/- 1.3 | 89.8% +/- 2.1 | 88.8% +/- 3.0 |
 | **fine-tuned, emitting item names** | **99.1% +/- 1.3** | **94.4% +/- 1.3** | **94.4% +/- 1.3** |
+| &nbsp;&nbsp;+ resolver alias table | 99.1% +/- 1.3 | 96.7% +/- 1.3 | 96.7% +/- 1.3 <sup>†</sup> |
 | raw BM25 over 400 items, no model | -- | -- | 84.4% |
 
 - **tool** — correct function chosen, out of six
 - **entity** — plus the load-bearing argument (series ID / query / survey)
 - **exact** — every argument identical
+
+<sup>†</sup> Same five adapters, model untouched. The entire +2.3pp is the
+`healthcare` alias, added knowing it was a held-out failure. See Act 8.
 
 A 67MB adapter on an M4 Mini, for the 35 concepts it was taught. I want to
 resist rounding that 99.1% to "100%"; four of five seeds hit 43/43 and the
