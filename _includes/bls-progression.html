@@ -13,13 +13,18 @@
 <figure class="bls-fig">
   <style>
     .bls-fig {
-      --bls-ink:    #1E1E1E;
-      --bls-muted:  #888888;
-      --bls-rule:   #e6e6e3;
-      --bls-axis:   #c9c9c4;
+      /* Pull from site palette defined in custom.scss :root.
+         Falls back to the same hex if the stylesheet isn't loaded (e.g. email). */
+      --bls-ink:    var(--ink,    #1E1E1E);
+      --bls-muted:  var(--muted-lt, #888888);
+      --bls-rule:   var(--rule,   #e6e6e3);
+      --bls-axis:   var(--baseline, #c9c9c4);
       --bls-hover:  rgba(42,120,214,0.08);
-      --bls-1: #86b6ef; --bls-2: #5598e7; --bls-3: #2a78d6; --bls-4: #184f95;
-      --bls-base: #c9c9c4;
+      --bls-1: var(--blue-1, #86b6ef);
+      --bls-2: var(--blue-2, #5598e7);
+      --bls-3: var(--blue-3, #2a78d6);
+      --bls-4: var(--blue-4, #184f95);
+      --bls-base: var(--baseline, #c9c9c4);
       margin: 2.2em 0;
       padding: 0;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;

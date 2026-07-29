@@ -1,3 +1,21 @@
+/* ===============================
+   Site Palette — single source of truth
+   Used by custom.scss and any scoped includes (e.g. bls-progression.html)
+   =============================== */
+:root {
+  --ink:        #1E1E1E;
+  --muted:      #555555;
+  --muted-lt:   #888888;
+  --rule:       #e6e6e3;
+  --bg:         #E8E8E8;
+  --bg-white:   #ffffff;
+  --blue-1:     #86b6ef;  /* lightest, step 1 */
+  --blue-2:     #5598e7;
+  --blue-3:     #2a78d6;
+  --blue-4:     #184f95;  /* darkest, step 4 */
+  --baseline:   #c9c9c4;  /* non-model bars / neutral */
+}
+
 /* Metadata Sidebar */
 .stripe-metadata {
   font-family: 'JetBrains Mono', monospace;
