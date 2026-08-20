@@ -30,11 +30,12 @@ I will use this space to post about things that I've found interesting along the
 ### Professional Experience
 **[Fuse](https://fuse.is/) — AI Data Strategy for Marketers — Data Scientist & AI Engineer**  
 _Jan 2026 – Present_  
-- Architected end-to-end TikTok Ads integration (OAuth, sync, AI agent) enabling analysis of a 5th major ad platform.
-- Built statistical anomaly detection library exposed via MCP for LLM-powered analysis across Google, Meta, GA4, and TikTok.
-- Developed TikTok Ads MCP server with complexity classification and streaming, adhering to Anthropic's specifications.
-- Engineered context system to prevent LLM hallucinations, reducing API errors by enforcing valid field references and dimensions.
-- Implemented sandboxed Python executor with module detection to ensure LLMs use valid APIs.
+- Architected the enterprise **Salesforce integration** as an outbound hosted-MCP client: OAuth 2.0 + PKCE authorization flow, cross-tenant refresh-token assertions, and an untrusted-content envelope guarding against prompt injection from CRM record text. Shipped as a distributable 2GP managed package.
+- Built 6 production MCP servers (Klaviyo, SEO, Salesforce, TikTok Ads, LinkedIn Ads, Exa) exposing 30+ analytics tools to LLM agents.
+- Designed a multi-agent ReAct orchestration layer for three research agents: an 8-action loop gated by a complexity classifier, adaptive retry across 9 error classes, and per-datasource circuit breakers.
+- Built a sandboxed executor for LLM-generated analysis code that intercepts hallucinated imports and redirects agents to the real API, so they self-repair instead of failing.
+- Engineered context system across 16 agents (per-API field references, deterministic tool-routing evals) to resolve vocabulary collisions across 12+ MCP servers and cut hallucinated queries.
+- Instrumented OpenTelemetry tracing and per-tool credit metering, turning LLM spend into a billable, auditable unit.
 
 
 **[GYRA+](https://gyramais.com.br/) — Head of Data**  
