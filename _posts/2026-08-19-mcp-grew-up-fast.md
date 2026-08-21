@@ -15,7 +15,7 @@ read_time: true
 
 Salesforce co-founder Parker Harris asked that out loud this spring, opening a product announcement most companies would never risk making about their own flagship product. By April 2026, Salesforce had shipped the part that made the question serious: a hosted, MCP connection any AI client can use to query a CRM in plain English, generally available to every Enterprise Edition org.
 
-I spent a the past few weeks building against exactly that surface. What struck me wasn't the demo. It was realizing how recently the plumbing underneath it didn't exist at all, and how fast it got built.
+I spent the past few weeks building against [exactly that surface](https://www.fuse.is/blog/never-log-into-salesforce-again). What struck me wasn't the demo. It was realizing how recently the plumbing underneath it didn't exist at all, and how fast it got built.
 
 ## The 18 months that made this possible
 
