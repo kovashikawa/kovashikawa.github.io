@@ -1,0 +1,33 @@
+name: Guard master merges
+
+# Enforces the branch model: master may only be updated via a pull request
+# FROM the development branch. Direct pushes to master are blocked by the
+# ruleset (require_pull_request); this workflow additionally fails any PR
+# whose source branch is not `development`, so a PR from a feature branch
+# directly to master cannot be merged either.
+#
+# This check is a required status check on the master ruleset, so it must
+# pass before any PR to master can merge.
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  guard-source-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR source branch
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          echo "PR source branch: ${HEAD_REF}"
+          if [ "$HEAD_REF" != "development" ]; then
+            echo "::error::PRs to master must come from the development branch (this PR is from '${HEAD_REF}'). Open a PR against development instead."
+            exit 1
+          fi
+          echo "OK: PR source branch is development."
