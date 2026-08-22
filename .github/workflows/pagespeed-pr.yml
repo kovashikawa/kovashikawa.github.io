@@ -1,0 +1,112 @@
+name: PageSpeed PR Preview
+
+# Non-blocking Lighthouse preview on every pull request: builds the PR branch
+# with Jekyll, serves it locally, audits desktop + mobile, and posts the scores
+# as a PR comment. This is the "check the score before merging" step.
+#
+# The hard gate (budgets enforced, run goes red) is the post-deploy workflow
+# (pagespeed.yml), which runs against the live site after merge. This preview
+# is informational only — it never blocks the merge.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write  # to post the score comment
+
+concurrency:
+  group: pagespeed-pr-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+
+      - name: Build site
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
+
+      - name: Serve build locally
+        run: |
+          python3 -m http.server 8080 --directory _site &
+          sleep 2
+          curl -s -o /dev/null -w "local http %{http_code}\n" http://localhost:8080/
+
+      - name: Run Lighthouse (desktop + mobile)
+        id: lh
+        run: |
+          mkdir -p reports
+          npx --yes lighthouse@latest http://localhost:8080/ \
+            --preset=desktop \
+            --output=json --output-path=reports/desktop.json \
+            --quiet --chrome-flags="--headless --no-sandbox --disable-gpu --no-first-run" \
+            || true
+          npx --yes lighthouse@latest http://localhost:8080/ \
+            --form-factor=mobile --screenEmulation.mobile \
+            --screenEmulation.width=390 --screenEmulation.height=844 \
+            --screenEmulation.deviceScaleFactor=3 \
+            --output=json --output-path=reports/mobile.json \
+            --quiet --chrome-flags="--headless --no-sandbox --disable-gpu --no-first-run" \
+            || true
+          ls -la reports/
+
+      - name: Post scores as PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const cats = ['performance', 'seo', 'accessibility', 'best-practices'];
+            const metrics = [
+              ['largest-contentful-paint', 'LCP'],
+              ['total-blocking-time', 'TBT'],
+              ['cumulative-layout-shift', 'CLS'],
+            ];
+            const scores = {};
+            for (const strat of ['desktop', 'mobile']) {
+              try { scores[strat] = JSON.parse(fs.readFileSync(`reports/${strat}.json`, 'utf8')); }
+              catch (e) { scores[strat] = null; }
+            }
+            const lines = ['## Lighthouse preview (PR branch build)', '', '| Metric | Desktop | Mobile |', '|---|---|---|'];
+            for (const c of cats) {
+              const cells = [c];
+              for (const strat of ['desktop', 'mobile']) {
+                const r = scores[strat];
+                cells.push(r && r.categories && r.categories[c] ? `${Math.round(r.categories[c].score * 100)}` : '-');
+              }
+              lines.push(`| **${cells[0]}** | ${cells[1]} | ${cells[2]} |`);
+            }
+            for (const [mid, label] of metrics) {
+              const cells = [label];
+              for (const strat of ['desktop', 'mobile']) {
+                const r = scores[strat];
+                cells.push(r && r.audits && r.audits[mid] ? (r.audits[mid].displayValue || '-') : '-');
+              }
+              lines.push(`| ${cells[0]} | ${cells[1]} | ${cells[2]} |`);
+            }
+            const err = scores.desktop && scores.desktop.runtimeError
+              ? `\n_Note: ${scores.desktop.runtimeError.message}_`
+              : '';
+            const body = lines.join('\n') + err + '\n\n_Non-blocking preview. The live gate (pagespeed.yml) runs after merge._';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body,
+            });
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pagespeed-pr-reports
+          path: reports/

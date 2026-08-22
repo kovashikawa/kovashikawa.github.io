@@ -5,7 +5,8 @@ author: rafael            # matches whatever you have in _config.yml > authors
 categories: [statistics]
 tags: [correlation, independence, statistics, python]
 canonical_url: https://medium.com/@rafaelkovashikawa/why-the-lack-of-correlation-doesnt-mean-independence-9506a9eec376
-toc: true       
+toc: true
+mathjax: true
 ---
 
 ## The Intuition
