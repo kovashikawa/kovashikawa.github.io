@@ -47,7 +47,7 @@ jobs:
         run: |
           mkdir -p reports
           npx --yes lighthouse@latest http://localhost:8080/ \
-            --preset=desktop \
+            --form-factor=desktop --screenEmulation.desktop --screenEmulation.mobile=false \
             --output=json --output-path=reports/desktop.json \
             --quiet --chrome-flags="--headless --no-sandbox --disable-gpu --no-first-run" \
             || true

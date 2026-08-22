@@ -56,7 +56,7 @@ jobs:
         run: |
           mkdir -p reports
           if [ "$STRATEGY" = "desktop" ]; then
-            PRESET="--preset=desktop"
+            PRESET="--form-factor=desktop --screenEmulation.desktop --screenEmulation.mobile=false"
           else
             PRESET="--form-factor=mobile --screenEmulation.mobile --screenEmulation.width=390 --screenEmulation.height=844 --screenEmulation.deviceScaleFactor=3"
           fi
