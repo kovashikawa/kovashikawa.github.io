@@ -12,10 +12,10 @@ tags:
   - brand
 ---
 
-My LinkedIn cover used to be the company's purple gradient with a tagline on
-it. It looked fine. It also looked like everyone else's. I wanted something
-that read as mine: a quiet, monochrome plot in the same palette as this
-blog, with no words trying to sell anything.
+My LinkedIn cover used to be a purple gradient with the company's tagline on
+it. It works for the company page. My profile is my own surface, so I wanted
+a cover that read as mine: a quiet, monochrome plot in the same palette as
+this blog, with no words trying to sell anything.
 
 The final result is one line of math and one curve:
 
@@ -27,7 +27,7 @@ $$ dX_t = \mu X_t\,dt + \sigma X_t\,dW_t $$
 
 the process Black-Scholes assumes for the underlying. The curve is a single
 realized path: exponential drift, Brownian noise. Same idea as the
-volatility smile page I wrote earlier — the elegant model, and what actually
+volatility smile page I wrote earlier. The elegant model, and what actually
 happens when you let randomness in.
 
 A few decisions along the way were deliberate.
@@ -62,7 +62,7 @@ like one. Two text elements, two jobs, no overlap.
 ## The crispness problem
 
 The annoying part was output quality. Screenshot the HTML at 1x and a 2px
-curve is 2 physical pixels — it comes out soft and aliased, and LinkedIn's
+curve is 2 physical pixels. It comes out soft and aliased, and LinkedIn's
 own compression makes it worse. The fix is a pipeline I now use every time I
 turn HTML into an image:
 
@@ -73,8 +73,8 @@ turn HTML into an image:
    `sips -z` is bilinear and softens edges; LANCZOS is the right filter.
 3. Save as PNG, or JPEG around q=90 for a much smaller upload.
 
-The text needed to be a touch bigger than I first wanted (17px, not 15px) —
-at 1584px wide, small glyphs are at the legibility floor, and shrinking
+The text needed to be a touch bigger than I first wanted (17px, not 15px).
+At 1584px wide, small glyphs are at the legibility floor, and shrinking
 them to fit the canvas just makes them blur.
 
 ## The tool
@@ -85,7 +85,7 @@ All of it is one Python file now, so the next cover is one command:
 kcover --seed 42 --out cover.png
 ```
 
-It simulates a fresh path each run — same equation, different realization,
+It simulates a fresh path each run. Same equation, different realization,
 which is the point. The seed pins a specific draw if you want to keep one.
 It renders, downscales, and verifies the curve doesn't collide with the
 equation or the URL.
