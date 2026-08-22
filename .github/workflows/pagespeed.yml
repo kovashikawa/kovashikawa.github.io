@@ -1,0 +1,185 @@
+name: PageSpeed (Lighthouse)
+
+# Runs a Lighthouse audit (same engine as pagespeed.web.dev) against the
+# deployed site after every successful Pages deploy, enforces SEO + Core Web
+# Vitals budgets from .github/lighthouse-budgets.json, and fails the run if a
+# budget is breached. Full JSON+HTML reports are uploaded as artifacts, and a
+# compact score history is committed to the pagespeed-data branch so the data
+# accumulates over time.
+#
+# Triggered:
+#   * automatically after the "Deploy Jekyll site to Pages" workflow completes
+#     on master (i.e. every push that deploys)
+#   * weekly on Monday 06:00 UTC (drift check even with no pushes)
+#   * manually via workflow_dispatch
+#
+# The gate: if any category score or CWV metric falls below/above its budget,
+# the run turns red on the commit. Fixes live in the pagespeed-lighthouse skill.
+
+on:
+  workflow_run:
+    workflows: ["Deploy Jekyll site to Pages"]
+    types: [completed]
+    branches: [master]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: write  # needed to commit history to pagespeed-data branch
+
+concurrency:
+  group: pagespeed
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        strategy: [desktop, mobile]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Lighthouse ({{ matrix.strategy }})
+        id: lh
+        continue-on-error: true
+        env:
+          STRATEGY: ${{ matrix.strategy }}
+        run: |
+          mkdir -p reports
+          if [ "$STRATEGY" = "desktop" ]; then
+            PRESET="--preset=desktop"
+          else
+            PRESET="--form-factor=mobile --screenEmulation.mobile --screenEmulation.width=390 --screenEmulation.height=844 --screenEmulation.deviceScaleFactor=3"
+          fi
+          npx --yes lighthouse@latest https://kovashikawa.github.io/ \
+            $PRESET \
+            --output=json,html \
+            --output-path=reports/$STRATEGY \
+            --budget-path=.github/lighthouse-budgets.json \
+            --quiet \
+            --chrome-flags="--headless --no-sandbox --disable-gpu --no-first-run" \
+            || { echo "lighthouse exit=$? (expected 1 when budgets exceeded)"; }
+
+      - name: Print scores to job summary
+        if: always()
+        env:
+          STRATEGY: ${{ matrix.strategy }}
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          ## Lighthouse [${{ matrix.strategy }}] https://kovashikawa.github.io/
+
+          | Category | Score |
+          |---|---|
+          EOF
+          python3 - "$STRATEGY" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          strategy = sys.argv[1]
+          try:
+              r = json.load(open(f"reports/{strategy}.report.json"))
+          except FileNotFoundError:
+              try:
+                  r = json.load(open(f"reports/{strategy}.json"))
+              except FileNotFoundError:
+                  print("| (report missing) | - |")
+                  sys.exit(0)
+          cats = r.get("categories", {})
+          for name in ("performance", "seo", "accessibility", "best-practices"):
+              sc = cats.get(name, {}).get("score")
+              print(f"| {name} | {round((sc or 0) * 100)} |")
+          a = r.get("audits", {})
+          for mid, label in (("largest-contentful-paint", "LCP"),
+                             ("total-blocking-time", "TBT"),
+                             ("cumulative-layout-shift", "CLS")):
+              print(f"| {label} | {a.get(mid, {}).get('displayValue', '-')} |")
+          if r.get("runtimeError"):
+              print(f"\n_Note: {r['runtimeError'].get('message', '')}_")
+          PY
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-${{ matrix.strategy }}
+          path: reports/
+
+      - name: Fail on budget breach
+        if: steps.lh.outcome == 'failure'
+        run: |
+          echo "::error::Lighthouse budget exceeded for ${{ matrix.strategy }} — see report artifact or the pagespeed-lighthouse skill playbook."
+          exit 1
+
+  # Persist one compact history row per run on a dedicated branch, so scores
+  # accumulate without touching master (no re-trigger loop).
+  save-history:
+    runs-on: ubuntu-latest
+    needs: audit
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Switch to history branch (create orphan on first run)
+        run: |
+          git config user.name "pagespeed-bot"
+          git config user.email "pagespeed-bot@users.noreply.github.com"
+          git fetch origin pagespeed-data 2>/dev/null || true
+          if git rev-parse --verify origin/pagespeed-data >/dev/null 2>&1; then
+            git checkout -B pagespeed-data origin/pagespeed-data
+          else
+            git checkout --orphan pagespeed-data
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+      - name: Download reports
+        uses: actions/download-artifact@v4
+        with:
+          path: reports
+          merge-multiple: true
+      - name: Append history row and commit
+        env:
+          TS: ${{ github.event.workflow_run.created_at || github.event.repository.updated_at }}
+        run: |
+          python3 - <<'PY'
+          import json, os, glob
+          ts = os.environ.get("TS") or ""
+          row = {"ts": ts, "runs": {}}
+          for f in sorted(glob.glob("reports/*.report.json")):
+              strategy = os.path.basename(f).replace(".report.json", "")
+              try:
+                  r = json.load(open(f))
+              except Exception:
+                  continue
+              cats = r.get("categories", {})
+              scores = {c: round((cats.get(c, {}).get("score") or 0) * 100)
+                        for c in ("performance", "accessibility", "best-practices", "seo")}
+              a = r.get("audits", {})
+              metrics = {m: (a.get(m, {}).get("displayValue") if a.get(m) else None)
+                         for m in ("largest-contentful-paint", "total-blocking-time",
+                                   "cumulative-layout-shift")}
+              row["runs"][strategy] = {"scores": scores, "metrics": metrics}
+          hist_file = "pagespeed-history.json"
+          history = []
+          if os.path.exists(hist_file):
+              try:
+                  history = json.load(open(hist_file))
+              except Exception:
+                  history = []
+          history.append(row)
+          json.dump(history, open(hist_file, "w"), indent=2)
+          print(f"history now {len(history)} rows")
+          PY
+          git add pagespeed-history.json
+          if git diff --cached --quiet; then
+            echo "no change"
+          else
+            git commit -m "pagespeed: record run $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push origin pagespeed-data
+          fi

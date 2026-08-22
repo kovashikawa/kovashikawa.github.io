@@ -1,0 +1,21 @@
+[
+  {
+    "ts": "2026-08-22T19:36:00Z",
+    "url": "https://kovashikawa.github.io/",
+    "runs": {
+      "desktop": {
+        "scores": {
+          "performance": 63,
+          "accessibility": 92,
+          "best-practices": 96,
+          "seo": 100
+        },
+        "metrics": {
+          "largest-contentful-paint": "11.9\u00a0s",
+          "total-blocking-time": "170\u00a0ms",
+          "cumulative-layout-shift": "0"
+        }
+      }
+    }
+  }
+]

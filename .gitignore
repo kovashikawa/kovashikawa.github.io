@@ -39,3 +39,8 @@ __pycache__
 .Python
 env/
 venv/
+
+# Lighthouse full reports (keep the compact history.json committed)
+reports/pagespeed/*.json
+reports/pagespeed/*.html
+!reports/pagespeed/history.json
