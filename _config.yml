@@ -96,7 +96,7 @@ facebook:
   username               :
   app_id                 :
   publisher              :
-og_image                 : "/assets/images/selfie.jpeg"
+og_image                 : "/assets/images/selfie-og.jpg"
 # For specifying social profiles
 # - https://developers.google.com/structured-data/customize/social-profiles
 social:
@@ -115,7 +115,7 @@ analytics:
 # Site Author
 author:
   name             : # "Rafael Kovashikawa"
-  avatar           : '/assets/images/selfie.jpeg'
+  avatar           : '/assets/images/selfie-avatar.webp'
   bio              : "AI Engineer @ FUSE. Previously macro quant @ JGP. MIT MicroMasters. Washington, DC."
   location         : "Washington DC"
   email            :

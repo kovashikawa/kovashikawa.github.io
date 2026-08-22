@@ -7,7 +7,11 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-title" content="kovashikawa" />
 <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
-<!-- MathJax config: allow $...$ inline math -->
+<!-- MathJax config: allow $...$ inline math. Loaded only on pages that opt in
+     with `mathjax: true` in front matter (the 670 KB bundle is otherwise
+     unnecessary on every page). -->
+{% if page.mathjax or layout.mathjax %}
+
 <script>
   window.MathJax = {
     tex: {
@@ -20,4 +24,5 @@
 
 <!-- Local MathJax bundle -->
 <script defer src="{{ '/assets/js/mathjax/tex-svg.js' | relative_url }}"></script>
+{% endif %}
 <!-- end custom head snippets -->
