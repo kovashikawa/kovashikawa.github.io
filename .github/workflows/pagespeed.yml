@@ -60,14 +60,36 @@ jobs:
           else
             PRESET="--form-factor=mobile --screenEmulation.mobile --screenEmulation.width=390 --screenEmulation.height=844 --screenEmulation.deviceScaleFactor=3"
           fi
-          npx --yes lighthouse@latest https://kovashikawa.github.io/ \
-            $PRESET \
-            --output=json,html \
-            --output-path=reports/$STRATEGY \
-            --budget-path=.github/lighthouse-budgets.json \
-            --quiet \
-            --chrome-flags="--headless --no-sandbox --disable-gpu --no-first-run" \
-            || { echo "lighthouse exit=$? (expected 1 when budgets exceeded)"; }
+          # Retry loop: NO_FCP is an intermittent headless-Chrome flake; a slow
+          # first paint occasionally crosses the paint timeout. Retry only on
+          # NO_FCP — a budget breach (exit 1 but no runtime error) fails fast.
+          ok=0
+          for i in 1 2 3; do
+            out="$(npx --yes lighthouse@latest https://kovashikawa.github.io/ \
+              $PRESET \
+              --output=json,html \
+              --output-path=reports/$STRATEGY \
+              --budget-path=.github/lighthouse-budgets.json \
+              --quiet \
+              --max-wait-for-load=60000 \
+              --chrome-flags="--headless --no-sandbox --disable-gpu --no-first-run" 2>&1)"
+            rc=$?
+            if [ $rc -eq 0 ]; then
+              ok=1
+              break
+            fi
+            if ! echo "$out" | grep -q "NO_FCP"; then
+              # Real failure (budget breach or other) — do not retry.
+              echo "$out" | grep -iE "budget|error" | head -5
+              exit 1
+            fi
+            echo "attempt $i NO_FCP, retrying..."
+            sleep 5
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error::Lighthouse failed for $STRATEGY after 3 attempts"
+            exit 1
+          fi
 
       - name: Print scores to job summary
         if: always()

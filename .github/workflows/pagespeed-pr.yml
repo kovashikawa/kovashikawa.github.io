@@ -46,18 +46,29 @@ jobs:
         id: lh
         run: |
           mkdir -p reports
-          npx --yes lighthouse@latest http://localhost:8080/ \
+          # Retry loop: NO_FCP is an intermittent headless-Chrome flake; a slow
+          # first paint (Google Fonts + Font Awesome are still render-blocking)
+          # occasionally crosses the paint timeout. Give it up to 3 attempts.
+          run_lh () {
+            local out="$1"; shift
+            for i in 1 2 3; do
+              npx --yes lighthouse@latest "$@" \
+                --output=json --output-path="$out" \
+                --quiet --chrome-flags="--headless --no-sandbox --disable-gpu --no-first-run" \
+                --max-wait-for-load=60000 && return 0
+              echo "attempt $i failed, retrying..."
+              sleep 5
+            done
+            return 1
+          }
+          run_lh reports/desktop.json http://localhost:8080/ \
             --form-factor=desktop --screenEmulation.desktop --screenEmulation.mobile=false \
-            --output=json --output-path=reports/desktop.json \
-            --quiet --chrome-flags="--headless --no-sandbox --disable-gpu --no-first-run" \
-            || true
-          npx --yes lighthouse@latest http://localhost:8080/ \
+            || echo "desktop failed after retries"
+          run_lh reports/mobile.json http://localhost:8080/ \
             --form-factor=mobile --screenEmulation.mobile \
             --screenEmulation.width=390 --screenEmulation.height=844 \
             --screenEmulation.deviceScaleFactor=3 \
-            --output=json --output-path=reports/mobile.json \
-            --quiet --chrome-flags="--headless --no-sandbox --disable-gpu --no-first-run" \
-            || true
+            || echo "mobile failed after retries"
           ls -la reports/
 
       - name: Post scores as PR comment
