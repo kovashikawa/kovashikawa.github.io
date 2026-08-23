@@ -10,6 +10,7 @@ tags:
   - mathjax
   - visualization
   - brand
+mathjax: true
 ---
 
 My LinkedIn cover is one line of math and one curve:
