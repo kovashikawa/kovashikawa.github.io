@@ -96,7 +96,7 @@ facebook:
   username               :
   app_id                 :
   publisher              :
-og_image                 : "/assets/images/selfie-og.jpg"
+og_image                 : "/assets/images/og/site-card.jpg"
 # For specifying social profiles
 # - https://developers.google.com/structured-data/customize/social-profiles
 social:
