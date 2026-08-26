@@ -32,17 +32,21 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          BASE_REF=$(gh pr view "${{ github.event.pull_request.number }}" \
-            --repo "${{ github.repository }}" \
-            --json baseRefName -q .baseRefName)
-          HEAD_REF="${{ github.head_ref }}"
-          echo "PR base: ${BASE_REF}, source branch: ${HEAD_REF}"
-          if [ "$BASE_REF" != "master" ]; then
-            echo "Guard only applies to PRs targeting master (base is ${BASE_REF}). Skipping."
-            exit 0
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF=$(gh pr view "${{ github.event.pull_request.number }}" \
+              --repo "${{ github.repository }}" \
+              --json baseRefName -q .baseRefName)
+            HEAD_REF="${{ github.head_ref }}"
+            echo "PR base: ${BASE_REF}, source branch: ${HEAD_REF}"
+            if [ "$BASE_REF" != "master" ]; then
+              echo "Guard only applies to PRs targeting master (base is ${BASE_REF}). Skipping."
+              exit 0
+            fi
+            if [ "$HEAD_REF" != "development" ]; then
+              echo "::error::PRs to master must come from the development branch (this PR is from '${HEAD_REF}'). Open a PR against development instead."
+              exit 1
+            fi
+            echo "OK: PR source branch is development."
+          else
+            echo "Manual dispatch: guard checks only apply to pull_request events. Skipping."
           fi
-          if [ "$HEAD_REF" != "development" ]; then
-            echo "::error::PRs to master must come from the development branch (this PR is from '${HEAD_REF}'). Open a PR against development instead."
-            exit 1
-          fi
-          echo "OK: PR source branch is development."
