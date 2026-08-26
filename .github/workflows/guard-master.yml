@@ -8,14 +8,21 @@ name: Guard master merges
 #
 # This check is a required status check on the master ruleset, so it must
 # pass before any PR to master can merge.
+#
+# The guard runs on every pull request, then reads the PR's CURRENT base
+# branch via the API. Enforcing on the live base instead of trusting the
+# event's base avoids a false failure when a PR is retargeted away from
+# master after its event was already dispatched (e.g. a push that lands
+# while the base is still master, followed by a retarget to development).
 
 on:
   pull_request:
-    branches: [master]
     types: [opened, synchronize, reopened, edited]
+  workflow_dispatch: {}
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   guard-source-branch:
@@ -23,11 +30,23 @@ jobs:
     steps:
       - name: Check PR source branch
         env:
-          HEAD_REF: ${{ github.head_ref }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo "PR source branch: ${HEAD_REF}"
-          if [ "$HEAD_REF" != "development" ]; then
-            echo "::error::PRs to master must come from the development branch (this PR is from '${HEAD_REF}'). Open a PR against development instead."
-            exit 1
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF=$(gh pr view "${{ github.event.pull_request.number }}" \
+              --repo "${{ github.repository }}" \
+              --json baseRefName -q .baseRefName)
+            HEAD_REF="${{ github.head_ref }}"
+            echo "PR base: ${BASE_REF}, source branch: ${HEAD_REF}"
+            if [ "$BASE_REF" != "master" ]; then
+              echo "Guard only applies to PRs targeting master (base is ${BASE_REF}). Skipping."
+              exit 0
+            fi
+            if [ "$HEAD_REF" != "development" ]; then
+              echo "::error::PRs to master must come from the development branch (this PR is from '${HEAD_REF}'). Open a PR against development instead."
+              exit 1
+            fi
+            echo "OK: PR source branch is development."
+          else
+            echo "Manual dispatch: guard checks only apply to pull_request events. Skipping."
           fi
-          echo "OK: PR source branch is development."
