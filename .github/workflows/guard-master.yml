@@ -18,6 +18,7 @@ name: Guard master merges
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
+  workflow_dispatch: {}
 
 permissions:
   contents: read
