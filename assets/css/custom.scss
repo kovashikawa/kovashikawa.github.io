@@ -209,3 +209,108 @@ samp {
 .page__content li {
   margin-bottom: 0.5em;
 }
+
+/* ===============================
+   Quiet Home — white, text-list
+   Scoped to body.layout--home-quiet only.
+   =============================== */
+body.layout--home-quiet {
+  background: #ffffff;
+  background-image: none;
+}
+
+body.layout--home-quiet::after {
+  display: none; /* kill blue vignette */
+}
+
+body.layout--home-quiet .masthead {
+  background: transparent;
+  border-bottom: 1px solid #ececec;
+}
+
+.home-quiet {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 72px 24px 90px;
+  font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 18px;
+  color: #000;
+}
+
+.home-quiet__title {
+  font-size: 58px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: #000;
+  margin: 0 0 48px;
+  max-width: 16ch;
+  font-family: inherit;
+}
+
+.home-quiet__title em {
+  font-style: normal;
+  color: #6a6a6a;
+}
+
+.home-quiet__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: qh;
+}
+
+.home-quiet__item {
+  counter-increment: qh;
+  border-bottom: 1px solid #ececec;
+}
+
+.home-quiet__link {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  padding: 20px 0;
+  color: #000;
+  text-decoration: none;
+}
+
+.home-quiet__link:hover .home-quiet__title-text {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.home-quiet__title-text {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.home-quiet__date {
+  font-size: 14px;
+  color: #6a6a6a;
+  margin-left: auto;
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-quiet__all {
+  margin-top: 48px;
+  font-size: 16px;
+}
+
+.home-quiet__all a {
+  color: #000;
+}
+
+@media (max-width: 560px) {
+  .home-quiet__title {
+    font-size: 40px;
+  }
+  .home-quiet__link {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .home-quiet__date {
+    margin-left: 0;
+  }
+}
