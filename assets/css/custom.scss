@@ -258,47 +258,12 @@ samp {
   color: #555;
 }
 
-/* a/A toggle — lives in the masthead next to Home */
-.masthead-quiet__right {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.home-quiet__case {
-  border: 1px solid #ececec;
-  background: #fff;
-  color: #555;
-  font-size: 11px;
-  line-height: 1;
-  padding: 3px 5px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-family: inherit;
-  flex: none;
-  margin-top: 2px;
-}
-
-.home-quiet__case:hover {
-  border-color: #bbb;
-  color: #1E1E1E;
-}
-
-.home-quiet__case[aria-pressed="true"] {
-  background: #1E1E1E;
-  color: #fff;
-  border-color: #1E1E1E;
-}
-
-/* the toggle only makes sense on the home page (masthead is include_cached) */
-body:not(.layout--home-quiet) .home-quiet__case {
-  display: none;
-}
-
 .home-quiet__list {
   list-style: none;
   margin: 0;
   padding: 0;
+  /* editorial rule: the home list is all-lowercase (display-only; source stays proper for SEO) */
+  text-transform: lowercase;
 }
 
 .home-quiet__item {
@@ -340,11 +305,6 @@ body:not(.layout--home-quiet) .home-quiet__case {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* the a/A toggle applies lowercase on the home page */
-body[data-subcase="lower"] .home-quiet__subtitle {
-  text-transform: lowercase;
 }
 
 .home-quiet__date {
