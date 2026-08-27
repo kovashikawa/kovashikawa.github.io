@@ -3,13 +3,19 @@ layout: default
 ---
 
 <div class="home-quiet">
-  <h1 class="home-quiet__title">Writing about agents, markets, and the code <em>between them.</em></h1>
+  <div class="home-quiet__head">
+    <h1 class="home-quiet__title">Writing about agents, markets, and the code <em>between them.</em></h1>
+    <button class="home-quiet__case" type="button" aria-pressed="false" aria-label="Toggle subtitle capitalization" title="Toggle subtitle capitalization">a</button>
+  </div>
 
   <ol class="home-quiet__list">
     {% for post in site.posts limit:6 %}
       <li class="home-quiet__item">
         <a class="home-quiet__link" href="{{ post.url | relative_url }}">
-          <span class="home-quiet__title-text">{{ post.title }}</span>
+          <div class="home-quiet__body">
+            <span class="home-quiet__title-text">{{ post.title }}</span>
+            <span class="home-quiet__subtitle">{{ post.excerpt | strip_html | strip_newlines | truncate: 150 }}</span>
+          </div>
           <span class="home-quiet__date">{{ post.date | date: "%b %d, %Y" }}</span>
         </a>
       </li>
@@ -18,3 +24,21 @@ layout: default
 
   <p class="home-quiet__all"><a href="/year-archive/">All posts →</a></p>
 </div>
+
+<script>
+(function () {
+  var btn = document.querySelector('.home-quiet__case');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    if (document.body.getAttribute('data-subcase') === 'normal') {
+      document.body.removeAttribute('data-subcase');
+      btn.setAttribute('aria-pressed', 'false');
+      btn.textContent = 'a';
+    } else {
+      document.body.setAttribute('data-subcase', 'normal');
+      btn.setAttribute('aria-pressed', 'true');
+      btn.textContent = 'A';
+    }
+  });
+})();
+</script>

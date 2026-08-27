@@ -18,21 +18,23 @@
 
 /* Metadata Sidebar */
 .stripe-metadata {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: inherit;
   padding-right: 20px;
 }
 
 .metadata-header {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #888 !important;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid #1E1E1E;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ececec;
   padding-bottom: 0.5rem;
-  font-weight: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .metadata-group {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .metadata-label {
@@ -40,11 +42,12 @@
   color: #888;
   margin-bottom: 0.25rem;
   letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .metadata-value {
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 500;
   color: #1E1E1E;
 }
 
@@ -98,34 +101,18 @@ td {
 
 /* Grid Background */
 body {
-  background-color: #E8E8E8;
-  background-image:
-    linear-gradient(#ccc 1px, transparent 1px),
-    linear-gradient(90deg, #ccc 1px, transparent 1px);
-  background-size: 50px 50px;
-  background-position: -1px -1px;
+  background-color: #ffffff;
+  background-image: none;
 }
 
-/* Vignette / Blue Glow */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  box-shadow: inset 0 0 150px rgba(0, 50, 200, 0.08);
-  pointer-events: none;
-  z-index: 100;
-  opacity: 0.8;
-}
+/* Vignette removed for the quiet look. */
 
 /* Typography Overrides */
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   color: #1E1E1E;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 17px;
+  line-height: 1.65;
 }
 
 h1,
@@ -134,9 +121,10 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Inter', sans-serif;
-  letter-spacing: -0.02em;
+  font-family: inherit;
+  letter-spacing: -0.01em;
   color: #1E1E1E;
+  font-weight: 600;
 }
 
 code,
@@ -148,24 +136,24 @@ samp {
 
 /* Specific Header Styling */
 .page__title {
-  font-weight: 900;
-  font-size: 2.5rem;
-  line-height: 1;
-  text-transform: uppercase;
-  margin-bottom: 0.5em;
-  letter-spacing: -0.04em;
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1.15;
+  text-transform: none;
+  margin-bottom: 0.6em;
+  letter-spacing: -0.01em;
 }
 
 /* Navigation & Header */
 .masthead {
   background: transparent;
-  border-bottom: 2px solid #1E1E1E;
+  border-bottom: 1px solid #ececec;
 }
 
 .masthead__menu-item {
-  font-family: 'JetBrains Mono', monospace;
-  text-transform: uppercase;
-  font-size: 0.85rem;
+  font-family: inherit;
+  text-transform: none;
+  font-size: 1rem;
 }
 
 .masthead__inner-wrap {
@@ -189,8 +177,8 @@ samp {
 .page__content ol,
 .page__content ul,
 .archive__item-excerpt {
-  font-size: 14px !important;
-  line-height: 1.6 !important;
+  font-size: 17px !important;
+  line-height: 1.65 !important;
 }
 
 /* Ensure spacing between paragraphs */
@@ -212,29 +200,22 @@ samp {
 
 /* ===============================
    Quiet Home — white, text-list
-   Scoped to body.layout--home-quiet only.
    =============================== */
-body.layout--home-quiet {
-  background: #ffffff;
-  background-image: none;
-}
-
-body.layout--home-quiet::after {
-  display: none; /* kill blue vignette */
-}
-
-body.layout--home-quiet .masthead {
-  background: transparent;
-  border-bottom: 1px solid #ececec;
-}
-
 .home-quiet {
   max-width: 1200px;
   margin: 0 auto;
   padding: 72px 24px 90px;
   font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 18px;
-  color: #000;
+  color: #1E1E1E;
+}
+
+.home-quiet__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 48px;
 }
 
 .home-quiet__title {
@@ -242,26 +223,49 @@ body.layout--home-quiet .masthead {
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.01em;
-  color: #000;
-  margin: 0 0 48px;
+  color: #1E1E1E;
+  margin: 0;
   max-width: 16ch;
   font-family: inherit;
 }
 
 .home-quiet__title em {
   font-style: normal;
-  color: #6a6a6a;
+  color: #555;
+}
+
+/* a/A toggle — subtitle case */
+.home-quiet__case {
+  border: 1px solid #ececec;
+  background: #fff;
+  color: #555;
+  font-size: 13px;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  flex: none;
+}
+
+.home-quiet__case:hover {
+  border-color: #bbb;
+  color: #1E1E1E;
+}
+
+.home-quiet__case[aria-pressed="true"] {
+  background: #1E1E1E;
+  color: #fff;
+  border-color: #1E1E1E;
 }
 
 .home-quiet__list {
   list-style: none;
   margin: 0;
   padding: 0;
-  counter-reset: qh;
 }
 
 .home-quiet__item {
-  counter-increment: qh;
   border-bottom: 1px solid #ececec;
 }
 
@@ -269,8 +273,8 @@ body.layout--home-quiet .masthead {
   display: flex;
   align-items: baseline;
   gap: 18px;
-  padding: 20px 0;
-  color: #000;
+  padding: 18px 0;
+  color: #1E1E1E;
   text-decoration: none;
 }
 
@@ -279,15 +283,37 @@ body.layout--home-quiet .masthead {
   text-underline-offset: 3px;
 }
 
+.home-quiet__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
 .home-quiet__title-text {
   font-size: 18px;
   font-weight: 400;
   line-height: 1.3;
 }
 
+.home-quiet__subtitle {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.45;
+  text-transform: lowercase;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+body[data-subcase="normal"] .home-quiet__subtitle {
+  text-transform: none;
+}
+
 .home-quiet__date {
   font-size: 14px;
-  color: #6a6a6a;
+  color: #555;
   margin-left: auto;
   flex: none;
   font-variant-numeric: tabular-nums;
@@ -299,7 +325,7 @@ body.layout--home-quiet .masthead {
 }
 
 .home-quiet__all a {
-  color: #000;
+  color: #1E1E1E;
 }
 
 @media (max-width: 560px) {
@@ -308,7 +334,8 @@ body.layout--home-quiet .masthead {
   }
   .home-quiet__link {
     flex-direction: column;
-    gap: 2px;
+    align-items: flex-start;
+    gap: 4px;
   }
   .home-quiet__date {
     margin-left: 0;
