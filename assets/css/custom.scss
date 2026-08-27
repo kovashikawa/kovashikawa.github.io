@@ -192,7 +192,7 @@ samp {
   text-underline-offset: 3px;
 }
 
-/* Lowercase-everything toggle, sits beside Home */
+/* Lowercase-everything toggle, sits beside Home. Bare letter, no box. */
 .masthead-quiet__right {
   display: flex;
   align-items: flex-start;
@@ -200,13 +200,12 @@ samp {
 }
 
 .lc-toggle {
-  border: 1px solid #ececec;
-  background: #fff;
-  color: #555;
-  font-size: 11px;
+  background: transparent;
+  border: none;
+  padding: 2px;
+  color: #888;
+  font-size: 13px;
   line-height: 1;
-  padding: 3px 5px;
-  border-radius: 3px;
   cursor: pointer;
   font-family: inherit;
   flex: none;
@@ -214,14 +213,12 @@ samp {
 }
 
 .lc-toggle:hover {
-  border-color: #bbb;
   color: #1E1E1E;
 }
 
 .lc-toggle[aria-pressed="true"] {
-  background: #1E1E1E;
-  color: #fff;
-  border-color: #1E1E1E;
+  color: #1E1E1E;
+  font-weight: 600;
 }
 
 /* Active state: the whole page renders lowercase (display-only CSS transform;
@@ -234,6 +231,23 @@ body.lc * {
 /* keep the toggle's own label readable in the active state */
 body.lc .lc-toggle {
   text-transform: none !important;
+}
+
+/* Social icon row (About page top) */
+.social-icons-row {
+  display: flex;
+  gap: 16px;
+  margin: 0 0 28px;
+}
+
+.social-icons-row a {
+  color: #555;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.social-icons-row a:hover {
+  color: #1E1E1E;
 }
 
 /* Cards / Teasers */

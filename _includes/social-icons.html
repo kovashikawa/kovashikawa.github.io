@@ -1,0 +1,10 @@
+<div class="social-icons-row">
+  {% for link in site.footer.links %}
+    {% if link.url %}
+      <a href="{{ link.url }}" rel="nofollow noopener noreferrer" aria-label="{{ link.label | escape_once | strip }}"><i class="{{ link.icon | default: 'fas fa-link' }}" aria-hidden="true"></i></a>
+    {% endif %}
+  {% endfor %}
+  {% unless site.atom_feed.hide %}
+    <a href="{% if site.atom_feed.path %}{{ site.atom_feed.path }}{% else %}{{ '/feed.xml' | relative_url }}{% endif %}" aria-label="{{ site.data.ui-text[site.locale].feed_label | default: 'Feed' }}"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i></a>
+  {% endunless %}
+</div>
