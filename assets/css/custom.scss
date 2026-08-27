@@ -150,14 +150,46 @@ samp {
   border-bottom: 1px solid #ececec;
 }
 
-.masthead__menu-item {
-  font-family: inherit;
-  text-transform: none;
-  font-size: 1rem;
-}
-
 .masthead__inner-wrap {
   background-color: transparent !important;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 24px 18px;
+  font-family: inherit;
+}
+
+/* Quiet two-item masthead: name/(about me) left, Home/(posts and projects) right */
+.masthead-quiet {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+}
+
+.masthead-quiet__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-decoration: none;
+}
+
+.masthead-quiet__label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1E1E1E;
+  line-height: 1.2;
+}
+
+.masthead-quiet__sub {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.3;
+}
+
+.masthead-quiet__item:hover .masthead-quiet__label {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* Cards / Teasers */
