@@ -247,7 +247,7 @@ body.lc .lc-toggle {
   text-transform: none !important;
 }
 
-/* Social icon row (About page top) */
+/* Social icon row (About page top) — all black logos */
 .social-icons-row {
   display: flex;
   gap: 16px;
@@ -255,16 +255,18 @@ body.lc .lc-toggle {
 }
 
 .social-icons-row a {
-  color: #555;
+  color: #1E1E1E;
   font-size: 1.35rem;
   line-height: 1;
 }
 
 .social-icons-row a:hover {
-  color: #1E1E1E;
+  color: #555;
 }
 
-/* Footer: follow me label + bigger all-black minimal icons */
+/* Footer: follow me label + bigger all-black minimal icons.
+   The theme's .social-icons block colors the <i> glyphs with brand colors
+   (blue LinkedIn, orange RSS), so force the glyph itself black here. */
 .page__footer-follow-label {
   font-size: 0.8rem;
   color: #555;
@@ -285,7 +287,8 @@ body.lc .lc-toggle {
   text-transform: none;
 }
 
-.page__footer-follow .social-icons a {
+.page__footer-follow .social-icons a,
+.page__footer-follow .social-icons a i {
   padding: 0;
   font-weight: normal;
   color: #1E1E1E;
@@ -293,7 +296,8 @@ body.lc .lc-toggle {
   line-height: 1;
 }
 
-.page__footer-follow .social-icons a:hover {
+.page__footer-follow .social-icons a:hover,
+.page__footer-follow .social-icons a:hover i {
   color: #555;
 }
 
