@@ -10,7 +10,7 @@
           <span class="masthead-quiet__label">Home</span>
           <span class="masthead-quiet__sub">(posts and projects)</span>
         </a>
-        <button class="lc-toggle" type="button" aria-pressed="false" aria-label="Lowercase the whole page" title="Lowercase the whole page">a</button>
+        <button class="lc-toggle" type="button" aria-pressed="false" aria-label="Toggle lowercase" title="Toggle lowercase"><span class="lc-a">a</span>/<span class="lc-A">A</span></button>
       </div>
     </nav>
   </div>
@@ -22,7 +22,6 @@
   function set(on) {
     document.body.classList.toggle('lc', on);
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.textContent = on ? 'A' : 'a';
     try { localStorage.setItem('lc', on ? '1' : '0'); } catch (e) {}
   }
   try { if (localStorage.getItem('lc') === '1') set(true); } catch (e) {}

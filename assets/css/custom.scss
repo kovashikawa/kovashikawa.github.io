@@ -203,20 +203,40 @@ samp {
   background: transparent;
   border: none;
   padding: 2px;
-  color: #888;
   font-size: 13px;
   line-height: 1;
   cursor: pointer;
   font-family: inherit;
   flex: none;
   margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* no fade on the state indicator (MM sets a 0.2s transition on spans) */
+.lc-toggle,
+.lc-toggle * {
+  transition: none;
+}
+
+/* a/A symbol — the ACTIVE mode is emphasized.
+   Default (normal case): a/A  -> the A is dark/bold
+   body.lc (lowercase on): a/A -> the a is dark/bold */
+.lc-toggle .lc-a,
+.lc-toggle .lc-A {
+  font-weight: 400;
+  color: #ccc;
 }
 
 .lc-toggle:hover {
   color: #1E1E1E;
 }
 
-.lc-toggle[aria-pressed="true"] {
+body:not(.lc) .lc-toggle .lc-A {
+  color: #1E1E1E;
+  font-weight: 600;
+}
+
+body.lc .lc-toggle .lc-a {
   color: #1E1E1E;
   font-weight: 600;
 }
@@ -248,6 +268,39 @@ body.lc .lc-toggle {
 
 .social-icons-row a:hover {
   color: #1E1E1E;
+}
+
+/* Footer: follow me label + bigger all-black minimal icons */
+.page__footer-follow-label {
+  font-size: 0.8rem;
+  color: #555;
+  margin: 0 0 12px;
+  text-transform: lowercase;
+  letter-spacing: 0.06em;
+}
+
+.page__footer-follow .social-icons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.page__footer-follow .social-icons li {
+  padding: 0;
+  font-size: 0;
+  text-transform: none;
+}
+
+.page__footer-follow .social-icons a {
+  padding: 0;
+  font-weight: normal;
+  color: #1E1E1E;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.page__footer-follow .social-icons a:hover {
+  color: #555;
 }
 
 /* Cards / Teasers */
