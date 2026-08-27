@@ -192,6 +192,50 @@ samp {
   text-underline-offset: 3px;
 }
 
+/* Lowercase-everything toggle, sits beside Home */
+.masthead-quiet__right {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.lc-toggle {
+  border: 1px solid #ececec;
+  background: #fff;
+  color: #555;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: inherit;
+  flex: none;
+  margin-top: 2px;
+}
+
+.lc-toggle:hover {
+  border-color: #bbb;
+  color: #1E1E1E;
+}
+
+.lc-toggle[aria-pressed="true"] {
+  background: #1E1E1E;
+  color: #fff;
+  border-color: #1E1E1E;
+}
+
+/* Active state: the whole page renders lowercase (display-only CSS transform;
+   source stays proper case, so SEO titles/headings/feeds are untouched). */
+body.lc,
+body.lc * {
+  text-transform: lowercase !important;
+}
+
+/* keep the toggle's own label readable in the active state */
+body.lc .lc-toggle {
+  text-transform: none !important;
+}
+
 /* Cards / Teasers */
 .archive__item-teaser {
   border-radius: 4px;
@@ -262,8 +306,6 @@ samp {
   list-style: none;
   margin: 0;
   padding: 0;
-  /* editorial rule: the home list is all-lowercase (display-only; source stays proper for SEO) */
-  text-transform: lowercase;
 }
 
 .home-quiet__item {

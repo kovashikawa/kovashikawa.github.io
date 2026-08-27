@@ -5,10 +5,29 @@
         <span class="masthead-quiet__label">{{ site.title }}</span>
         <span class="masthead-quiet__sub">(about me)</span>
       </a>
-      <a class="masthead-quiet__item" href="{{ '/' | relative_url }}">
-        <span class="masthead-quiet__label">Home</span>
-        <span class="masthead-quiet__sub">(posts and projects)</span>
-      </a>
+      <div class="masthead-quiet__right">
+        <a class="masthead-quiet__item" href="{{ '/' | relative_url }}">
+          <span class="masthead-quiet__label">Home</span>
+          <span class="masthead-quiet__sub">(posts and projects)</span>
+        </a>
+        <button class="lc-toggle" type="button" aria-pressed="false" aria-label="Lowercase the whole page" title="Lowercase the whole page">a</button>
+      </div>
     </nav>
   </div>
 </div>
+<script>
+(function () {
+  var btn = document.querySelector('.lc-toggle');
+  if (!btn) return;
+  function set(on) {
+    document.body.classList.toggle('lc', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? 'A' : 'a';
+    try { localStorage.setItem('lc', on ? '1' : '0'); } catch (e) {}
+  }
+  try { if (localStorage.getItem('lc') === '1') set(true); } catch (e) {}
+  btn.addEventListener('click', function () {
+    set(!document.body.classList.contains('lc'));
+  });
+})();
+</script>
