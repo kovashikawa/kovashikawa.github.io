@@ -218,26 +218,20 @@ samp {
   transition: none;
 }
 
-/* a/A symbol — the ACTIVE mode is emphasized.
-   Default (normal case): a/A  -> the A is dark/bold
-   body.lc (lowercase on): a/A -> the a is dark/bold */
+/* a/A symbol — the ACTIVE mode is bold, both letters black.
+   Default (normal case): a/A  -> the A is bold
+   body.lc (lowercase on): a/A -> the a is bold */
 .lc-toggle .lc-a,
 .lc-toggle .lc-A {
   font-weight: 400;
-  color: #ccc;
-}
-
-.lc-toggle:hover {
   color: #1E1E1E;
 }
 
 body:not(.lc) .lc-toggle .lc-A {
-  color: #1E1E1E;
   font-weight: 600;
 }
 
 body.lc .lc-toggle .lc-a {
-  color: #1E1E1E;
   font-weight: 600;
 }
 
