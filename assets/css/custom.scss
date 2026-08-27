@@ -236,18 +236,10 @@ samp {
 .home-quiet {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 72px 24px 90px;
+  padding: 64px 24px 90px;
   font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 18px;
   color: #1E1E1E;
-}
-
-.home-quiet__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 48px;
 }
 
 .home-quiet__title {
@@ -256,7 +248,7 @@ samp {
   line-height: 1.1;
   letter-spacing: -0.01em;
   color: #1E1E1E;
-  margin: 0;
+  margin: 0 0 48px;
   max-width: 16ch;
   font-family: inherit;
 }
@@ -266,18 +258,25 @@ samp {
   color: #555;
 }
 
-/* a/A toggle — subtitle case */
+/* a/A toggle — lives in the masthead next to Home */
+.masthead-quiet__right {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
 .home-quiet__case {
   border: 1px solid #ececec;
   background: #fff;
   color: #555;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 1;
-  padding: 5px 8px;
-  border-radius: 4px;
+  padding: 3px 5px;
+  border-radius: 3px;
   cursor: pointer;
   font-family: inherit;
   flex: none;
+  margin-top: 2px;
 }
 
 .home-quiet__case:hover {
@@ -289,6 +288,11 @@ samp {
   background: #1E1E1E;
   color: #fff;
   border-color: #1E1E1E;
+}
+
+/* the toggle only makes sense on the home page (masthead is include_cached) */
+body:not(.layout--home-quiet) .home-quiet__case {
+  display: none;
 }
 
 .home-quiet__list {
@@ -332,15 +336,15 @@ samp {
   font-size: 15px;
   color: #555;
   line-height: 1.45;
-  text-transform: lowercase;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-body[data-subcase="normal"] .home-quiet__subtitle {
-  text-transform: none;
+/* the a/A toggle applies lowercase on the home page */
+body[data-subcase="lower"] .home-quiet__subtitle {
+  text-transform: lowercase;
 }
 
 .home-quiet__date {

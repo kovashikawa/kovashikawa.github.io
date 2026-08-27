@@ -3,10 +3,7 @@ layout: default
 ---
 
 <div class="home-quiet">
-  <div class="home-quiet__head">
-    <h1 class="home-quiet__title">Writing about agents, markets, and the code <em>between them.</em></h1>
-    <button class="home-quiet__case" type="button" aria-pressed="false" aria-label="Toggle subtitle capitalization" title="Toggle subtitle capitalization">a</button>
-  </div>
+  <h1 class="home-quiet__title">Writing about agents, markets, and the code <em>between them.</em></h1>
 
   <ol class="home-quiet__list">
     {% for post in site.posts limit:6 %}
@@ -30,12 +27,12 @@ layout: default
   var btn = document.querySelector('.home-quiet__case');
   if (!btn) return;
   btn.addEventListener('click', function () {
-    if (document.body.getAttribute('data-subcase') === 'normal') {
+    if (document.body.getAttribute('data-subcase') === 'lower') {
       document.body.removeAttribute('data-subcase');
       btn.setAttribute('aria-pressed', 'false');
       btn.textContent = 'a';
     } else {
-      document.body.setAttribute('data-subcase', 'normal');
+      document.body.setAttribute('data-subcase', 'lower');
       btn.setAttribute('aria-pressed', 'true');
       btn.textContent = 'A';
     }

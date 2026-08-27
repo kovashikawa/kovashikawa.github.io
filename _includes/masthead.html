@@ -5,10 +5,13 @@
         <span class="masthead-quiet__label">{{ site.title }}</span>
         <span class="masthead-quiet__sub">(about me)</span>
       </a>
-      <a class="masthead-quiet__item" href="{{ '/' | relative_url }}">
-        <span class="masthead-quiet__label">Home</span>
-        <span class="masthead-quiet__sub">(posts and projects)</span>
-      </a>
+      <div class="masthead-quiet__right">
+        <a class="masthead-quiet__item" href="{{ '/' | relative_url }}">
+          <span class="masthead-quiet__label">Home</span>
+          <span class="masthead-quiet__sub">(posts and projects)</span>
+        </a>
+        <button class="home-quiet__case" type="button" aria-pressed="false" aria-label="Toggle subtitle capitalization" title="Toggle subtitle capitalization">a</button>
+      </div>
     </nav>
   </div>
 </div>
