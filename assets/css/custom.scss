@@ -18,21 +18,23 @@
 
 /* Metadata Sidebar */
 .stripe-metadata {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: inherit;
   padding-right: 20px;
 }
 
 .metadata-header {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #888 !important;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid #1E1E1E;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ececec;
   padding-bottom: 0.5rem;
-  font-weight: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .metadata-group {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .metadata-label {
@@ -40,11 +42,12 @@
   color: #888;
   margin-bottom: 0.25rem;
   letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .metadata-value {
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 500;
   color: #1E1E1E;
 }
 
@@ -98,34 +101,18 @@ td {
 
 /* Grid Background */
 body {
-  background-color: #E8E8E8;
-  background-image:
-    linear-gradient(#ccc 1px, transparent 1px),
-    linear-gradient(90deg, #ccc 1px, transparent 1px);
-  background-size: 50px 50px;
-  background-position: -1px -1px;
+  background-color: #ffffff;
+  background-image: none;
 }
 
-/* Vignette / Blue Glow */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  box-shadow: inset 0 0 150px rgba(0, 50, 200, 0.08);
-  pointer-events: none;
-  z-index: 100;
-  opacity: 0.8;
-}
+/* Vignette removed for the quiet look. */
 
 /* Typography Overrides */
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   color: #1E1E1E;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 17px;
+  line-height: 1.65;
 }
 
 h1,
@@ -134,9 +121,10 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Inter', sans-serif;
-  letter-spacing: -0.02em;
+  font-family: inherit;
+  letter-spacing: -0.01em;
   color: #1E1E1E;
+  font-weight: 600;
 }
 
 code,
@@ -148,28 +136,186 @@ samp {
 
 /* Specific Header Styling */
 .page__title {
-  font-weight: 900;
-  font-size: 2.5rem;
-  line-height: 1;
-  text-transform: uppercase;
-  margin-bottom: 0.5em;
-  letter-spacing: -0.04em;
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1.15;
+  text-transform: none;
+  margin-bottom: 0.6em;
+  letter-spacing: -0.01em;
 }
 
 /* Navigation & Header */
 .masthead {
   background: transparent;
-  border-bottom: 2px solid #1E1E1E;
-}
-
-.masthead__menu-item {
-  font-family: 'JetBrains Mono', monospace;
-  text-transform: uppercase;
-  font-size: 0.85rem;
+  border-bottom: 1px solid #ececec;
 }
 
 .masthead__inner-wrap {
   background-color: transparent !important;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 24px 18px;
+  font-family: inherit;
+}
+
+/* Quiet two-item masthead: name/(about me) left, Home/(posts and projects) right */
+.masthead-quiet {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+}
+
+.masthead-quiet__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-decoration: none;
+}
+
+.masthead-quiet__label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1E1E1E;
+  line-height: 1.2;
+}
+
+.masthead-quiet__sub {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.3;
+}
+
+.masthead-quiet__item:hover .masthead-quiet__label {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Lowercase-everything toggle, sits beside Home. Bare letter, no box. */
+.masthead-quiet__right {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.lc-toggle {
+  background: transparent;
+  border: none;
+  padding: 2px;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+  flex: none;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* no fade on the state indicator (MM sets a 0.2s transition on spans) */
+.lc-toggle,
+.lc-toggle * {
+  transition: none;
+}
+
+/* a/A symbol — the ACTIVE mode is bold, both letters black.
+   Default (normal case): a/A  -> the A is bold
+   body.lc (lowercase on): a/A -> the a is bold */
+.lc-toggle .lc-a,
+.lc-toggle .lc-A {
+  font-weight: 400;
+  color: #1E1E1E;
+}
+
+body:not(.lc) .lc-toggle .lc-A {
+  font-weight: 600;
+}
+
+body.lc .lc-toggle .lc-a {
+  font-weight: 600;
+}
+
+/* Active state: the whole page renders lowercase (display-only CSS transform;
+   source stays proper case, so SEO titles/headings/feeds are untouched). */
+body.lc,
+body.lc * {
+  text-transform: lowercase !important;
+}
+
+/* keep the toggle's own label readable in the active state */
+body.lc .lc-toggle {
+  text-transform: none !important;
+}
+
+/* Social icon row (About page top) — all black logos */
+.social-icons-row {
+  display: flex;
+  gap: 16px;
+  margin: 0 0 28px;
+}
+
+.social-icons-row a {
+  color: #1E1E1E;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.social-icons-row a:hover {
+  color: #555;
+}
+
+/* Footer: follow me label + bigger all-black minimal icons.
+   The theme's .social-icons block colors the <i> glyphs with brand colors
+   (blue LinkedIn, orange RSS), so force the glyph itself black here. */
+.page__footer-follow-label {
+  font-size: 0.8rem;
+  color: #555;
+  margin: 0 0 16px;
+  text-transform: lowercase;
+  letter-spacing: 0.06em;
+}
+
+.page__footer-follow .social-icons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.page__footer-follow .social-icons li {
+  padding: 0;
+  font-size: 0;
+  text-transform: none;
+}
+
+.page__footer-follow .social-icons a,
+.page__footer-follow .social-icons a i {
+  padding: 0;
+  font-weight: normal;
+  color: #1E1E1E;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.page__footer-follow .social-icons a:hover,
+.page__footer-follow .social-icons a:hover i {
+  color: #555;
+}
+
+/* Footer breathing room: separate the icon row from the copyright line.
+   Baseline grid (8px): 32px below the icons to the copyright, 48px above
+   the follow block, 48px below the copyright to the page edge. */
+.page__footer-follow {
+  margin-bottom: 32px;
+}
+
+.page__footer-copyright {
+  margin-top: 0;
+  line-height: 1.6;
+}
+
+.page__footer footer {
+  padding-top: 48px;
+  padding-bottom: 48px;
 }
 
 /* Cards / Teasers */
@@ -189,8 +335,8 @@ samp {
 .page__content ol,
 .page__content ul,
 .archive__item-excerpt {
-  font-size: 14px !important;
-  line-height: 1.6 !important;
+  font-size: 17px !important;
+  line-height: 1.65 !important;
 }
 
 /* Ensure spacing between paragraphs */
@@ -208,4 +354,118 @@ samp {
 /* Fix lists inside content */
 .page__content li {
   margin-bottom: 0.5em;
+}
+
+/* ===============================
+   Quiet Home — white, text-list
+   =============================== */
+.home-quiet {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 24px 90px;
+  font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 18px;
+  color: #1E1E1E;
+}
+
+.home-quiet__title {
+  font-size: 58px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: #1E1E1E;
+  margin: 0 0 48px;
+  max-width: 16ch;
+  font-family: inherit;
+}
+
+.home-quiet__title em {
+  font-style: normal;
+  color: #555;
+}
+
+.home-quiet__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home-quiet__item {
+  border-bottom: 1px solid #ececec;
+}
+
+.home-quiet__link {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  padding: 18px 0;
+  color: #1E1E1E;
+  text-decoration: none;
+}
+
+.home-quiet__link:hover .home-quiet__title-text {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.home-quiet__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.home-quiet__title-text {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.home-quiet__subtitle {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.home-quiet__date {
+  font-size: 14px;
+  color: #555;
+  margin-left: auto;
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-quiet__all {
+  margin-top: 48px;
+  font-size: 16px;
+}
+
+.home-quiet__all a {
+  color: #1E1E1E;
+}
+
+@media (max-width: 560px) {
+  .home-quiet__title {
+    font-size: 40px;
+  }
+  .home-quiet__link {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .home-quiet__date {
+    margin-left: 0;
+  }
+  /* Masthead: let the two items breathe on small screens */
+  .masthead-quiet {
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+  .masthead__inner-wrap {
+    padding: 16px 20px 12px;
+  }
 }

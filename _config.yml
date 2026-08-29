@@ -148,6 +148,9 @@ footer:
     - label: "LinkedIn"
       icon: "fab fa-fw fa-linkedin"
       url: "https://www.linkedin.com/in/rkovashikawa/"
+    - label: "Threads"
+      icon: "fa-brands fa-fw fa-threads"
+      url: "https://www.threads.com/@kovashikawa"
   since: "2013"
 
 
@@ -318,5 +321,5 @@ defaults:
       author_profile: true
       read_time: true
       comments: # true
-      share: true
+      share: false
       related: true

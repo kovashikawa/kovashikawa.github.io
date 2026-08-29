@@ -1,39 +1,32 @@
-{% capture logo_path %}{{ site.logo }}{% endcapture %}
-
 <div class="masthead">
   <div class="masthead__inner-wrap">
-    <div class="masthead__menu">
-      <nav id="site-nav" class="greedy-nav">
-        {% unless logo_path == empty %}
-          <a class="site-logo" href="{{ '/' | relative_url }}"><img src="{{ logo_path | relative_url }}" alt="{{ site.masthead_title | default: site.title }}"></a>
-        {% endunless %}
-        <a class="site-title" href="{{ '/' | relative_url }}">
-          {{ site.masthead_title | default: site.title | escape_once | strip }}
-          {% if site.subtitle %}<span class="site-subtitle">{{ site.subtitle | escape_once | strip }}</span>{% endif %}
+    <nav class="masthead__menu masthead-quiet" aria-label="Site">
+      <a class="masthead-quiet__item" href="{{ '/about/' | relative_url }}">
+        <span class="masthead-quiet__label">{{ site.title }}</span>
+        <span class="masthead-quiet__sub">(about me)</span>
+      </a>
+      <div class="masthead-quiet__right">
+        <a class="masthead-quiet__item" href="{{ '/' | relative_url }}">
+          <span class="masthead-quiet__label">Home</span>
+          <span class="masthead-quiet__sub">(posts and projects)</span>
         </a>
-        <ul class="visible-links">
-          {%- for link in site.data.navigation.main -%}
-            <li class="masthead__menu-item">
-              <a
-                href="{{ link.url | relative_url }}"
-                {% if link.description %} title="{{ link.description }}"{% endif %}
-                {% if link.target %} target="{{ link.target }}"{% endif %}
-              >{{ link.title }}</a>
-            </li>
-          {%- endfor -%}
-        </ul>
-        {% if site.search == true %}
-        <button class="search__toggle" type="button">
-          <span class="visually-hidden">{{ site.data.ui-text[site.locale].search_label | default: "Toggle search" }}</span>
-          <i class="fas fa-search"></i>
-        </button>
-        {% endif %}
-        <button class="greedy-nav__toggle hidden" type="button">
-          <span class="visually-hidden">{{ site.data.ui-text[site.locale].menu_label | default: "Toggle menu" }}</span>
-          <div class="navicon"></div>
-        </button>
-        <ul class="hidden-links hidden"></ul>
-      </nav>
-    </div>
+        <button class="lc-toggle" type="button" aria-pressed="false" aria-label="Toggle lowercase" title="Toggle lowercase"><span class="lc-a">a</span>/<span class="lc-A">A</span></button>
+      </div>
+    </nav>
   </div>
 </div>
+<script>
+(function () {
+  var btn = document.querySelector('.lc-toggle');
+  if (!btn) return;
+  function set(on) {
+    document.body.classList.toggle('lc', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    try { localStorage.setItem('lc', on ? '1' : '0'); } catch (e) {}
+  }
+  try { if (localStorage.getItem('lc') === '1') set(true); } catch (e) {}
+  btn.addEventListener('click', function () {
+    set(!document.body.classList.contains('lc'));
+  });
+})();
+</script>

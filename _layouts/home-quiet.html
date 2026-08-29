@@ -1,0 +1,23 @@
+---
+layout: default
+---
+
+<div class="home-quiet">
+  <h1 class="home-quiet__title">Writing about agents, markets, and the code <em>between them.</em></h1>
+
+  <ol class="home-quiet__list">
+    {% for post in site.posts limit:6 %}
+      <li class="home-quiet__item">
+        <a class="home-quiet__link" href="{{ post.url | relative_url }}">
+          <div class="home-quiet__body">
+            <span class="home-quiet__title-text">{{ post.title }}</span>
+            <span class="home-quiet__subtitle">{{ post.excerpt | strip_html | strip_newlines | truncate: 150 }}</span>
+          </div>
+          <span class="home-quiet__date">{{ post.date | date: "%b %d, %Y" }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ol>
+
+  <p class="home-quiet__all"><a href="/year-archive/">All posts →</a></p>
+</div>
