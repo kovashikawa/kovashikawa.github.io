@@ -2,12 +2,16 @@
 layout: single                 # one-column layout
 title:  "About Me"
 permalink: /about/             # matches the nav link
+no_metadata: true              # drop the details/date/share sidebar; socials go at top instead
 author_profile: true           # shows the (now-larger) avatar + socials
 toc:  false                    # turn on if the page gets long
 description: "Rafael Kovashikawa — Data Scientist & AI Engineer at FUSE. Previously Head of Data at GYRA+, Macro Data Scientist at JGP. MIT MicroMasters in Statistics & Data Science."
 ---
 
 <!-- Kick-off blurb -->
+
+{% include social-icons.html %}
+
 I’m Rafael Kovashikawa, an economist-turned-data-professional with a soft spot for macro signals, efficient pipelines and making cool things with LLMs.
 
 Always curious about _tech, data and dogs_.
