@@ -308,5 +308,36 @@
         }
       }
     }
+  },
+  {
+    "ts": "2026-08-29T23:31:45Z",
+    "runs": {
+      "desktop": {
+        "scores": {
+          "performance": 70,
+          "accessibility": 98,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "largest-contentful-paint": "2.7\u00a0s",
+          "total-blocking-time": "0\u00a0ms",
+          "cumulative-layout-shift": "0"
+        }
+      },
+      "mobile": {
+        "scores": {
+          "performance": 93,
+          "accessibility": 98,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "largest-contentful-paint": "2.6\u00a0s",
+          "total-blocking-time": "0\u00a0ms",
+          "cumulative-layout-shift": "0"
+        }
+      }
+    }
   }
 ]
