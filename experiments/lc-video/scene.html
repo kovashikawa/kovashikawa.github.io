@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root {
+    --ink: #1E1E1E;
+    --muted: #555555;
+    --muted-lt: #888888;
+    --rule: #ececec;
+    --bg: #E8E8E8;
+    --bg-white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--bg-white);
+    font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ Masthead (mirrors masthead-quiet) ============ */
+  .masthead {
+    background: transparent;
+    border-bottom: 1px solid var(--rule);
+  }
+  .masthead__inner-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 22px 24px 18px;
+  }
+  .masthead-quiet {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+  }
+  .masthead-quiet__item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-decoration: none;
+  }
+  .masthead-quiet__label {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .masthead-quiet__sub {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+  .masthead-quiet__right {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* a/A toggle - ACTIVE letter is bold, both black */
+  .lc-toggle {
+    background: transparent;
+    border: none;
+    padding: 2px;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    font-family: inherit;
+    flex: none;
+    margin-top: 2px;
+    white-space: nowrap;
+    transition: none;
+    color: var(--ink);
+  }
+  .lc-toggle .lc-a,
+  .lc-toggle .lc-A {
+    font-weight: 400;
+    color: var(--ink);
+  }
+  body:not(.lc) .lc-toggle .lc-A { font-weight: 600; }
+  body.lc .lc-toggle .lc-a { font-weight: 600; }
+  /* the toggle's own label is never lowercased by anything */
+  .lc-toggle { text-transform: none !important; }
+
+  /* ============ Home page (mirrors home-quiet) ============ */
+  .home-quiet {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 64px 24px 90px;
+    font-size: 18px;
+  }
+  .home-quiet__title {
+    font-size: 58px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0 0 48px;
+    max-width: 16ch;
+  }
+  .home-quiet__title em { font-style: normal; color: var(--muted); }
+
+  .home-quiet__list { list-style: none; }
+  .home-quiet__item { border-bottom: 1px solid var(--rule); }
+  .home-quiet__link {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    padding: 18px 0;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .home-quiet__body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .home-quiet__title-text { font-size: 18px; font-weight: 400; line-height: 1.3; }
+  .home-quiet__subtitle { font-size: 15px; color: var(--muted); line-height: 1.45; }
+  .home-quiet__date {
+    font-size: 14px; color: var(--muted); margin-left: auto; flex: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ============ Frame / animation helpers ============ */
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  #stage { position: relative; width: 100%; height: 100%; }
+  #viewport { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
+
+  .flash { position: absolute; z-index: 5; border-radius: 4px; background: rgba(30,30,30,0.10); opacity: 0; pointer-events: none; }
+
+  #cursor {
+    position: absolute; z-index: 6;
+    width: 26px; height: 26px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #cursor svg { width: 100%; height: 100%; display: block; }
+  #cursor .arrow { fill: #1E1E1E; }
+
+  /* uppercase-char spans (created by settle) */
+  .uppercase-char { display: inline-block; text-align: left; overflow: visible; }
+
+  #titlecard, #endcard {
+    position: absolute; z-index: 4;
+    inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--bg-white);
+    opacity: 0;
+  }
+  .tc-kicker { font-size: 15px; color: var(--muted); letter-spacing: 0.04em; margin-bottom: 20px; }
+  .tc-symbol { font-size: 120px; font-weight: 400; color: var(--ink); line-height: 1; display: flex; align-items: baseline; margin-bottom: 28px; }
+  .tc-symbol .lc-a { font-weight: 400; }
+  .tc-symbol .lc-A { font-weight: 600; }
+  #titlecard.lc .tc-symbol .lc-a { font-weight: 600; }
+  #titlecard.lc .tc-symbol .lc-A { font-weight: 400; }
+  .tc-main { font-size: 44px; font-weight: 400; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 14px; }
+  .tc-sub { font-size: 19px; color: var(--muted); max-width: 46ch; text-align: center; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="viewport">
+    <div class="masthead">
+      <div class="masthead__inner-wrap">
+        <nav class="masthead-quiet" aria-label="Site">
+          <a class="masthead-quiet__item">
+            <span class="masthead-quiet__label">Rafael Kovashikawa</span>
+            <span class="masthead-quiet__sub">(about me)</span>
+          </a>
+          <div class="masthead-quiet__right">
+            <a class="masthead-quiet__item">
+              <span class="masthead-quiet__label">Home</span>
+              <span class="masthead-quiet__sub">(posts and projects)</span>
+            </a>
+            <button class="lc-toggle" id="lcToggle" type="button" aria-pressed="false" title="Toggle lowercase"><span class="lc-a">a</span>/<span class="lc-A">A</span></button>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="home-quiet">
+      <h1 class="home-quiet__title" id="siteTitle">Thoughts on <em>software</em> and <em>data</em></h1>
+      <ul class="home-quiet__list">
+        <li class="home-quiet__item">
+          <a class="home-quiet__link">
+            <span class="home-quiet__body">
+              <span class="home-quiet__title-text">A LinkedIn Cover That Isn't Stock</span>
+              <span class="home-quiet__subtitle">One line of math, one curve: a LinkedIn cover from geometric Brownian motion, in the same palette as this blog.</span>
+            </span>
+            <span class="home-quiet__date">Aug 22, 2026</span>
+          </a>
+        </li>
+        <li class="home-quiet__item">
+          <a class="home-quiet__link">
+            <span class="home-quiet__body">
+              <span class="home-quiet__title-text">MCP Grew Up Fast: From Experiment to Enterprise Trust Boundary</span>
+              <span class="home-quiet__subtitle">How an 18-month standards effort quietly turned into the compliance layer for AI-to-CRM access.</span>
+            </span>
+            <span class="home-quiet__date">Aug 19, 2026</span>
+          </a>
+        </li>
+        <li class="home-quiet__item">
+          <a class="home-quiet__link">
+            <span class="home-quiet__body">
+              <span class="home-quiet__title-text">Distilling a BLS Agent</span>
+              <span class="home-quiet__subtitle">Training a small model to answer Bureau of Labor Statistics questions, distilled from a larger one.</span>
+            </span>
+            <span class="home-quiet__date">Jul 27, 2026</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- cursor -->
+  <div id="cursor">
+    <svg viewBox="0 0 26 26"><path class="arrow" d="M4,3 L4,20 L9,15 L12,22 L15,21 L12,14 L18,14 Z"/></svg>
+  </div>
+
+  <!-- title card -->
+  <div id="titlecard" class="lc">
+    <div class="tc-kicker">a small design note on this site</div>
+    <div class="tc-symbol"><span class="lc-a">a</span>/<span class="lc-A">A</span></div>
+    <div class="tc-main">the whole site, lowercase, on a click</div>
+    <div class="tc-sub">one button in the corner. it changes nothing about the words,<br>only how they look. click it once and the entire site settles into lowercase.</div>
+  </div>
+
+  <!-- end card -->
+  <div id="endcard" class="lc">
+    <div class="tc-kicker">that's it</div>
+    <div class="tc-symbol"><span class="lc-a">a</span>/<span class="lc-A">A</span></div>
+    <div class="tc-main">lowercase is a mood</div>
+    <div class="tc-sub">source stays proper case. only the rendering changes. your SEO is safe.</div>
+  </div>
+</div>
+
+<script>
+  window.VIDEO_FPS = 30;
+  window.frameIndex = 0;
+
+  const stage = document.getElementById('stage');
+  const viewport = document.getElementById('viewport');
+  const cursor = document.getElementById('cursor');
+  const toggle = document.getElementById('lcToggle');
+  const titlecard = document.getElementById('titlecard');
+  const endcard = document.getElementById('endcard');
+
+  function setLc(on) {
+    document.body.classList.toggle('lc', on);
+    titlecard.classList.toggle('lc', on);
+    endcard.classList.toggle('lc', on);
+    toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  function pos(el, x, y) { el.style.left = x + 'px'; el.style.top = y + 'px'; }
+  function elCenter(el) {
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+
+  function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  /* ---------- Timeline ----------
+     Each event: { t: type, at: startTime, ... }
+     types:
+       fade   {el, dir, dur}
+       lc     {on}
+       cursor {x0,y0,x1,y1,dur,ease}   (absolute coords)
+       cursordisp {v}
+       press  {dur}                     button scale-down then release
+       flash  {dur}                     click flash on the toggle
+       settle {dur}                     letter-by-letter lowercase wave
+       hold   {dur}                     static beat
+  */
+  const TL = [];
+
+  function at(ev) { TL.push(ev); }
+
+  // Scene 1: title card
+  at({ t:'fade', el:'titlecard', dir:'in',  at:0.0, dur:0.5 });
+  at({ t:'hold', at:0.5, dur:2.4 });
+  at({ t:'fade', el:'titlecard', dir:'out', at:2.9, dur:0.5 });
+
+  // Scene 2: cursor arrives and clicks
+  const offX = -60, offY = 140;
+  at({ t:'cursordisp', v:true, at:3.4 });
+  at({ t:'cursor', x0:offX, y0:offY, x1:0, y1:0, at:3.4, dur:1.0, ease:easeInOut, rel:'toggle' });
+  at({ t:'hold', at:4.4, dur:0.45 });
+  at({ t:'press', at:4.85, dur:0.28 });        // 0.12 down, 0.16 up
+  at({ t:'flash', at:4.98, dur:0.3 });
+  at({ t:'lc', on:true, at:5.0 });             // button state flips; page unchanged
+  at({ t:'cursor', x0:0, y0:0, x1:offX, y1:offY, at:5.15, dur:0.9, ease:easeInOut, rel:'toggle' });
+  at({ t:'cursordisp', v:false, at:6.1 });
+
+  // Scene 3: letters settle
+  at({ t:'hold', at:6.1, dur:0.3 });
+  at({ t:'settle', at:6.4, dur:1.8 });
+
+  // Scene 4: hold lowercase, end card
+  at({ t:'hold', at:8.2, dur:1.0 });
+  at({ t:'fade', el:'endcard', dir:'in', at:9.2, dur:0.7 });
+  at({ t:'hold', at:9.9, dur:3.0 });
+
+  const END_TIME = 12.9;
+  window.timeline = TL;
+  window.END_TIME = END_TIME;
+
+  // toggle center (static layout) — computed after fonts load
+  let toggleC = null;
+  function refreshToggleCenter() { toggleC = elCenter(toggle); }
+
+  /* ---------- settle: wrap uppercase chars, then flip staggered ---------- */
+  window.settleChars = null;
+  window.settle = function (dur) {
+    if (window.settleChars) return;
+    const walker = document.createTreeWalker(viewport, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) {
+      const n = walker.currentNode;
+      if (!n.nodeValue) continue;
+      if (n.parentElement && n.parentElement.closest('.lc-toggle')) continue; // skip the toggle label
+      if (/[A-Z]/.test(n.nodeValue)) nodes.push(n);
+    }
+    const all = [];
+    nodes.forEach((n) => {
+      const text = n.nodeValue;
+      const frag = document.createDocumentFragment();
+      let buf = '';
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (/[A-Z]/.test(ch)) {
+          if (buf) { frag.appendChild(document.createTextNode(buf)); buf = ''; }
+          const s = document.createElement('span');
+          s.className = 'uppercase-char';
+          s.textContent = ch;             // <-- the actual glyph lives inside the span
+          frag.appendChild(s);
+          all.push(s);
+        } else {
+          buf += ch;
+        }
+      }
+      if (buf) frag.appendChild(document.createTextNode(buf));
+      n.parentNode.replaceChild(frag, n);
+    });
+    // sort by vertical then horizontal position (top-to-bottom, left-to-right wave)
+    all.forEach((s) => {
+      const r = s.getBoundingClientRect();
+      s.dataset.y = r.top + r.height / 2;
+      s.dataset.x = r.left + r.width / 2;
+    });
+    all.sort((a, b) => (+a.dataset.y - +b.dataset.y) || (+a.dataset.x - +b.dataset.x));
+    all.forEach((s, i) => {
+      const upW = s.getBoundingClientRect().width;
+      s.style.width = upW + 'px';
+      s.dataset.delay = (i / all.length) * dur * 1000; // ms
+    });
+    window.settleChars = all;
+    window.settleDur = dur * 1000;
+  };
+
+  /* ---------- per-frame render ---------- */
+  window.renderFrame = function () {
+    const t = window.frameIndex / window.VIDEO_FPS;
+    const TL = window.timeline;
+
+    // reset base
+    setLc(false);
+    cursor.style.opacity = 0;
+    titlecard.style.opacity = 0;
+    endcard.style.opacity = 0;
+    viewport.style.opacity = 1;
+    toggle.style.transform = 'none';
+    const flashEl = document.getElementById('flashEl');
+    if (flashEl) flashEl.style.opacity = 0;
+
+    // walk timeline
+    let cursorOn = false;
+    let lcOn = false;
+    let cursorX = offX, cursorY = offY;
+    let pressOn = false, pressT = 0;
+    let flashOn = false, flashT = 0;
+    let fadeIn = {}, fadeOut = {};
+    let settleEv = null, settleStart = -1;
+
+    for (const ev of TL) {
+      if (ev.at > t) continue;
+      switch (ev.t) {
+        case 'cursordisp': cursorOn = ev.v; break;
+        case 'lc': lcOn = ev.on; break;
+        case 'cursor': {
+          const cx = ev.x0, cy = ev.y0;
+          const x1 = ev.rel === 'toggle' && toggleC ? toggleC.x : ev.x1;
+          const y1 = ev.rel === 'toggle' && toggleC ? toggleC.y : ev.y1;
+          const p = Math.min(1, (t - ev.at) / ev.dur);
+          cursorX = cx + (x1 - cx) * ev.ease(p);
+          cursorY = cy + (y1 - cy) * ev.ease(p);
+          break;
+        }
+        case 'press': {
+          pressOn = true;
+          pressT = Math.min(1, (t - ev.at) / ev.dur);
+          break;
+        }
+        case 'flash': {
+          flashOn = true;
+          flashT = Math.min(1, (t - ev.at) / ev.dur);
+          break;
+        }
+        case 'fade': {
+          if (ev.dir === 'in') fadeIn[ev.el] = Math.max(fadeIn[ev.el] || 0, easeOut(Math.min(1, (t - ev.at) / ev.dur)));
+          else fadeOut[ev.el] = Math.max(fadeOut[ev.el] || 0, easeInOut(Math.min(1, (t - ev.at) / ev.dur)));
+          break;
+        }
+        case 'settle': settleEv = ev; settleStart = ev.at; break;
+      }
+    }
+
+    // apply states
+    setLc(lcOn);
+    if (fadeIn['titlecard'] !== undefined) titlecard.style.opacity = fadeIn['titlecard'];
+    if (fadeIn['endcard'] !== undefined) endcard.style.opacity = fadeIn['endcard'];
+    if (fadeOut['titlecard'] !== undefined) titlecard.style.opacity = 1 - fadeOut['titlecard'];
+    if (fadeOut['endcard'] !== undefined) endcard.style.opacity = 1 - fadeOut['endcard'];
+
+    // cursor
+    if (cursorOn) {
+      pos(cursor, cursorX, cursorY);
+      cursor.style.opacity = 1;
+    }
+
+    // press feedback on the toggle
+    if (pressOn) {
+      const down = Math.min(1, pressT / 0.45);
+      const scale = 1 - 0.10 * (down < 1 ? down : (1 - (pressT - 0.45) / 0.55));
+      toggle.style.transform = 'scale(' + Math.max(0.9, scale).toFixed(3) + ')';
+    }
+
+    // flash
+    if (flashOn) {
+      let f = document.getElementById('flashEl');
+      if (!f) {
+        f = document.createElement('div');
+        f.className = 'flash';
+        f.id = 'flashEl';
+        stage.appendChild(f);
+      }
+      const r = toggle.getBoundingClientRect();
+      f.style.left = (r.left - 8) + 'px';
+      f.style.top = (r.top - 8) + 'px';
+      f.style.width = (r.width + 16) + 'px';
+      f.style.height = (r.height + 16) + 'px';
+      f.style.opacity = (1 - flashT) * 0.85;
+    }
+
+    // settle init (once)
+    if (settleEv && !window.settleChars) window.settle(settleEv.dur);
+
+    // settle letter wave
+    if (settleEv && window.settleChars) {
+      const localT = (t - settleStart) * 1000; // ms since settle start
+      window.settleChars.forEach((s) => {
+        const delay = +s.dataset.delay;
+        if (localT < delay) { s.style.opacity = 1; s.style.textTransform = 'none'; return; }
+        const prog = Math.min(1, (localT - delay) / 130); // 130ms crossfade per char
+        if (prog < 0.5) {
+          s.style.opacity = (1 - easeInOut(prog * 2)).toFixed(3);
+          s.style.textTransform = 'none';
+        } else if (prog < 1) {
+          s.style.opacity = easeInOut((prog - 0.5) * 2).toFixed(3);
+          s.style.textTransform = 'lowercase';
+        } else {
+          // flip complete: release the fixed width so the line tightens to
+          // the lowercase glyph (no gaps), causing a gentle settle reflow
+          s.style.opacity = 1;
+          s.style.textTransform = 'lowercase';
+          s.style.width = 'auto';
+        }
+      });
+    }
+  };
+</script>
+</body>
+</html>

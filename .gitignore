@@ -47,3 +47,7 @@ tools/_og_master.png
 reports/pagespeed/*.json
 reports/pagespeed/*.html
 !reports/pagespeed/history.json
+# lc-video render artifacts (keep source, drop intermediates)
+experiments/lc-video/frames/
+experiments/lc-video/stills/
+experiments/lc-video/verify/
