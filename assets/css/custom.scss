@@ -270,7 +270,7 @@ body.lc .lc-toggle {
 .page__footer-follow-label {
   font-size: 0.8rem;
   color: #555;
-  margin: 0 0 12px;
+  margin: 0 0 16px;
   text-transform: lowercase;
   letter-spacing: 0.06em;
 }
@@ -299,6 +299,23 @@ body.lc .lc-toggle {
 .page__footer-follow .social-icons a:hover,
 .page__footer-follow .social-icons a:hover i {
   color: #555;
+}
+
+/* Footer breathing room: separate the icon row from the copyright line.
+   Baseline grid (8px): 32px below the icons to the copyright, 48px above
+   the follow block, 48px below the copyright to the page edge. */
+.page__footer-follow {
+  margin-bottom: 32px;
+}
+
+.page__footer-copyright {
+  margin-top: 0;
+  line-height: 1.6;
+}
+
+.page__footer footer {
+  padding-top: 48px;
+  padding-bottom: 48px;
 }
 
 /* Cards / Teasers */
@@ -442,5 +459,13 @@ body.lc .lc-toggle {
   }
   .home-quiet__date {
     margin-left: 0;
+  }
+  /* Masthead: let the two items breathe on small screens */
+  .masthead-quiet {
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+  .masthead__inner-wrap {
+    padding: 16px 20px 12px;
   }
 }
