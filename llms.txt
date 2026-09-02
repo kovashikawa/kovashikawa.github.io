@@ -1,0 +1,8 @@
+# Rafael Kovashikawa
+
+Data Scientist and AI Engineer at FUSE. Writing about AI agents, MCP servers, quantitative finance, and data engineering.
+
+- [About](https://kovashikawa.github.io/about/)
+- [Posts](https://kovashikawa.github.io/year-archive/)
+- [Projects](https://kovashikawa.github.io/projects/)
+- [GitHub](https://github.com/kovashikawa)
