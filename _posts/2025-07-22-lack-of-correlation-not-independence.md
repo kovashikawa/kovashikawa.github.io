@@ -1,6 +1,7 @@
 ---
-title:  "Why Lack of Correlation Doesn’t Mean Independence"
-excerpt: "pearson’s ρ drops to zero for X vs |X|, a neat example of hidden dependence."
+title:  "Why rho = 0 Is Not Independence: A Concrete Example"
+excerpt: "A zero correlation only rules out a linear link. See why Y = &#124;X&#124; defies Pearson's rho, and which measures catch the hidden dependence."
+description: "A zero correlation only rules out a linear link. See why Y = &#124;X&#124; defies Pearson's rho, and which measures catch the hidden dependence."
 author: rafael            # matches whatever you have in _config.yml > authors
 categories: [statistics]
 tags: [correlation, independence, statistics, python]
@@ -9,9 +10,11 @@ toc: true
 mathjax: true
 ---
 
+> Zero correlation between two variables never proves independence; it only rules out a linear relationship. Dependence can hide in nonlinear patterns such as Y = \|X\|, where Pearson's rho equals zero yet X fully determines Y.
+
 ## The Intuition
 
-For a **Gaussian** (Normal) pair of random variables, Pearson’s correlation coefficient ($\rho$) fully captures dependence. Step outside the Gaussian world, though, and $\rho$ can fail spectacularly.
+For a **Gaussian** (Normal) pair of random variables, Pearson's correlation coefficient ($\rho$) fully captures dependence. Step outside the Gaussian world, though, and $\rho$ can fail spectacularly.
 
 Before diving in, recall the classical definition:
 
@@ -19,7 +22,7 @@ $$
 \rho_{X,Y}=\frac{\operatorname{cov}(X,Y)}{\sigma_X\sigma_Y},
 $$
 
-where $\sigma$ denotes the standard deviation. Values are bound in the range $[-1, 1]$. A value of 0 is *often* mistaken for “independence” — but it only guarantees **no linear** relationship.
+where $\sigma$ denotes the standard deviation. Values are bound in the range $[-1, 1]$. A value of 0 is *often* mistaken for "independence", but it only guarantees **no linear** relationship.
 
 ---
 
@@ -30,7 +33,7 @@ Let's consider two random variables:
 - $X \sim \mathcal{N}(0,1)$
 - $Y = \lvert X \rvert$
 
-Intuitively, $Y$ is *completely determined* by $X$, so they are **dependent**. Let’s simulate this and see what Pearson’s $\rho$ says.
+Intuitively, $Y$ is *completely determined* by $X$, so they are **dependent**. Let's simulate this and see what Pearson's $\rho$ says.
 
 ```python
 import numpy as np
@@ -50,7 +53,7 @@ The expected output will be something like this (values will fluctuate slightly)
 | **X** | 1.000000 | 0.000??? |
 | **Y** | 0.000??? | 1.000000 |
 
-As you can see, $\rho$ is approximately $0$! Pearson’s correlation fails here because the dependence is non-linear and symmetric around zero.
+As you can see, $\rho$ is approximately $0$! Pearson's correlation fails here because the dependence is non-linear and symmetric around zero.
 
 ---
 
