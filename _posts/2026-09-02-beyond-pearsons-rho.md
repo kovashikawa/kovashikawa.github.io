@@ -37,9 +37,9 @@ Two things to notice before the details:
 1. **The cross column is the honest one.** Cross is $Y = X \cdot W$ with $W$ a Rademacher sign: $Y$ is literally $\pm X$, completely determined by $X$ up to sign. Pearson, Spearman, and Kendall all report near zero because the sign symmetry cancels, while Chatterjee xi (0.229) and distance correlation (0.313) flag the dependence. It is the cleanest possible counterexample to "zero correlation means nothing is going on."
 2. **HSIC and KSG MI are on different scales.** HSIC is positive but unbounded; MI is in nats and depends on marginal entropy. Use them as detectors and for ranking, not as comparable strengths.
 
-## Distance correlation (Szekely, Rizzo, Bakirov 2007)
+## Distance correlation
 
-The idea: independence is equivalent to the joint characteristic function factoring into the product of marginals. Distance covariance is a weighted norm on exactly that difference, and the estimator falls out as a double-centering of pairwise distance matrices:
+Szekely, Rizzo and Bakirov (2007) introduced distance correlation to fix exactly this blind spot. The idea: independence is equivalent to the joint characteristic function factoring into the product of marginals. Distance covariance is a weighted norm on exactly that difference, and the estimator falls out as a double-centering of pairwise distance matrices:
 
 $$\operatorname{dCor}(X,Y) = \frac{\operatorname{dCov}(X,Y)}{\sqrt{\operatorname{dCov}(X,X)\,\operatorname{dCov}(Y,Y)}}.$$
 
@@ -47,9 +47,9 @@ The property that matters: $\operatorname{dCor} = 0$ if and only if $X$ and $Y$ 
 
 Cost: $O(n^2)$ memory and time, because of the distance matrices. Fine at 10k rows, painful at 10M.
 
-## Chatterjee's xi (2021)
+## Chatterjee's xi
 
-The modern minimalism champion. Rank X, reorder Y's max-ranks by X, and measure how much adjacent ranks jump:
+Chatterjee (2021) answered with a coefficient that is almost absurdly simple. Rank X, reorder Y's max-ranks by X, and measure how much adjacent ranks jump:
 
 $$\xi_n(X,Y) = 1 - \frac{A_1}{C_U}, \qquad A_1 = \frac{1}{2n}\sum_{i=1}^{n-1}\left|\frac{r_{i+1}}{n} - \frac{r_i}{n}\right|, \qquad C_U = \frac{1}{n}\sum_{i=1}^{n} g_i(1-g_i),$$
 
@@ -57,27 +57,27 @@ where $r_i$ are max-ranks of $Y$ reordered by $X$ and $g_i$ the max-ranks of $-Y
 
 Two honest footnotes. Finite-sample $\xi$ under independence is slightly negative on average, so small negative values are expected, not bugs. And $\xi(X, Y)$ is asymmetric by construction: it measures "how well Y behaves as a function of X," which the paper argues for deliberately.
 
-## HSIC (Gretton et al. 2005, Song et al. 2012)
+## HSIC
 
-Map each variable into a reproducing kernel Hilbert space with a characteristic kernel (RBF here), and take the Hilbert-Schmidt norm of the cross-covariance operator between the two embeddings. HSIC = 0 iff independence, no density estimation anywhere in the pipeline. That is why it is the workhorse of kernel feature selection, where estimating densities in high dimensions is a nonstarter.
+HSIC comes from the kernel methods literature (Gretton et al. 2005) and became the workhorse of kernel feature selection (Song et al. 2012). Map each variable into a reproducing kernel Hilbert space with a characteristic kernel (RBF here), and take the Hilbert-Schmidt norm of the cross-covariance operator between the two embeddings. HSIC = 0 iff independence, no density estimation anywhere in the pipeline. That is why it is the workhorse of kernel feature selection, where estimating densities in high dimensions is a nonstarter.
 
 Bandwidth choice matters. The implementation in the companion repo uses the median-distance heuristic, which is the standard default.
 
-## KSG mutual information (Kraskov, Stogbauer, Grassberger 2004)
+## KSG mutual information
 
-Mutual information $I(X; Y) = 0$ iff independence, full stop. The KSG estimator is a k-nearest-neighbor scheme that adapts its resolution in both margins, which fixes the classic histogram-bin problems. It is what scikit-learn's `mutual_info_regression` uses under the hood.
+Mutual information $I(X; Y) = 0$ iff independence, full stop. The KSG estimator (Kraskov, Stogbauer and Grassberger 2004) is a k-nearest-neighbor scheme that adapts its resolution in both margins, which fixes the classic histogram-bin problems. It is what scikit-learn's `mutual_info_regression` uses under the hood.
 
 The caveat: MI values depend on marginal entropies, so "1.6 nats" on linear data and "6.1 nats" on |X| are not comparable strengths. It answers "is there dependence" decisively, and "how strong" only loosely.
 
-## MIC (Reshef et al. 2011, with caveats)
+## MIC
 
-The maximal information coefficient maximizes normalized mutual information over all grid binning schemes, capped by sample size. It made a splash in Science for "detecting novel associations in large data sets" and is the measure most people name when they want "the nonlinear correlation."
+The maximal information coefficient (Reshef et al. 2011) maximizes normalized mutual information over all grid binning schemes, capped by sample size. It made a splash in Science for "detecting novel associations in large data sets" and is the measure most people name when they want "the nonlinear correlation."
 
 The honest footnote: the equitability claims were contested, with mathematical arguments showing the proposed definition of equitability is impossible for any nontrivial measure (Kinney and Atwal 2014), and follow-up work found the simulation evidence artifactual. Treat MIC as one more detector, not a calibrated strength scale. `minepy` is the reference implementation; it is not in this repo's benchmark because its API is a separate wheel, but the claim in the table is covered by distance correlation and KSG MI, which dominate it on power anyway.
 
-## Tail dependence (Joe 1993, and copula thinking)
+## Tail dependence
 
-All of the above measure dependence across the whole distribution. Risk work cares about the tails specifically: given that one asset is in its 95th percentile, how likely is the other to be too?
+All of the above measure dependence across the whole distribution. Risk work cares about the tails specifically: given that one asset is in its 95th percentile, how likely is the other to be too? Tail dependence coefficients go back to Sibuya (1959) and Joe (1993).
 
 $$\lambda(q) = P(F_Y(Y) > q \mid F_X(X) > q).$$
 
@@ -105,12 +105,12 @@ The repo also includes a self-test that checks Chatterjee's xi against the canon
 
 ## Further reading
 
-1. Szekely, Rizzo, Bakirov (2007). Measuring and testing dependence by correlation of distances. *Annals of Statistics*.
-2. Szekely and Rizzo (2009). Brownian distance covariance. *Annals of Applied Statistics*.
-3. Chatterjee (2021). A new coefficient of correlation. *JASA*.
-4. Gretton et al. (2005). Measuring statistical dependence with Hilbert-Schmidt norms. *ALT*.
-5. Kraskov, Stogbauer, Grassberger (2004). Estimating mutual information. *Physical Review E*.
-6. Reshef et al. (2011). Detecting novel associations in large data sets. *Science*.
-7. Kinney and Atwal (2014). Equitability, mutual information, and the maximal information coefficient. *PNAS*.
-8. Joe (1993). Multivariate models and dependence concepts. Chapman and Hall.
-9. Song et al. (2012). Feature selection via dependence maximization. *JMLR*.
+1. Szekely, Rizzo, Bakirov (2007). [Measuring and testing dependence by correlation of distances](https://projecteuclid.org/journals/annals-of-statistics/volume-35/issue-6/Measuring-and-testing-dependence-by-correlation-of-distances/10.1214/009053607000000505.full). *Annals of Statistics*.
+2. Szekely and Rizzo (2009). [Brownian distance covariance](https://projecteuclid.org/journals/annals-of-applied-statistics/volume-3/issue-4/Brownian-distance-covariance/10.1214/09-AOAS312.full). *Annals of Applied Statistics*.
+3. Chatterjee (2021). [A new coefficient of correlation (PDF)](https://arxiv.org/pdf/1909.10140). *JASA*.
+4. Gretton et al. (2005). [Measuring statistical dependence with Hilbert-Schmidt norms (PDF)](http://alex.smola.org/papers/2005/GreBouSmoSch05.pdf). *ALT*.
+5. Kraskov, Stogbauer, Grassberger (2004). [Estimating mutual information (PDF)](https://arxiv.org/pdf/cond-mat/0305641). *Physical Review E*.
+6. Reshef et al. (2011). [Detecting novel associations in large data sets](https://www.science.org/doi/10.1126/science.1205438). *Science*.
+7. Kinney and Atwal (2014). [Equitability, mutual information, and the maximal information coefficient](https://www.pnas.org/doi/10.1073/pnas.1309933111). *PNAS*.
+8. Joe (1997). [Multivariate models and dependence concepts](https://doi.org/10.1201/b13150). Chapman and Hall.
+9. Song et al. (2012). [Feature selection via dependence maximization (PDF)](https://www.jmlr.org/papers/volume13/song12a/song12a.pdf). *JMLR*.
