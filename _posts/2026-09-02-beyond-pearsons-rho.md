@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Beyond Pearson's rho: measuring dependence the modern way"
+title: "Beyond Correlation: measuring dependence the modern way"
 date: 2026-09-02 12:00:00 -0400
 excerpt: "Pearson says 0, but X and Y are dependent. A guide to distance correlation, Chatterjee's xi, HSIC, KSG MI, and tail dependence, with rerunnable benchmark."
 description: "Pearson says 0, but X and Y are dependent. A guide to distance correlation, Chatterjee's xi, HSIC, KSG MI, and tail dependence, with rerunnable benchmark."
