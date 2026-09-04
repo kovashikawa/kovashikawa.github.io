@@ -32,7 +32,7 @@ Every number below comes from a runnable benchmark against nine synthetic datase
 
 All numbers: $n = 10{,}000$, seed 42, `scripts/benchmark.py`. Generators: linear = $1.5X + \mathcal{N}(0, 0.3^2)$, quadratic = $X^2$, abs = $\lvert X \rvert$, sine = $\sin(4X)$, circle = $(\cos\theta, \sin\theta)$ with $\theta \sim U(0, 2\pi)$, cross = $X \cdot W$ with $W$ a Rademacher sign, independent = two independent normals, heavy_tail = $X + 0.5 \cdot t_3$, tail_t = a $t$-copula with $\nu = 3, \rho = 0.5$ via the canonical construction.
 
-The first three rows are the classical toolkit, and they all say "no dependence" on quadratic, abs, sine, circle, and cross. Chatterjee xi, distance correlation, and KSG MI flag all of them as dependent; HSIC and the tail-dependence column are subtler, see below. That contrast is the whole problem, quantified.
+The first three rows are the classical toolkit, and they all say "no dependence" on quadratic, abs, sine, circle, and cross. Chatterjee xi, distance correlation, and KSG MI flag all of them as dependent; HSIC and the tail-dependence row are subtler, see below. That contrast is the whole problem, quantified.
 
 Two things to notice before the details:
 
@@ -85,11 +85,11 @@ The population quantity is the limit, if it exists:
 
 $$\lambda_U = \lim_{q \to 1} P(F_Y(Y) > q \mid F_X(X) > q).$$
 
-The benchmark column reports the finite-quantile estimator $\lambda(q)$ at $q = 0.95$, a standard VaR level (roughly 500 conditioning exceedances at $n = 10{,}000$). Under independence, $\lambda(q) = 1 - q = 0.05$ exactly, so the independent column at 0.032 is consistent with the null floor of 0.05.
+The benchmark row reports the finite-quantile estimator $\lambda(q)$ at $q = 0.95$, a standard VaR level (roughly 500 conditioning exceedances at $n = 10{,}000$). Under independence, $\lambda(q) = 1 - q = 0.05$ exactly, so the independent column at 0.032 is consistent with the null floor of 0.05.
 
 This is where the Gaussian copula earns its infamy. For any correlation $\rho < 1$, the Gaussian copula has zero tail dependence in the limit: the co-exceedance probability vanishes as $q \to 1$, but slowly. At the generator's $\rho \approx 0.981$ the finite-q estimator still reads 0.856 at $q = 0.95$ (closed form 0.838), and only drifts to about 0.74 by $q = 0.999$ and 0.70 by $q = 0.9999$. If your risk model is Gaussian-copula shaped and you feed it Pearson correlations, you are asserting away joint tail risk by construction, just with a delay.
 
-The tail_t column is the counterexample: a $t$-copula with $\nu = 3, \rho = 0.5$ has positive asymptotic tail dependence, $\lambda_U = 2T_4(-\sqrt{4/3}) \approx 0.31$, and the empirical column holds at 0.376. And the heavy_tail column is a warning about reading too much into a name: it is just $X$ plus independent $t_3$ noise, which is asymptotically tail independent. Larger simulations ($n = 20$M) show its $\lambda(q)$ falling from 0.487 at $q = 0.95$ to 0.011 at $q = 0.999$ and 0.0005 at $q = 0.9999$, so it is not a tail-dependent copula. Always check the generator, not the label.
+The tail_t column is the counterexample: a $t$-copula with $\nu = 3, \rho = 0.5$ has positive asymptotic tail dependence, $\lambda_U = 2T_4(-\sqrt{4/3}) \approx 0.31$, and the empirical column holds at 0.376. And the heavy_tail column is a warning about reading too much into a name: it is just $X$ plus independent $t_3$ noise, which is asymptotically tail independent. Larger simulations ($n = 20$M) show its $\lambda(q)$ falling from 0.487 at $q = 0.95$ to 0.011 at $q = 0.999$ and below 0.001 at $q = 0.9999$, so it is not a tail-dependent copula. Always check the generator, not the label.
 
 ## When to use what
 
@@ -121,10 +121,10 @@ The repo also includes a self-test that checks Chatterjee's xi against the canon
 5. Kraskov, Stogbauer, Grassberger (2004). [Estimating mutual information (PDF)](https://arxiv.org/pdf/cond-mat/0305641). *Physical Review E*.
 6. Reshef et al. (2011). [Detecting novel associations in large data sets](https://www.science.org/doi/10.1126/science.1205438). *Science*.
 7. Kinney and Atwal (2014). [Equitability, mutual information, and the maximal information coefficient](https://www.pnas.org/doi/10.1073/pnas.1309933111). *PNAS*.
-8. Sibuya (1960). Bivariate extreme statistics. *Annals of the Institute of Statistical Mathematics* 11.
+8. Sibuya (1960). Bivariate extreme statistics, I. *Annals of the Institute of Statistical Mathematics* 11(3):195-210.
 9. Joe (1997). [Multivariate models and dependence concepts](https://doi.org/10.1201/b13150). Chapman and Hall.
 10. Song et al. (2012). [Feature selection via dependence maximization (PDF)](https://www.jmlr.org/papers/volume13/song12a/song12a.pdf). *JMLR*.
-11. Fukumizu, Gretton, Sun, Scholkopf (2008). [Kernel measures of conditional dependence (PDF)](https://papers.nips.cc/paper/3340-kernel-measures-of-conditional-dependence.pdf). *NeurIPS*.
+11. Fukumizu, Gretton, Sun, Scholkopf (2008). [Kernel measures of conditional dependence (PDF)](https://papers.nips.cc/paper/3340-kernel-measures-of-conditional-dependence.pdf). *NIPS 20 (2008)*.
 12. Huo and Szekely (2016). [Fast computing for distance covariance](https://www.tandfonline.com/doi/abs/10.1080/00401706.2015.1054435). *Technometrics*.
 13. Shi, Drton, Han (2022). [On the power of Chatterjee's rank correlation (PDF)](https://arxiv.org/pdf/2008.06820). *Biometrika*.
 14. Simon and Tibshirani (2014). [Comment on "Detecting novel associations in large data sets" by Reshef et al. (PDF)](https://arxiv.org/pdf/1401.7645). *arXiv:1401.7645*.
