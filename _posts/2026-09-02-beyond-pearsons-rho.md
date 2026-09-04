@@ -13,7 +13,7 @@ read_time: true
 mathjax: true
 ---
 
-[Last time]({% post_url 2025-07-22-lack-of-correlation-not-independence %}) I showed the canonical trap: $X \sim \mathcal{N}(0,1)$, $Y = |X|$, and Pearson's $\rho$ reports about 0 while $X$ fully determines $Y$. The one-line takeaway was "use a nonlinear measure." This post is the follow-through: which measures, what they actually guarantee, and what they miss.
+[Last time]({% post_url 2025-07-22-lack-of-correlation-not-independence %}) I showed the canonical trap: $X \sim \mathcal{N}(0,1)$, $Y = \lvert X \rvert$, and Pearson's $\rho$ reports about 0 while $X$ fully determines $Y$. The one-line takeaway was "use a nonlinear measure." This post is the follow-through: which measures, what they actually guarantee, and what they miss.
 
 Every number below comes from a runnable benchmark against eight synthetic datasets, seeded and reproducible. The companion repo is [kovashikawa/correlation-models](https://github.com/kovashikawa/correlation-models).
 
@@ -30,7 +30,7 @@ Every number below comes from a runnable benchmark against eight synthetic datas
 | KSG MI | 1.651 | 6.102 | 6.378 | 4.716 | 5.167 | 6.197 | 0.012 | 0.579 |
 | Tail dep (q=0.95) | 0.838 | 0.498 | 0.498 | 0.090 | 0.000 | 0.480 | 0.046 | 0.474 |
 
-The first three rows are the classical toolkit, and they all say "no dependence" on quadratic, |X|, sine, circle, and cross. The modern measures say "obviously dependent." That is the whole problem, quantified.
+The first three rows are the classical toolkit, and they all say "no dependence" on quadratic, \|X\|, sine, circle, and cross. The modern measures say "obviously dependent." That is the whole problem, quantified.
 
 Two things to notice before the details:
 
@@ -43,7 +43,7 @@ Szekely, Rizzo and Bakirov (2007) introduced distance correlation to fix exactly
 
 $$\operatorname{dCor}(X,Y) = \frac{\operatorname{dCov}(X,Y)}{\sqrt{\operatorname{dCov}(X,X)\,\operatorname{dCov}(Y,Y)}}.$$
 
-The property that matters: $\operatorname{dCor} = 0$ if and only if $X$ and $Y$ are independent, for distributions with finite first moments, in any dimension. Pearson cannot make that claim. In the bivariate normal case dCor is a deterministic function of $|\rho|$ and never exceeds it.
+The property that matters: $\operatorname{dCor} = 0$ if and only if $X$ and $Y$ are independent, for distributions with finite first moments, in any dimension. Pearson cannot make that claim. In the bivariate normal case dCor is a deterministic function of $\lvert \rho \rvert$ and never exceeds it.
 
 Cost: $O(n^2)$ memory and time, because of the distance matrices. Fine at 10k rows, painful at 10M.
 
@@ -53,7 +53,7 @@ Chatterjee (2021) answered with a coefficient that is almost absurdly simple. Ra
 
 $$\xi_n(X,Y) = 1 - \frac{A_1}{C_U}, \qquad A_1 = \frac{1}{2n}\sum_{i=1}^{n-1}\left|\frac{r_{i+1}}{n} - \frac{r_i}{n}\right|, \qquad C_U = \frac{1}{n}\sum_{i=1}^{n} g_i(1-g_i),$$
 
-where $r_i$ are max-ranks of $Y$ reordered by $X$ and $g_i$ the max-ranks of $-Y$. With no ties this collapses to $\xi = 1 - \frac{3}{n^2-1}\sum_{i=1}^{n-1}|r_{i+1} - r_i|$. $\xi = 0$ iff independence, $\xi = 1$ iff $Y$ is a measurable function of $X$. Computes in $O(n \log n)$ and is completely nonparametric.
+where $r_i$ are max-ranks of $Y$ reordered by $X$ and $g_i$ the max-ranks of $-Y$. With no ties this collapses to $\xi = 1 - \frac{3}{n^2-1}\sum_{i=1}^{n-1}\lvert r_{i+1} - r_i \rvert$. $\xi = 0$ iff independence, $\xi = 1$ iff $Y$ is a measurable function of $X$. Computes in $O(n \log n)$ and is completely nonparametric.
 
 Two honest footnotes. Finite-sample $\xi$ under independence is slightly negative on average, so small negative values are expected, not bugs. And $\xi(X, Y)$ is asymmetric by construction: it measures "how well Y behaves as a function of X," which the paper argues for deliberately.
 
@@ -67,7 +67,7 @@ Bandwidth choice matters. The implementation in the companion repo uses the medi
 
 Mutual information $I(X; Y) = 0$ iff independence, full stop. The KSG estimator (Kraskov, Stogbauer and Grassberger 2004) is a k-nearest-neighbor scheme that adapts its resolution in both margins, which fixes the classic histogram-bin problems. It is what scikit-learn's `mutual_info_regression` uses under the hood.
 
-The caveat: MI values depend on marginal entropies, so "1.6 nats" on linear data and "6.1 nats" on |X| are not comparable strengths. It answers "is there dependence" decisively, and "how strong" only loosely.
+The caveat: MI values depend on marginal entropies, so "1.6 nats" on linear data and "6.1 nats" on \|X\| are not comparable strengths. It answers "is there dependence" decisively, and "how strong" only loosely.
 
 ## MIC
 
@@ -101,7 +101,7 @@ uv venv && uv pip install -r requirements.txt
 uv run python scripts/benchmark.py
 ```
 
-The repo also includes a self-test that checks Chatterjee's xi against the canonical XICOR formulation, distance correlation against known cases, and tail dependence against closed-form values for Y = X and Y = |X|.
+The repo also includes a self-test that checks Chatterjee's xi against the canonical XICOR formulation, distance correlation against known cases, and tail dependence against closed-form values for Y = X and Y = \|X\|.
 
 ## Further reading
 
