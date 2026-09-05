@@ -17,6 +17,10 @@ mathjax: true
 
 Every number below comes from a runnable benchmark against nine synthetic datasets, seeded and reproducible. The companion repo is [kovashikawa/correlation-models](https://github.com/kovashikawa/correlation-models).
 
+<video controls muted playsinline poster="/assets/videos/beyond-correlation-poster.png" width="100%">
+  <source src="/assets/videos/beyond-correlation.mp4" type="video/mp4">
+</video>
+
 ## The benchmark table
 
 | Measure | linear | quadratic | abs | sine | circle | cross | independent | heavy_tail | tail_t |
