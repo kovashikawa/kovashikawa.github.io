@@ -2,8 +2,8 @@
 layout: single
 title: "Beyond Correlation: measuring dependence the modern way"
 date: 2026-09-02 12:00:00 -0400
-excerpt: "Pearson says 0, but X and Y are dependent. A guide to distance correlation, Chatterjee's xi, HSIC, KSG MI, and tail dependence, with rerunnable benchmark."
-description: "Pearson says 0, but X and Y are dependent. A guide to distance correlation, Chatterjee's xi, HSIC, KSG MI, and tail dependence, with rerunnable benchmark."
+excerpt: "Pearson says 0, but X and Y are dependent. A guide to distance correlation, Chatterjee's xi, HSIC, KSG MI, and tail dependence, with a rerunnable benchmark."
+description: "A guide to distance correlation, Chatterjee's xi, HSIC, KSG mutual information, and tail dependence: what each measure catches that Pearson misses, benchmarked against nine synthetic datasets."
 tags: [statistics, correlation, dependence, python, benchmark]
 categories: [statistics]
 author_profile: true
@@ -13,9 +13,13 @@ read_time: true
 mathjax: true
 ---
 
-[Last time]({% post_url 2025-07-22-lack-of-correlation-not-independence %}) I showed the canonical trap: $X \sim \mathcal{N}(0,1)$, $Y = \lvert X \rvert$, and Pearson's $\rho$ reports about 0 while $X$ fully determines $Y$. The one-line takeaway was "use a nonlinear measure." This post is the follow-through: which measures, what they actually guarantee, and what they miss.
+Pearson's correlation is zero for plenty of pairs that are fully dependent. The canonical case: $X \sim \mathcal{N}(0,1)$, $Y = \lvert X \rvert$. $\rho$ reports about 0, but $X$ determines $Y$ exactly. The fix isn't "use a nonlinear measure" in the abstract, it's knowing which measure catches which failure mode, and what each one actually guarantees.
 
-Every number below comes from a runnable benchmark against nine synthetic datasets, seeded and reproducible. The companion repo is [kovashikawa/correlation-models](https://github.com/kovashikawa/correlation-models).
+That's what this post benchmarks: distance correlation, Chatterjee's xi, HSIC, KSG mutual information, and tail dependence, against nine synthetic datasets built to break Pearson in different ways.
+
+Every number below is reproducible: seeded, and the companion repo is [kovashikawa/correlation-models](https://github.com/kovashikawa/correlation-models).
+
+Two minutes covering the same ground visually, walking through each counterexample and measure below.
 
 <video controls muted playsinline poster="/assets/videos/beyond-correlation-poster.png" width="100%">
   <source src="/assets/videos/beyond-correlation.mp4" type="video/mp4">
@@ -34,14 +38,15 @@ Every number below comes from a runnable benchmark against nine synthetic datase
 | KSG MI | 1.639 | 6.102 | 6.378 | 4.716 | 5.167 | 6.194 | 0.001 | 0.568 | 0.192 |
 | Tail dep (q=0.95) | 0.856 | 0.498 | 0.498 | 0.090 | 0.000 | 0.462 | 0.032 | 0.500 | 0.376 |
 
-All numbers: $n = 10{,}000$, seed 42, `scripts/benchmark.py`. Generators: linear = $1.5X + \mathcal{N}(0, 0.3^2)$, quadratic = $X^2$, abs = $\lvert X \rvert$, sine = $\sin(4X)$, circle = $(\cos\theta, \sin\theta)$ with $\theta \sim U(0, 2\pi)$, cross = $X \cdot W$ with $W$ a Rademacher sign, independent = two independent normals, heavy_tail = $X + 0.5 \cdot t_3$, tail_t = a $t$-copula with $\nu = 3, \rho = 0.5$ via the canonical construction.
+<p style="font-size: 0.75em; color: var(--muted, #555555);" markdown="1">n = 10,000, seed 42, full generator code in the repo.</p>
 
-The first three rows are the classical toolkit, and they all say "no dependence" on quadratic, abs, sine, circle, and cross. Chatterjee xi, distance correlation, and KSG MI flag all of them as dependent; HSIC and the tail-dependence row are subtler, see below. That contrast is the whole problem, quantified.
+The first three rows are the classical toolkit, and none of them catch quadratic, abs, sine, circle, or cross. Chatterjee's xi, distance correlation, and KSG MI catch all five. HSIC and tail dependence are subtler cases, covered below. That gap is the whole problem, quantified.
 
-Two things to notice before the details:
+Two things worth flagging before the per-measure sections.
 
-1. **The cross column is the cleanest counterexample.** Cross is $Y = X \cdot W$ with $W$ a Rademacher sign. The sign is independent noise, so $Y$ is *not* a function of $X$: $\lvert Y \rvert = \lvert X \rvert$ is. That distinction is exactly why Chatterjee xi lands at 0.245, far below 1. Pearson, Spearman, and Kendall all report near zero because the sign symmetry cancels, while xi and distance correlation (0.313) flag the dependence. This is the canonical demonstration that zero correlation does not mean nothing is going on, and it doubles as a reminder that the rule "uncorrelated implies independent only for jointly Gaussian pairs" is load-bearing: both margins here are standard normal, but the pair is not jointly Gaussian.
-2. **Global and local measures answer different questions.** Chatterjee xi, distance correlation, HSIC, and KSG MI measure dependence across the whole distribution. The tail-dependence row measures co-exceedance in the extremes, a separate axis, and the tail_t column is the dataset built to show it (see the tail section). HSIC is nonnegative and not normalized; MI is in nats. Use them as detectors and for ranking, not as comparable strengths.
+1. **Cross is the sharpest counterexample.** $Y = X \cdot W$, where $W$ is a random sign independent of $X$. The sign cancels out any linear relationship, so Pearson, Spearman, and Kendall all read near zero. But $Y$ is not independent of $X$: $\lvert Y \rvert = \lvert X \rvert$ always. Chatterjee's xi (0.245) and distance correlation (0.313) both catch it. Both margins are standard normal here, and the pair still isn't jointly Gaussian, which is exactly the case where "uncorrelated implies independent" fails.
+2. **The measures split into two questions.** Xi, distance correlation, HSIC, and KSG MI test dependence across the whole distribution. Tail dependence tests something narrower: whether extremes move together, which is why the tail_t column exists. HSIC is unnormalized and MI is measured in nats, so don't compare magnitudes across measures. Use them to detect and rank, not to score.
+3. **The independent column is the null.** Every measure should read near zero there, and does: Chatterjee's xi is -0.004, distance correlation 0.014, HSIC 0.000. That's the reference for judging every "catch" above. Xi's null standard deviation is about $\sqrt{2/(5n)} \approx 0.0063$ at $n = 10{,}000$ (derived below), which puts circle's xi of 0.254 roughly 40 null standard deviations out, not just "nonzero."
 
 ## Distance correlation
 
@@ -53,7 +58,7 @@ The property that matters: $\operatorname{dCor} = 0$ if and only if $X$ and $Y$ 
 
 Cost: the naive estimator used here is $O(n^2)$ memory and time, because of the pairwise distance matrices. Fine at 10k rows, painful at 10M. Faster $O(n \log n)$ algorithms exist for univariate data (Huo and Szekely 2016).
 
-## Chatterjee's xi
+## Chatterjee's rank correlation
 
 Chatterjee (2021) took a different route, with a coefficient that is almost absurdly simple. Rank X, reorder Y's max-ranks by X, and measure how much adjacent ranks jump:
 
@@ -65,35 +70,33 @@ Three footnotes. First, under independence $\xi_n$ has mean zero and standard de
 
 ## HSIC
 
-HSIC comes from the kernel methods literature (Gretton et al. 2005) and became a standard tool in nonlinear feature selection (Song et al. 2012). Map each variable into a reproducing kernel Hilbert space with a universal kernel (RBF here), and take the squared Hilbert-Schmidt norm of the cross-covariance operator between the two embeddings. HSIC = 0 iff independence for universal kernels (Gretton 2005 on compact domains; Fukumizu et al. 2008 for the general statement), with no density estimation anywhere in the pipeline. That is what makes it practical in high dimensions, where density estimation is a nonstarter.
+HSIC comes from the kernel methods literature (Gretton et al. 2005) and became a standard tool in nonlinear feature selection (Song et al. 2012). Map each variable into a reproducing kernel Hilbert space with a universal kernel (RBF here), and take the squared Hilbert-Schmidt norm of the cross-covariance operator between the two embeddings. HSIC = 0 iff independence for universal kernels (Gretton 2005 on compact domains; Fukumizu et al. 2008 for the general statement).
 
-Bandwidth choice matters. The implementation in the companion repo uses the median-distance heuristic, which is the standard default.
+On this benchmark HSIC is the flattest row: 0.088 on linear, dropping to 0.008 on sine and 0.000 on independent, everything within a factor of about 11. It still separates dependent from independent, linear and heavy_tail sit well above the 0.000 null, but the RBF kernel's median-distance bandwidth is not tuned per dataset here, so treat the exact HSIC values as a coarse detector rather than a ranking. Its real strength is scaling to vector-valued or high-dimensional X and Y, where density-based measures like KSG MI become impractical.
 
 ## KSG mutual information
 
-Mutual information $I(X; Y) = 0$ iff independence, full stop. The KSG estimator (Kraskov, Stogbauer and Grassberger 2004) is a k-nearest-neighbor scheme that adapts its resolution in both margins, which fixes the classic histogram-bin problems. It is what scikit-learn's `mutual_info_regression` uses under the hood.
+Mutual information $I(X; Y) = 0$ iff independence, full stop. The KSG estimator (Kraskov, Stogbauer and Grassberger 2004) is a k-nearest-neighbor scheme that adapts its resolution in both margins, which fixes the classic histogram-bin problems. It is what scikit-learn's `mutual_info_regression` uses under the hood, with $k = 3$ neighbors here.
 
-The caveat: the values are not comparable across datasets. Linear has additive noise and a finite population MI of $-\frac{1}{2}\ln(1-\rho^2)$, about 1.63 nats at the generator's $\rho \approx 0.981$, which the 1.639 estimate matches. Quadratic, abs, sine, circle, and cross are noiseless functions: their population MI is infinite, and the KSG estimate just grows with $n$ (and shrinks with $k$). So "6.4 nats on abs" does not mean abs is "four times more dependent" than linear. MI answers "is there dependence" decisively, and "how strong" only loosely.
+The values are not comparable across datasets. Linear has additive noise and a finite population MI of $-\frac{1}{2}\ln(1-\rho^2)$. At the generator's $\rho \approx 0.9806$ that works out to about 1.629 nats, matching the 1.639 estimate. Quadratic, abs, sine, circle, and cross have no additive noise: each Y is fully determined by X and a coin flip or angle draw with no residual randomness, so the joint distribution is singular and the population MI is infinite. The KSG estimate for these just grows with $n$ and shrinks with $k$. So "6.4 nats on abs" does not mean abs is four times more dependent than linear's 1.6. MI answers "is there dependence" decisively, and "how strong" only loosely.
 
-## MIC
-
-The maximal information coefficient (Reshef et al. 2011) maximizes normalized mutual information over all grid binning schemes, capped by sample size. It made a splash in Science for "detecting novel associations in large data sets" and is the measure most people name when they want "the nonlinear correlation."
-
-The footnote: the equitability claims were contested, with mathematical arguments showing the proposed definition of equitability is impossible for any nontrivial measure (Kinney and Atwal 2014), and power comparisons found MIC underpowered relative to distance correlation and other plug-in statistics (Simon and Tibshirani 2014); the original authors replied (Reshef et al. 2014) and later introduced refined, consistently estimable variants (Reshef et al. 2016). Treat MIC as one more detector, not a calibrated strength scale. `minepy` is a third-party implementation requiring a compiled extension, so it is left out of this repo's benchmark; the reference implementation is the Reshef lab's Java MINE tool.
+The maximal information coefficient (Reshef et al. 2011) is the other mutual-information-based measure people reach for, maximizing normalized MI over grid binning schemes. It made a splash in *Science* in 2011, but its equitability claims were shown mathematically impossible for any nontrivial measure (Kinney and Atwal 2014), and later power comparisons found it underpowered relative to distance correlation (Simon and Tibshirani 2014). Refined variants followed (Reshef et al. 2016). Treat MIC, like the measures above, as a detector rather than a calibrated strength scale. It is not in this benchmark: `minepy`, the standard implementation, requires a compiled extension and was left out; the Reshef lab's Java MINE tool is the reference implementation.
 
 ## Tail dependence
 
-All of the above measure dependence across the whole distribution. Risk work cares about the tails specifically: given that one asset is above its 95th percentile, how likely is the other to be too? Tail dependence coefficients go back to Sibuya (1960); the modern treatment is Joe (1997).
+The measures above test dependence across the whole distribution. Risk work cares about the tails specifically: given that one asset is above its 95th percentile, how likely is the other to be too? Tail dependence coefficients go back to Sibuya (1960); the modern treatment is Joe (1997).
 
 The population quantity is the limit, if it exists:
 
 $$\lambda_U = \lim_{q \to 1} P(F_Y(Y) > q \mid F_X(X) > q).$$
 
-The benchmark row reports the finite-quantile estimator $\lambda(q)$ at $q = 0.95$, a standard VaR level (roughly 500 conditioning exceedances at $n = 10{,}000$). Under independence, $\lambda(q) = 1 - q = 0.05$ exactly, so the independent column at 0.032 is consistent with the null floor of 0.05.
+The benchmark row reports the finite-quantile estimator $\lambda(q)$ at $q = 0.95$, a standard VaR level, exactly 500 conditioning exceedances at $n = 10{,}000$. Under independence, $\lambda(q) = 1 - q = 0.05$ exactly. The independent column reads 0.032, about 1.8 standard errors low (SE $\approx \sqrt{0.05 \cdot 0.95 / 500} \approx 0.0098$), consistent with the null.
 
-This is where the Gaussian copula earns its infamy. For any correlation $\rho < 1$, the Gaussian copula has zero tail dependence in the limit: the co-exceedance probability vanishes as $q \to 1$, but slowly. At the generator's $\rho \approx 0.981$ the finite-q estimator still reads 0.856 at $q = 0.95$ (closed form 0.838), and only drifts to about 0.74 by $q = 0.999$ and 0.70 by $q = 0.9999$. If your risk model is Gaussian-copula shaped and you feed it Pearson correlations, you are asserting away joint tail risk by construction, just with a delay.
+This is where the Gaussian copula earns its infamy. For any correlation $\rho < 1$, the Gaussian copula has zero tail dependence in the limit, but the co-exceedance probability vanishes slowly as $q \to 1$. The linear column is generated from a Gaussian copula at $\rho \approx 0.9806$. Its finite-q estimator reads 0.856 at $q = 0.95$ against a closed form of 0.838. That gap narrows only gradually: about 0.74 by $q = 0.999$ and 0.70 by $q = 0.9999$. If your risk model is Gaussian-copula shaped and you feed it Pearson correlations, you are asserting away joint tail risk by construction, just with a delay.
 
-The tail_t column is the counterexample: a $t$-copula with $\nu = 3, \rho = 0.5$ has positive asymptotic tail dependence, $\lambda_U = 2T_4(-\sqrt{4/3}) \approx 0.31$, and the empirical column holds at 0.376. And the heavy_tail column is a warning about reading too much into a name: it is just $X$ plus independent $t_3$ noise, which is asymptotically tail independent. Larger simulations ($n = 20$M) show its $\lambda(q)$ falling from 0.487 at $q = 0.95$ to 0.011 at $q = 0.999$ and below 0.001 at $q = 0.9999$, so it is not a tail-dependent copula. Always check the generator, not the label.
+The tail_t column is the counterexample. It's generated from a $t$-copula with $\nu = 3, \rho = 0.5$, which has positive asymptotic tail dependence: $\lambda_U = 2T_4(-\sqrt{4/3}) \approx 0.31$. The empirical estimate at $q = 0.95$ reads 0.376, higher than the asymptotic limit because finite-q estimates overstate $\lambda_U$ and converge to it slowly, the same effect visible in the linear column above.
+
+The heavy_tail column is a warning about reading too much into a name. It's just $X$ plus independent $t_3$ noise, which is asymptotically tail independent despite the heavy-tailed marginal. Larger simulations ($n = 20$M) show its $\lambda(q)$ decaying with $q$: 0.487 at $q = 0.95$, 0.011 at $q = 0.999$, below 0.001 at $q = 0.9999$. The 0.500 in the benchmark table is the $n = 10{,}000$ estimate at $q = 0.95$ only, consistent with the larger simulation's first point; the decay only shows up once $q$ moves well past 0.95. Always check the generator, not the label.
 
 ## When to use what
 
