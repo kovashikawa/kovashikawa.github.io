@@ -37,7 +37,7 @@ Pascal has a line for this. In a note headed "Langage" in the *Pensées* (Brunsc
 
 ## Why fluent and wrong is the default failure
 
-Gary Illyes [put it plainly in 2024](https://www.linkedin.com/posts/garyillyes_answering-something-from-my-inbox-here-based-activity-7223526102072258561-huR7): language models produce "relevant and coherent responses. But not necessarily factually correct ones." Recent research explains part of why.
+It isn't a quirk of one model. Recent research points to how models are trained and scored.
 
 - **Guessing is rewarded.** Kalai, Nachum, Vempala and Zhang argue in [Why Language Models Hallucinate](https://arxiv.org/abs/2509.04664) (2025) that "the training and evaluation procedures reward guessing over acknowledging uncertainty". OpenAI's [write-up](https://openai.com/index/why-language-models-hallucinate/) frames it as a multiple-choice exam, where a wild guess might score and a blank answer never does.
 - **Convincing is rewarded.** Sharma et al. at Anthropic found in [Towards Understanding Sycophancy in Language Models](https://arxiv.org/abs/2310.13548) that "both humans and preference models (PMs) prefer convincingly-written sycophantic responses over correct ones a non-negligible fraction of the time." In April 2025 OpenAI [rolled back a GPT-4o update](https://openai.com/index/sycophancy-in-gpt-4o/) that had become too agreeable. One of the changes combined in it was a new reward signal from users' thumbs-up and thumbs-down ratings, and OpenAI [wrote](https://openai.com/index/expanding-on-sycophancy/) that "user feedback in particular can sometimes favor more agreeable responses."
