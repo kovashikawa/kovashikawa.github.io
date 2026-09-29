@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""generate_og — per-post Open Graph card generator for kovashikawa.github.io.
+"""generate_og: per-post Open Graph card generator for kovashikawa.com.
 
 Renders a 1200x630 social preview card from a post's front matter, in the
 blog's visual language: graph-paper grid over #E8E8E8, Inter 900 title,
@@ -168,7 +168,7 @@ def build_html(title, date_str):
 </head>
 <body>
   <div class="content">
-    <div class="domain">kovashikawa.github.io</div>
+    <div class="domain">kovashikawa.com</div>
     <div class="title">{title}</div>
     <div class="rule"></div>
     {date_html}

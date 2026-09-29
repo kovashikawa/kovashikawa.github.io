@@ -1,6 +1,7 @@
 # Rafael Kovashikawa — Personal Site
 
-This repository contains the source for **[kovashikawa.github.io](https://kovashikawa.github.io)**, my portfolio and blog.  
+This repository contains the source for **[kovashikawa.com](https://kovashikawa.com)**, my portfolio and blog.
+
 It runs on the nice **[Minimal Mistakes](https://github.com/mmistakes/minimal-mistakes)** Jekyll theme with custom tweaks.
 
 ## What’s inside
@@ -26,7 +27,7 @@ bundle exec jekyll serve
 
 ## Deployment
 
-Pushing to **`main`** triggers an automatic GitHub Pages build and deploy.
+Approved changes merged into **`master`** trigger a GitHub Pages deploy. Work on **`development`** does not deploy the site.
 
 ## License
 

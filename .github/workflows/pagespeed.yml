@@ -65,7 +65,7 @@ jobs:
           # NO_FCP — a budget breach (exit 1 but no runtime error) fails fast.
           ok=0
           for i in 1 2 3; do
-            out="$(npx --yes lighthouse@latest https://kovashikawa.github.io/ \
+            out="$(npx --yes lighthouse@latest https://kovashikawa.com/ \
               $PRESET \
               --output=json,html \
               --output-path=reports/$STRATEGY \
@@ -97,7 +97,7 @@ jobs:
           STRATEGY: ${{ matrix.strategy }}
         run: |
           cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
-          ## Lighthouse [${{ matrix.strategy }}] https://kovashikawa.github.io/
+          ## Lighthouse [${{ matrix.strategy }}] https://kovashikawa.com/
 
           | Category | Score |
           |---|---|
