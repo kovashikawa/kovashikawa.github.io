@@ -680,5 +680,36 @@
         }
       }
     }
+  },
+  {
+    "ts": "2026-09-29T12:39:22Z",
+    "runs": {
+      "desktop": {
+        "scores": {
+          "performance": 0,
+          "accessibility": 0,
+          "best-practices": 0,
+          "seo": 0
+        },
+        "metrics": {
+          "largest-contentful-paint": null,
+          "total-blocking-time": null,
+          "cumulative-layout-shift": null
+        }
+      },
+      "mobile": {
+        "scores": {
+          "performance": 0,
+          "accessibility": 0,
+          "best-practices": 0,
+          "seo": 0
+        },
+        "metrics": {
+          "largest-contentful-paint": null,
+          "total-blocking-time": null,
+          "cumulative-layout-shift": null
+        }
+      }
+    }
   }
 ]
