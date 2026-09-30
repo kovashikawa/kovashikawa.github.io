@@ -1,7 +1,7 @@
 ---
 layout: single
 title: "When AI Lies About Your Search Data"
-date: 2026-09-30 16:00:00 +0200
+date: 2026-09-30 13:52:00 +0200
 excerpt: "The long version of my Search Central Live Deep Dive talk: why the dangerous AI error is the fluent one, the three guardrails we run in production to make numbers prove where they came from, and the gap we haven't closed."
 description: "How FUSE's Emet pipeline checks AI answers about search data: declared receipts, a deterministic verifier whose tolerance comes from how a number was written, and a judge from a different model provider, with the research behind each choice."
 tags: [AI, LLM, hallucination, verification, search-console, agents]
