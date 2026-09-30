@@ -2,7 +2,7 @@
 layout: single
 title: "When AI Lies About Your Search Data"
 date: 2026-09-30 13:52:00 +0200
-excerpt: "The long version of my Search Central Live Deep Dive talk: why the dangerous AI error is the fluent one, the three guardrails we run in production to make numbers prove where they came from, and the gap we haven't closed."
+excerpt: "The long version of my Search Central Live Deep Dive talk: why the dangerous AI error is the fluent one, and the three guardrails we run in production to make numbers prove where they came from."
 description: "How FUSE's Emet pipeline checks AI answers about search data: declared receipts, a deterministic verifier whose tolerance comes from how a number was written, and a judge from a different model provider, with the research behind each choice."
 tags: [AI, LLM, hallucination, verification, search-console, agents]
 categories: [ai]
@@ -15,7 +15,7 @@ mathjax: true
 
 On September 30 I gave a seven-minute lightning talk at Google Search Central Live Deep Dive Europe 2026 in Barcelona. Seven minutes leaves room for the argument, but not for the papers, the edge cases, or more than a sentence on the time our own agent broke. This post is the long version.
 
-"Lie" is the talk's title and my shorthand. A model has no intent, but the reader is misled all the same. The core problem is simple to state: a language model gives you a plausible number, not necessarily a correct one, and the screen looks identical either way. At FUSE we stopped asking the model to be right and started asking each number to show where it came from.
+"Lie" is the talk's title and my shorthand. A model has no intent, but the reader is misled all the same. The core problem is simple to state: a language model gives you a plausible number, not necessarily a correct one, and the screen looks identical either way. At FUSE we don't take the model's word for a number. We ask each number to show where it came from.
 
 ## A plausible sentence with the wrong verb
 
@@ -31,7 +31,7 @@ Two caveats, because Search Console people will raise them.
 
 First, a worse average position isn't automatically bad news. Position is only recorded when there's an impression, so a site that starts appearing for new, lower-ranking queries can see its average position number go up while it gains visibility. Google's help calls position ["a complex metric that can be misleading if you don't understand the subtleties"](https://support.google.com/webmasters/answer/7042828) and [recommends](https://support.google.com/webmasters/answer/17010961) focusing more on trends in impressions and clicks. The error in the example is the direction word, not a business judgment.
 
-Second, I have no data showing that frontier models make this exact mistake often. I'd expect a strong model on a high reasoning setting to catch it most of the time, but I haven't measured that either. The interesting part isn't the frequency. It's what the failure looks like when it happens: fluent, confident, and silent.
+Second, this isn't a claim that frontier models make this exact mistake often. A strong model on a high reasoning setting may well catch it. The interesting part isn't the frequency. It's what the failure looks like when it happens: fluent, confident, and silent.
 
 Pascal has a line for this. In a note headed "Langage" in the *Pensées* (Brunschvicg 27, Lafuma 559), he compares writers who force words into neat antitheses to builders who add false windows for symmetry. In Rudolf Arnheim's rendering in *Entropy and Art*: "their rule is not to speak right but to make right figures." Pascal meant figures of speech. The English word also means numbers, a sense he never intended, and read that way the line describes the example exactly. The figures, 8.2 and 9.1, were right. The speaking was not. "Improved" is a false window: it's there for the shape of the sentence, with nothing behind it. Arnheim's own gloss, just before the quote, is the best one-line summary of the problem I know: "The form may be quite orderly and yet misleading, because its structure does not correspond to the order it stands for."
 
@@ -74,15 +74,15 @@ DO NOT add any of these - they are handled automatically by the system:
 - CTR calculations or conversions
 ```
 
-The same prompt promised that the system would automatically "generate a detailed summary with insights" afterwards. In our postmortem's words, only the fetch step was implemented. The harder questions also went down a path that no longer loaded the field reference or the worked examples. The rows it fetched were real, but the answers built on them read as if they'd been invented.
+The same prompt assumed a later step would "generate a detailed summary with insights". That step wasn't there. The harder questions also went down a path that no longer loaded the field reference or the worked examples. The rows it fetched were real. The analysis built on them had lost the context it needed.
 
-The first fix was more code, a separate analyze step, and it crashed in production. The fix that worked was mostly not code: we let the script compute again and put the context back, the field reference and 13 worked examples where there had been 8. The postmortem's lesson fit on one line: "The 'brains' of an AI agent are in its context, not its code." One detail still makes me smile. The January prompt held up `df['ctr_pct'] = df['ctr'] * 100` as an example of an over-engineered script. Today the same line is the worked example under rule one of the agent's Search Console rules, which says CTR is a fraction, not a percentage.
+The first fix was more code, a separate analyze step, and it didn't hold up. The fix that worked was mostly not code: we let the script compute again and put the context back, the field reference and more worked examples. The lesson fits on one line: the brains of an AI agent are in its context, not its code. One detail is telling. The January prompt held up `df['ctr_pct'] = df['ctr'] * 100` as an example of an over-engineered script. Today the same line is the worked example under rule one of the agent's Search Console rules, which says CTR is a fraction, not a percentage.
 
-Restoring the context restored the quality of the analysis. It didn't make the output trustworthy on its own, so we built a system around the model.
+Restoring the context restored the quality of the analysis. Context alone doesn't make output verifiable, so we built a system around the model.
 
 ## Emet: one rule, three guardrails
 
-Emet, from the Hebrew word for truth, went live on FUSE's production traffic on August 31, 2026. It rests on one rule: a model never grades its own work. The work splits into three guardrails.
+Emet, from the Hebrew word for truth, runs on FUSE's production traffic. It rests on one rule: a model never grades its own work. The work splits into three guardrails.
 
 ### 1. Declare: every number gets a receipt
 
@@ -95,36 +95,33 @@ ctr_rel_change    +14.7%    (0.0242 - 0.0211) / 0.0211 * 100
 
 The second line is also a small lesson in wording. CTR moving from 2.11 to 2.42 percent is a 14.7 percent relative change and a 0.31 point absolute change, and an answer that says "CTR rose 14.7 percent" should say which one it means.
 
-A figure without a receipt entry never reaches the deterministic check. That's the first limit, and I come back to it below.
-
 ### 2. Verify: plain code, no model
 
 Every figure the model says it read from a data tool is checked against the tool output saved when the answer was written. Not the model's word, and not a fresh query: sources move (Search Console's newest data [can be preliminary](https://support.google.com/webmasters/answer/7576553)), and the question here is whether the model was faithful to its evidence.
 
 The design question is how close counts as a match. A flat percentage tolerance scales with the number: 5 percent of 10,000 clicks is 500 clicks of slack. Emet doesn't use one. The tolerance comes from how the number was written. "12,480" has to match to the click, while "12K" only claims thousands, so anything that rounds to 12K can match. A figure written too vaguely to prove much doesn't get a checkmark for landing somewhere near the truth. It's the same rule metrologists use for a digital reading ([GUM](https://www.iso.org/sites/JCGM/GUM/JCGM100/C045315e-html/C045315e_FILES/MAIN_C045315e/AF_e.html), F.2.2.1) and financial reporting uses for rounded facts ([XBRL Calculations 1.1](https://www.xbrl.org/Specification/calculation-1.1/REC-2023-02-22/calculation-1.1-REC-2023-02-22.html), section 5.2.3).
 
-It also never guesses units. Search Console's API returns CTR as a fraction from 0 to 1 while the report shows a percent, and a comparator can't tell a fraction from a hundredfold error unless the unit is written down. So the receipt is meant to carry the source's own figure, and a mismatch is never quietly converted into a match.
+It also never guesses units. Search Console's API returns CTR as a fraction from 0 to 1 while the report shows a percent, and a comparator can't tell a fraction from a hundredfold error unless the unit is written down. So a mismatch is never quietly converted into a match.
 
 No match, no checkmark.
 
 ### 3. Judge, then annotate
 
-The plain-code check covers numbers. Much of what misleads is in the words around them: directions, rankings, comparisons. For those, one model extracts the factual claims the answer rests on (values, directions, rankings, counts and dates), and a second model, chosen from a different provider than the one that wrote the answer, grades each claim against the saved rows as supported, imprecise, or unsupported. A wrong direction makes a claim unsupported. The judge's rules don't say which way position runs, though. That part depends on the grading model knowing that 1 is the top, which is the January lesson again, and the lines at the end of this post are the cheapest fix.
+The plain-code check covers numbers. Much of what misleads is in the words around them: directions, rankings, comparisons. For those, one model extracts the factual claims the answer rests on (values, directions, rankings, counts and dates), and a second model, chosen from a different provider than the one that wrote the answer, grades each claim against the saved rows as supported, imprecise, or unsupported. A wrong direction makes a claim unsupported.
 
-The different provider isn't decoration. LLM judges [recognize and favor their own generations](https://arxiv.org/abs/2404.13076), and [a panel of models from different families](https://arxiv.org/abs/2404.18796) showed less intra-model bias than a single large judge. We run one grader, not a panel. What we take from both papers is to keep it out of the writer's family, and on the normal path it comes from a different provider than the writer.
+The different provider isn't decoration. LLM judges [recognize and favor their own generations](https://arxiv.org/abs/2404.13076), and [a panel of models from different families](https://arxiv.org/abs/2404.18796) showed less intra-model bias than a single large judge. We run one grader, not a panel. What we take from both papers is to keep it out of the writer's family.
 
-Because the grader is itself a language model, its verdicts are advisory. An unsupported claim gets a proposed correction in the verification panel under the answer, with the original struck through, the corrected text, and the reason, one click away. The answer text itself is never altered. All of this runs in the background once the answer is on screen.
+Because the grader is itself a language model, it proposes rather than overwrites: an unsupported claim gets a correction in the verification panel under the answer, with the original struck through, the corrected text, and the reason, one click away. The answer text itself is never altered. It runs in the background, so the answer isn't held up while it's checked.
 
 ## What it doesn't do
 
 - **It checks faithfulness to the rows, not the truth of the rows.** Emet wouldn't have caught the ONS error, because the input itself was wrong. That's a different tier of problem.
 - **Corrections are proposals.** They sit under the answer, and the answer is never rewritten.
-- **Derived math is read, not recomputed.** The formula travels with the answer, and the judge reads the working.
-- **The deterministic check only sees what the model declares.** A figure left off the receipt never reaches the plain-code comparison. That one isn't a design choice. It's the gap we're working on next, and for now we measure it offline.
+- **A number the model never declares never reaches the deterministic check.** Closing that gap is next.
 
 ## The part you can steal
 
-You don't need our pipeline to get most of the benefit. Metric semantics are context, not code, and a model can only use the context you give it. For Search Console, four lines cover the most common traps:
+Part of this works without any pipeline. Metric semantics are context, not code, and a model can only use the context you give it. For Search Console, four lines cover the most common traps:
 
 ```
 position  1 is the top. A bigger number is further down.
@@ -145,7 +142,7 @@ One habit needs no setup at all: request the source rows for each figure and com
 
 In a journal entry from 1843, Kierkegaard grants that life must be understood backward but warns that it must be lived forward. Generation is the forward half. A model writes one token after another, and although the rows are in its context the whole time, nothing in that process goes back to test a sentence against them once it's written. Verification has to supply the other half, tracing each claim back to the rows it rests on.
 
-Building this hasn't made me trust the model more. It has made me insist that every figure it declares can be traced to a row, and that the reader can see what was checked.
+Building this has moved my trust from the model to the evidence. It has made me insist that every figure it declares can be traced to a row, and that the reader can see what was checked.
 
 ## Further reading
 
