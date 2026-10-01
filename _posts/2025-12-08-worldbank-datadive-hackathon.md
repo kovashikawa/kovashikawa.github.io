@@ -15,6 +15,8 @@ tags:
   - gradio
   - economics
 excerpt: "Our team built an interactive dashboard analyzing global AI job market trends and skills gaps across 66 countries using Stanford HAI data and World Bank labor indicators."
+header:
+  og_image: /assets/images/og/worldbank-datadive-hackathon.jpg
 ---
 
 # Building JobsLens AI at World Bank DataDive 2025

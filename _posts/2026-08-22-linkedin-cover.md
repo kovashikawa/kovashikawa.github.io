@@ -11,6 +11,8 @@ tags:
   - visualization
   - brand
 mathjax: true
+header:
+  og_image: /assets/images/og/linkedin-cover.jpg
 ---
 
 My LinkedIn cover is one line of math and one curve:

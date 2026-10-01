@@ -6,6 +6,8 @@ author: rafael
 categories: [swe]
 tags: [spotify, youtube, api, python]
 toc: true       
+header:
+  og_image: /assets/images/og/spotify2youtube-is-back.jpg
 ---
 
 Great news! After receiving an extended YouTube API quota, my [Spotify2YouTube](https://github.com/kovashikawa/spotify2youtube) project is officially back on track!

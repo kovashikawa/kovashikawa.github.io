@@ -9,6 +9,8 @@ tags:
   - verification
   - identity
   - agents
+header:
+  og_image: /assets/images/og/stack-overflow-proof-of-authorship.jpg
 ---
 
 Stack Overflow brought Developer Story back on September 10, four years after the

@@ -11,6 +11,8 @@ toc: true
 toc_sticky: true
 read_time: true
 mathjax: true
+header:
+  og_image: /assets/images/og/when-ai-lies-about-your-search-data.jpg
 ---
 
 On September 30 I gave a seven-minute lightning talk at Google Search Central Live Deep Dive Europe 2026 in Barcelona. Seven minutes leaves room for the argument, but not for the papers, the edge cases, or more than a sentence on the time our own agent broke. This post is the long version.

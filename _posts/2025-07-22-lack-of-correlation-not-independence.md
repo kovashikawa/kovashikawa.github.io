@@ -8,6 +8,8 @@ tags: [correlation, independence, statistics, python]
 canonical_url: https://medium.com/@rafaelkovashikawa/why-the-lack-of-correlation-doesnt-mean-independence-9506a9eec376
 toc: true
 mathjax: true
+header:
+  og_image: /assets/images/og/lack-of-correlation-not-independence.jpg
 ---
 
 > Zero correlation on its own does not prove independence; it only rules out a linear relationship. Dependence can hide in nonlinear patterns such as Y = \|X\|, where Pearson's rho equals zero yet X fully determines Y.
