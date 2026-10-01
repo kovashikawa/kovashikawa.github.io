@@ -10,7 +10,7 @@ toc: true
 toc_sticky: true
 read_time: true
 header:
-  og_image: /assets/images/og/mcp-grew-up-fast.jpg
+  og_image: /assets/images/og/mcp-grew-up-fast-v2.jpg
 ---
 
 ## "Why should you ever log into Salesforce again?"

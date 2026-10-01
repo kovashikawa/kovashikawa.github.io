@@ -18,6 +18,8 @@ classes: wide
 toc: true
 toc_label: "On this page"
 toc_icon: "brain"
+header:
+  og_image: /assets/images/og/distilling-bls-agent.jpg
 ---
 
 ## The idea

@@ -6,6 +6,8 @@ author: rafael
 categories: [ai]
 tags: [philosophy, chemistry]
 toc: true       
+header:
+  og_image: /assets/images/og/architecs-anthill-ai.jpg
 ---
 
 The 2025 Nobel Prize in Chemistry has been awarded to Susumu Kitagawa, Richard Robson, and Omar M. Yaghi for their creation of an entirely new class of materials: **metal-organic frameworks (MOFs)** [[1]](https://www.nobelprize.org/prizes/chemistry/2025/popular-information/).

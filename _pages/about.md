@@ -6,6 +6,8 @@ no_metadata: true              # drop the details/date/share sidebar; socials go
 author_profile: true           # shows the (now-larger) avatar + socials
 toc:  false                    # turn on if the page gets long
 description: "Rafael Kovashikawa — Data Scientist & AI Engineer at FUSE. Previously Head of Data at GYRA+, Macro Data Scientist at JGP. MIT MicroMasters in Statistics & Data Science."
+header:
+  og_image: /assets/images/og/about.jpg
 ---
 
 <!-- Kick-off blurb -->
