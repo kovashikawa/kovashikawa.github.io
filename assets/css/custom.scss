@@ -301,9 +301,12 @@ body.lc .lc-toggle {
   color: #555;
 }
 
-/* Footer breathing room: separate the icon row from the copyright line.
-   Baseline grid (8px): 32px below the icons to the copyright, 48px above
-   the follow block, 48px below the copyright to the page edge. */
+/* Keep the follow block close to the page content without crowding the
+   icon row or the copyright line. */
+.page__footer {
+  margin-top: 16px;
+}
+
 .page__footer-follow {
   margin-bottom: 32px;
 }
@@ -314,8 +317,56 @@ body.lc .lc-toggle {
 }
 
 .page__footer footer {
-  padding-top: 48px;
+  margin-top: 0;
+  padding-top: 24px;
   padding-bottom: 48px;
+}
+
+@media (min-width: 1024px) {
+  /* Pages without the metadata sidebar should not retain empty sidebar slots. */
+  #main.main--no-metadata .page {
+    display: flow-root;
+    float: none;
+    width: 100%;
+    max-width: 760px;
+    padding-inline-end: 0;
+    margin-inline: auto;
+  }
+}
+
+@media (min-width: 1100px) {
+  /* Share the masthead's frame across posts, archives, and the footer. */
+  #main {
+    max-width: 1200px;
+    padding-inline: 24px;
+  }
+
+  #main > .sidebar {
+    width: 200px;
+  }
+
+  #main > .page,
+  #main > .archive {
+    width: calc(100% - 220px);
+    padding-inline-end: 200px;
+  }
+
+  #main.main--no-metadata .page {
+    width: 100%;
+    padding-inline-end: 0;
+  }
+
+  .sidebar__right {
+    width: 200px;
+    margin-inline-end: -200px;
+  }
+}
+
+@media (min-width: 768px) {
+  .page__footer footer {
+    max-width: 1200px;
+    padding-inline: 24px;
+  }
 }
 
 /* Cards / Teasers */
@@ -362,7 +413,7 @@ body.lc .lc-toggle {
 .home-quiet {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 64px 24px 90px;
+  padding: 64px 24px 32px;
   font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 18px;
   color: #1E1E1E;
@@ -386,6 +437,7 @@ body.lc .lc-toggle {
 
 .home-quiet__list {
   list-style: none;
+  max-width: 800px;
   margin: 0;
   padding: 0;
 }
@@ -440,7 +492,7 @@ body.lc .lc-toggle {
 }
 
 .home-quiet__all {
-  margin-top: 48px;
+  margin: 32px 0 0;
   font-size: 16px;
 }
 

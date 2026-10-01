@@ -18,7 +18,7 @@ layout: default
 {% endunless %}
 {% endif %}
 
-<div id="main" role="main">
+<div id="main" role="main"{% if page.no_metadata %} class="main--no-metadata"{% endif %}>
   {% if site.minimal_mistakes_skin == 'stripe' %}
   {% include stripe-sidebar.html %}
   {% else %}
