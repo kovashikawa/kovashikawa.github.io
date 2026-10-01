@@ -835,5 +835,36 @@
         }
       }
     }
+  },
+  {
+    "ts": "2026-10-01T10:22:04Z",
+    "runs": {
+      "desktop": {
+        "scores": {
+          "performance": 78,
+          "accessibility": 98,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "largest-contentful-paint": "2.1\u00a0s",
+          "total-blocking-time": "0\u00a0ms",
+          "cumulative-layout-shift": "0"
+        }
+      },
+      "mobile": {
+        "scores": {
+          "performance": 96,
+          "accessibility": 98,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "largest-contentful-paint": "2.1\u00a0s",
+          "total-blocking-time": "110\u00a0ms",
+          "cumulative-layout-shift": "0"
+        }
+      }
+    }
   }
 ]
