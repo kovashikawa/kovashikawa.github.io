@@ -6,4 +6,6 @@ permalink: /projects/volatility-smile/
 date: 2025-07-25
 excerpt: "an interactive dashboard for visualizing the volatility smile, calculating option prices with black-scholes, and exploring implied volatility across different markets."
 classes: wide
+header:
+  og_image: /assets/images/og/volatility-smile.jpg
 ---

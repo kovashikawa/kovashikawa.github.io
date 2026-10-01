@@ -7,6 +7,8 @@ categories: [front]
 tags: [dogs, benito, portfolio, favicon]
 share: true
 toc: true
+header:
+  og_image: /assets/images/og/favicon-how-to.jpg
 ---
 
 Adding a favicon to your Jekyll site is a simple way to personalize your website and make it easily recognizable in browser tabs and bookmarks.

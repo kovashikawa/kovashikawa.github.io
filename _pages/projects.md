@@ -5,4 +5,6 @@ permalink: /projects/
 collection: projects 
 entries_layout: list 
 author_profile: true 
+header:
+  og_image: /assets/images/og/projects.jpg
 ---

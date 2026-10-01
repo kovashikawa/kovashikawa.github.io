@@ -9,6 +9,8 @@ tags:
   - css
   - typography
   - minimalism
+header:
+  og_image: /assets/images/og/lowercase-is-a-mood.jpg
 ---
 
 The whole site is one click away from lowercase. There is a bare `a/A` button

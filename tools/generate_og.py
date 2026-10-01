@@ -24,6 +24,7 @@ venv next to this script on first run (installs Pillow).
 
 import argparse
 import datetime
+import json
 import pathlib
 import re
 import subprocess
@@ -65,16 +66,21 @@ def ensure_pillow():
 def parse_front_matter(path):
     """Minimal YAML front matter reader: title, date, excerpt."""
     text = path.read_text(encoding="utf-8")
-    m = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
+    m = re.match(r"^---\n(.*?)\n---(?:\n|$)", text, re.DOTALL)
     if not m:
         raise SystemExit(f"no front matter in {path}")
     fm = m.group(1)
 
     def grab(key):
-        mm = re.search(rf'^{key}:\s*["\']?(.+?)["\']?\s*$', fm, re.MULTILINE)
-        return mm.group(1).strip() if mm else None
+        mm = re.search(rf"^{key}:[ \t]*(.*)$", fm, re.MULTILINE)
+        if not mm:
+            return None
+        value = mm.group(1).strip()
+        if value.startswith('"'):
+            return json.loads(value).strip()
+        return value.strip("'").strip()
 
-    title = grab("title") or path.stem
+    title = (grab("title") or path.stem).replace("'", "\u2019")
     date_raw = grab("date") or ""
     dmatch = re.match(r"(\d{4})-(\d{2})-(\d{2})", date_raw)
     date_str = ""

@@ -11,6 +11,8 @@ toc: true
 toc_sticky: true
 read_time: true
 mathjax: true
+header:
+  og_image: /assets/images/og/beyond-pearsons-rho.jpg
 ---
 
 Pearson's correlation is zero for plenty of pairs that are fully dependent. The canonical case: $X \sim \mathcal{N}(0,1)$, $Y = \lvert X \rvert$. $\rho$ reports about 0, but $X$ determines $Y$ exactly. The fix isn't "use a nonlinear measure" in the abstract, it's knowing which measure catches which failure mode, and what each one actually guarantees.
