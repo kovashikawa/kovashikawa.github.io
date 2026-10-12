@@ -323,3 +323,8 @@ defaults:
       comments: # true
       share: false
       related: true
+  # Keep build artifacts out of sitemap.xml
+  - scope:
+      path: "experiments"
+    values:
+      sitemap: false
