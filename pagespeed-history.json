@@ -928,5 +928,23 @@
         }
       }
     }
+  },
+  {
+    "ts": "2026-10-01T13:01:53Z",
+    "runs": {
+      "mobile": {
+        "scores": {
+          "performance": 97,
+          "accessibility": 98,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "largest-contentful-paint": "2.1\u00a0s",
+          "total-blocking-time": "40\u00a0ms",
+          "cumulative-layout-shift": "0"
+        }
+      }
+    }
   }
 ]
