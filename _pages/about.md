@@ -5,7 +5,7 @@ permalink: /about/             # matches the nav link
 no_metadata: true              # drop the details/date/share sidebar; socials go at top instead
 author_profile: true           # shows the (now-larger) avatar + socials
 toc:  false                    # turn on if the page gets long
-description: "Rafael Kovashikawa — Data Scientist & AI Engineer at FUSE. Previously Head of Data at GYRA+, Macro Data Scientist at JGP. MIT MicroMasters in Statistics & Data Science."
+description: "Rafael Kovashikawa, Data Scientist & AI Engineer at FUSE. I build LLM systems and the checks that keep their answers honest."
 header:
   og_image: /assets/images/og/about.jpg
 ---
@@ -14,9 +14,7 @@ header:
 
 {% include social-icons.html %}
 
-I’m Rafael Kovashikawa, an economist-turned-data-professional with a soft spot for macro signals, efficient pipelines and making cool things with LLMs.
-
-Always curious about _tech, data and dogs_.
+I'm Rafael Kovashikawa. I build LLM systems and the checks that keep their answers honest. At Fuse I work on agents and MCP servers for marketing analytics, and I built Emet, a pipeline that verifies what a model says against the data it was given. Before that I did macro and credit data science in Brazilian finance. I trained as an economist at FGV and live in Washington, DC.
 
 I will use this space to post about things that I've found interesting along the journey and, of course, my projects.
 
@@ -24,18 +22,19 @@ I will use this space to post about things that I've found interesting along the
 * **Data Science & Modeling** · Develop and productionize time‑series (ARIMA, VaR), tree‑based and econometric models for CPI forecasts, credit risk and trading signals.
 * **Data Engineering** · Build and orchestrate ETL on Airflow + Kubernetes.
 * **ML in Production** · Deploy credit-risk and anomaly-detection models (FastAPI, Docker).
-* **LLMs** · RAG pipeline, LangChain + vector DBs.
+* **LLM Systems** · MCP servers, agent orchestration, verification of model output, RAG pipelines.
 
-### Tech Stack
-**Programming:** Python, R, MongoDB, SQL, JavaScript, TypeScript, CSS, HTML, MCP (Model Context Protocol), Pydantic AI, Django  
-**Data Viz & Analysis:** Plotly, Matplotlib, Tableau, Excel, Bloomberg Terminal  
-**Cloud & Automation:** AWS, Redis (Pub/Sub), Apache Airflow, GitHub Actions (CI/CD), Google Cloud Platform  
-**ML & AI:** scikit‑learn, XGBoost, LightGBM, Econometrics (Statsmodels), LLMs, NLP, MCP Servers, Context Engineering, AI Agent Development  
+### Tech Stack
+**Programming:** Python, TypeScript, JavaScript, SQL, R  
+**LLM & Agents:** MCP (Model Context Protocol), Pydantic AI, LangChain, context engineering, evals  
+**Data & Cloud:** Airflow, FastAPI, MongoDB, Redis, AWS, Google Cloud Platform, GitHub Actions  
+**ML & Statistics:** scikit-learn, XGBoost, LightGBM, Statsmodels, NLP  
 **Languages:** Native Portuguese; fluent English and Spanish
 
 ### Professional Experience
-**[Fuse](https://fuse.is/) — AI Data Strategy for Marketers — Data Scientist & AI Engineer**  
+**[Fuse](https://fuse.is/) (AI Data Strategy for Marketers), Data Scientist & AI Engineer**  
 _Jan 2026 – Present_  
+- Built Emet, a verification pipeline for LLM answers. It matches the numbers in an answer against the JSON returned by the tools that produced it, then runs semantic and repair agents on claims that cannot be matched numerically. Each answer gets a verdict of verified, partial or failed. In production since August 2026.
 - Architected the enterprise **Salesforce integration** as an outbound hosted-MCP client: OAuth 2.0 + PKCE authorization flow, cross-tenant refresh-token assertions, and an untrusted-content envelope guarding against prompt injection from CRM record text. Shipped as a distributable 2GP managed package.
 - Built 6 production MCP servers (Klaviyo, SEO, Salesforce, TikTok Ads, LinkedIn Ads, Exa) exposing 30+ analytics tools to LLM agents.
 - Designed a multi-agent ReAct orchestration layer for three research agents: an 8-action loop gated by a complexity classifier, adaptive retry across 9 error classes, and per-datasource circuit breakers.
@@ -44,53 +43,47 @@ _Jan 2026 – Present_
 - Instrumented OpenTelemetry tracing and per-tool credit metering, turning LLM spend into a billable, auditable unit.
 
 
-**[GYRA+](https://gyramais.com.br/) — Head of Data**  
+**[GYRA+](https://gyramais.com.br/), Head of Data**  
 _Aug 2024 – Jan 2025 · Brazil_  
 - Led the strategic re‑architecture of data models and ETL/ELT pipelines (Python, Airflow, AWS), cutting AWS costs for the data team by **50 %**.  
 - Built a high‑performance simulation API (FastAPI, Polars, MongoDB) deployed on Kubernetes, enabling rapid credit‑portfolio stress testing.  
 - Delivered a production‑ready RAG pipeline (LangChain, MongoDB) that extracts and structures key information from legal documents.
 
-**[JGP Asset Management](https://www.jgp.com.br/en/home/) — Macro Data Scientist**  
+**[JGP Asset Management](https://www.jgp.com.br/en/home/), Macro Data Scientist**  
 _Jan 2021 – Jul 2024 · Brazil_  
 - Designed LATAM CPI forecasting models and global macro dashboards that out‑sped Bloomberg.  
 - Engineered resilient pipelines (Python, SQL, Airflow) to ingest and curate macro datasets for trading research.  
 - Developed NLP models to score Brazilian Central Bank communications and integrate sentiment into trading strategies.  
 - Automated data workflows, eliminating manual steps and improving data timeliness.
 
-**[Órama (acquired by BTG Pactual)](https://orama.com.br/)— Data Analytics**  
+**[Órama](https://orama.com.br/) (acquired by BTG Pactual), Data Analytics**  
 _Sep 2019 – Aug 2020_  
 - Mined client data with Python and SQL, applying NLP and k‑means clustering to improve investment recommendations.
 
-**[IBM](https://www.ibm.com/) — Data Operations**  
+**[IBM](https://www.ibm.com/), Data Operations**  
 _Apr 2019 – Aug 2019_
 - Automated ticket‑management workflows with Python, Selenium, and SQL, eliminating +90% of manual effort
 
 ### Education
-**[MIT — Data Science & Statistics MicroMasters (edX)](https://micromasters.mit.edu/ds/)**  
+**[MIT, Data Science & Statistics MicroMasters (edX)](https://micromasters.mit.edu/ds/)**  
 _May 2024 – Feb 2026_
 
-**[Fundação Getúlio Vargas (EPGE)](https://epge.fgv.br/en) — B.Sc. Economics**  
+**[Fundação Getúlio Vargas (EPGE)](https://epge.fgv.br/en), B.Sc. Economics**  
 _2017 – 2021_
 
 ### Awards
 
 | Award | What I Built |
 |-------|-------------|
-| 🏆 **Google Cloud AI Hackathon** (Dec 2025) | Built MedAnnotator, a multimodal medical annotation system. [[Post](/projects/ai/google-cloud-ai-hackathon-winner/)] [[Code](https://github.com/ODSCGoogleHackhathon/googol)] |
-| 🏆 **Big Data Hackathon** (Sep 2021) | XP Inc. & Microsoft Azure — built a 14 GB big‑data application on Azure. |
-| 🏆 **Cryptocurrency Datathon** (Sep 2020) | FGV & Ripple — ML strategies for Bitcoin trading with NLP on news and Reddit. |
+| **Google Cloud AI Hackathon** (Dec 2025) | Built MedAnnotator, a multimodal medical annotation system. [[Post](/projects/ai/google-cloud-ai-hackathon-winner/)] [[Code](https://github.com/ODSCGoogleHackhathon/googol)] |
+| **Big Data Hackathon** (Sep 2021) | XP Inc. & Microsoft Azure. Built a 14 GB big‑data application on Azure. |
+| **Cryptocurrency Datathon** (Sep 2020) | FGV & Ripple. ML strategies for Bitcoin trading with NLP on news and Reddit. |
 
 ----
 
 ### Outside the terminal
 
-I was born and raised in Rio de Janeiro, Brazil 🇧🇷
-
-Now I live in Washington, DC 🇺🇸
-
-My favorite things are:
-
-  🦮 dogs · 🏃 running · ⚽ Fluminense fan
+I was born and raised in Rio de Janeiro and now live in Washington, DC. I like dogs, running, and Fluminense.
 <div style="display: flex; gap: 10px;">
   <img src="/assets/images/benito_sunset.jpeg" alt="Benito at sunset" style="width: 48%; border-radius: 8px;" />
   <img src="/assets/images/selfie_run.jpeg" alt="Post-run selfie" style="width: 48%; border-radius: 8px;" />
