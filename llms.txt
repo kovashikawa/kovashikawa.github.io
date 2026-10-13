@@ -1,6 +1,6 @@
 # Rafael Kovashikawa
 
-Data Scientist and AI Engineer at FUSE. Writing about AI agents, MCP servers, quantitative finance, and data engineering.
+Data Scientist & AI Engineer at FUSE. I build LLM systems and the checks that keep their answers honest. Writing about AI agents, MCP servers, quantitative finance, and data engineering.
 
 - [About](https://kovashikawa.com/about/)
 - [Posts](https://kovashikawa.com/year-archive/)
