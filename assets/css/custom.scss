@@ -402,6 +402,62 @@ body.lc .lc-toggle {
   font-size: 0.85rem !important;
 }
 
+/* Quiet table of contents: a plain list with a small label, no box.
+   Matches the left "Details" sidebar. Current section is marked by ink
+   colour and a thin rule (the theme's scroll-spy sets .active). */
+.toc {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: inherit;
+
+  .nav__title {
+    margin: 0 0 0.25rem;
+    padding: 0 0 0.5rem calc(0.75rem + 2px);
+    color: var(--muted-lt);
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ececec;
+
+    i {
+      display: none;
+    }
+  }
+
+  .toc__menu a {
+    padding: 0.3rem 0 0.3rem 0.75rem;
+    color: var(--muted);
+    font-weight: 400;
+    line-height: 1.4;
+    border-bottom: 0;
+    border-inline-start: 2px solid transparent;
+
+    &:hover {
+      color: var(--ink);
+    }
+  }
+
+  /* Nested entries (posts that set toc_max_level above 2) stay indented */
+  .toc__menu li ul > li a {
+    padding-inline-start: 1.5rem;
+  }
+
+  .toc__menu li ul li ul > li a {
+    padding-inline-start: 2.25rem;
+  }
+
+  .active a {
+    color: var(--ink);
+    background: transparent;
+    border-inline-start-color: var(--ink);
+  }
+}
+
 /* Fix lists inside content */
 .page__content li {
   margin-bottom: 0.5em;
