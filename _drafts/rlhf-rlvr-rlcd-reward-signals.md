@@ -15,7 +15,7 @@ header:
   og_image: /assets/images/og/rlhf-rlvr-rlcd-reward-signals.jpg
 ---
 
-Most of what happens to a language model after pretraining is reinforcement learning, and what separates one recipe from another sits in two places: where the reward comes from, and how the policy is updated against it. This post goes through the main families in use today with the equation each one optimizes. They are RLHF (reinforcement learning from human feedback) and its direct-preference cousin DPO, RLAIF (from AI feedback), RLVR (with verifiable rewards) and its GRPO-style optimizers, outcome and process rewards, execution feedback, and calibrated training, meaning RLCR (calibration rewards) and RLCD (reinforcement learning for calibrated decisions).
+Most of what happens to a language model after pretraining is reinforcement learning, and what separates one recipe from another sits in two places: where the reward comes from, and how the policy is updated against it. This post goes through the main families in use today with the equation each one optimizes. They are RLHF (reinforcement learning from human feedback) and its direct-preference cousin DPO, RLAIF (from AI feedback), RLVR (with verifiable rewards) and its GRPO-style optimizers, outcome and process rewards, execution feedback, rubric rewards, and calibrated training, meaning RLCR (calibration rewards) and RLCD (reinforcement learning for calibrated decisions). A section on reasoning and agentic RL covers DeepSeek-R1, sequence-level optimizers, the debate over whether RLVR adds capability, and the move to multi-turn environments.
 
 The last family is why I wrote it. System One models such as TypeSafe's Jev do not generate text. They take a state and a list of typed questions and return a probability over the declared options. That changes what the model's action is. In the text-generating methods below, the reward scores a sampled string, or a number the model writes inside one. Here the action is the distribution itself, so a proper scoring rule can be applied to it directly, as long as it is a differentiable output of the model. What is documented is that output contract. How Jev, or any model that copies its interface, is trained is mostly unpublished, so the post shows what the contract permits in the math and then compares the training recipes other labs have disclosed.
 
@@ -43,6 +43,7 @@ The methods differ on the two axes the surveys use, where $R$ comes from and how
 | RLVR | A deterministic checker | PPO, or critic-free GRPO, RLOO, Dr. GRPO | One sampled response |
 | Outcome and process rewards | A learned verifier of the final answer or of each step | Usually reranking; as an RL reward it is a separate choice | A sampled solution, or each step in it |
 | Execution feedback (RLEF) | Running the code against tests | End-to-end RL over several turns | A multi-turn code attempt |
+| Rubric rewards (RaR) | A weighted checklist, each item judged by an LLM | GRPO | One sampled response |
 | RLCR | A checker plus a proper scoring rule on stated confidence | GRPO | A sampled answer and its stated confidence |
 | RLCD recipes | A proper scoring rule on the returned distribution, per the recipes disclosed | Supervised loss, then sometimes REINFORCE-style RL | The whole distribution over declared options |
 
@@ -196,6 +197,62 @@ Note what these models are. Both are probability-of-correctness classifiers trai
 **Execution feedback.** [RLEF (Gehring et al., 2024)](https://arxiv.org/abs/2410.02089) trains a code model end-to-end with RL over several turns, where the model sees the results of running its code against tests and revises. The reward is grounded in execution, not in a learned scorer. The abstract reports state-of-the-art results on competitive programming with 8B and 70B models and about an order of magnitude fewer samples. I have only read the abstract, so I do not give its objective.
 
 In RLHF, RLAIF, RLVR and these three, the policy emits text, and the reward scores a sample of it or, for DPO, a fixed pair of responses. RLCR keeps that frame and adds a probability the model writes inside its text. The System One section changes it.
+
+## RL for reasoning and agents
+
+The sections above are about the reward. This one is about what current reasoning and agent training puts around it. I read the sources here as abstracts or as the passages quoted from them, and I say where it is only an abstract. It is a map, not a census. It leaves out preference-optimization variants beyond DPO, multi-agent RL and RL for non-text models.
+
+**DeepSeek-R1.** [DeepSeek-R1](https://arxiv.org/abs/2501.12948) applies GRPO to a base model with a rule-based reward, an accuracy term and a format term combined with equal weight,
+
+$$
+R_{\text{rule}}=R_{\text{acc}}+R_{\text{format}}
+$$
+
+The authors say they did not use neural reward models, outcome or process, for reasoning tasks, because of reward hacking during large-scale RL and the cost of retraining them. That is the opposite choice from a PRM-guided pipeline, and it explains why the PRM paper above uses its model to rank samples and not to train the policy. The released R1 adds a cold-start SFT stage, rejection sampling, and a second RL stage that mixes rule-based and model-based rewards,
+
+$$
+R=R_{\text{reasoning}}+R_{\text{general}}+R_{\text{language}},\qquad R_{\text{reasoning}}=R_{\text{rule}},\qquad R_{\text{general}}=R_{\text{RM}}+R_{\text{format}}
+$$
+
+where the reward-model terms cover helpfulness and harmlessness. The paper adds the preference rewards only in the last 400 of 1,700 steps, because more steps with a model-based reward may lead to reward hacking. RLCR fits the same pattern of additive scalar rewards, with a calibration term next to the correctness term.
+
+**Rubrics where there is no checker.** [Rubrics as Rewards](https://arxiv.org/abs/2507.17746) (RaR) extends the RLVR recipe to tasks with no single right answer. Each prompt gets $k$ rubric items with weights $w_j$, and an LLM judges each as a binary check $c_j$. The reward is the weighted share satisfied,
+
+$$
+r(x,\hat y)=\frac{\sum_{j=1}^{k} w_j\,c_j(x,\hat y)}{\sum_{j=1}^{k} w_j}
+$$
+
+An implicit variant hands the whole rubric to a judge that returns one scalar. Training uses GRPO, and the paper notes that RLVR is the special case with one essential criterion. On medicine and science tasks it reports gains of up to 31% on HealthBench and 7% on GPQA-Diamond relative to LLM-judge rewards that use a direct Likert rating, with rubrics generated by an LLM from reference answers. A fixed generic rubric did worse than prompt-specific ones. One observation of mine, not something I saw done: each $c_j$ is a binary verdict from a judge, so a judge that returned $P(c_j=1)$ would give the expected reward $\sum_j w_j p_j/\sum_j w_j$ directly. That is the kind of output a System One model has.
+
+**Sequence-level ratios.** GRPO's clipped objective uses a probability ratio at every token,
+
+$$
+w_{i,t}(\theta)=\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x,y_{i,<t})}
+$$
+
+The Qwen team's [GSPO](https://arxiv.org/abs/2507.18071) replaces it with a length-normalized ratio for the whole response, clipped per response,
+
+$$
+s_i(\theta)=\left(\frac{\pi_\theta(y_i\mid x)}{\pi_{\theta_{\text{old}}}(y_i\mid x)}\right)^{1/|y_i|}
+$$
+
+Their argument is that a token-level weight is computed from one sample of each next-token distribution, so it does not do the correction importance sampling is for and instead adds variance that grows with length. In their words, the unit of the optimization objective should match the unit of the reward. They report better efficiency, stable training of mixture-of-experts models without a routing workaround, and use in the Qwen3 models. Those are the authors' claims. [DAPO](https://arxiv.org/abs/2503.14476) is a neighbouring recipe with four techniques, of which dynamic sampling is covered above. My reading is that "match the unit to the reward" is the same principle this post follows for System One. When the reward scores a distribution, the thing to optimize is the distribution.
+
+**Does RLVR add capability?** For a problem where one sample succeeds with probability $p$, the chance that at least one of $k$ samples succeeds is
+
+$$
+\text{pass@}k=1-(1-p)^k
+$$
+
+[Yue et al.](https://arxiv.org/abs/2504.13837) compare RLVR-trained models with their base models at large $k$ and report that the RLVR models win at $k=1$ but the base models win at large $k$, that RLVR-trained reasoning paths already sit inside the base model's sampling distribution, that six RLVR algorithms perform similarly, and that distillation does expand the boundary. They read this as RLVR improving sampling efficiency without adding new reasoning. Others dispute the reading, or its scope. [Dragoi et al.](https://arxiv.org/abs/2510.08325) point out that $1-(1-p)^k\to 1$ for any $p>0$, so on tasks with small answer spaces large-$k$ pass@$k$ rewards lucky guesses, and propose Cover@$\tau$, the fraction of problems with success rate at least $\tau$. [Yao et al.](https://arxiv.org/abs/2510.04028) argue both sides are partly right, with shrinkage in an early exploitation phase and expansion in prolonged training, and they report that Liu et al. attribute the shrinkage to stopping RL too early. A [2026 study of tool-use agents](https://arxiv.org/abs/2604.14877) finds RL expands the boundary on compositional, sequential-retrieval tasks and does nothing on pure reasoning. I have read only abstracts and excerpts of these. The fair summary is that the answer depends on the task and on how long training runs, and that it is not settled.
+
+**Agentic RL.** A [survey of agentic RL](https://arxiv.org/abs/2509.02547) states the formal difference. Single-turn LLM RL is a degenerate Markov decision process with horizon $T=1$, a prompt as the state, a text sequence as the action and the objective $\mathbb{E}_{a\sim\pi_\theta}[r(a)]$. Agentic RL is a partially observable one with $T>1$, observations $o_t=O(s_t)$, actions that include environment actions, and the objective
+
+$$
+\mathbb{E}_{\tau\sim\pi_\theta}\Big[\sum_{t}\gamma^{t}R(s_t,a_t)\Big]
+$$
+
+The survey calls temporal credit assignment a critical and largely unsolved problem, since most rewards are sparse outcomes at the end of a long trajectory, and lists turn-level advantage estimation as an early step. RLEF is a code-specific instance. Here is how System One sits against that frame, as my reading. A System One call is also a single step, but with an exogenous label the loss of every possible output $q$ becomes known once the label arrives. A checker scoring a sampled string reveals the reward of that string only. That difference is what makes the exact gradient above possible.
 
 ## What calibration means, as a statistic
 
@@ -448,6 +505,10 @@ What is public about Jev is the interface: typed questions in, a distribution ov
 
 Two public facts would change my read. A technical report with the loss would settle it directly. A comparison of calibration before and after the RL stage would show whether that stage adds anything over supervised training on the same labels.
 
+### What I would test first
+
+This is my suggestion and not something from a source. On a labeled sample from your own traffic, compare Jev against a plain cross-entropy head with one fitted temperature, the Kev recipe, and report ECE, Brier and log loss per task and not only pooled. Check reliability within slices of different base rates, since that is where the independent study found the error. Perturb the option names, their order and the JSON key order, and count how often decisions flip. Pin the model version, and repeat the checks after any version change. Whether you have outcome labels at all, and how late they arrive, decides whether any of this is possible.
+
 ## How each one gets gamed
 
 **RLHF.** The reward model is a proxy, and pushing the policy hard against it eventually costs real quality (Gao et al., above). A rater who cannot check a claim can still prefer the confident phrasing, so a proxy trained on those choices can reward sounding right.
@@ -609,6 +670,10 @@ for k in [0.5, 1, 1.5, 2, 3, 5]:
 - Ahmadian et al., [Back to Basics: Revisiting REINFORCE Style Optimization](https://arxiv.org/abs/2402.14740) (RLOO) and Liu et al., [Understanding R1-Zero-Like Training](https://arxiv.org/abs/2503.20783) (Dr. GRPO)
 - Lightman et al., [Let's Verify Step by Step](https://arxiv.org/abs/2305.20050) (ORM, PRM, product score) and Gehring et al., [RLEF](https://arxiv.org/abs/2410.02089) (abstract only)
 - Ma et al., [Can Jev be Your Q or Policy in Reinforcement Learning?](https://arxiv.org/abs/2610.11692) (abstract only)
+- DeepSeek-AI, [DeepSeek-R1](https://arxiv.org/abs/2501.12948) (rule-based rewards, second RL stage; also in Nature, 2025) and [Rubrics as Rewards](https://arxiv.org/abs/2507.17746) (ICLR 2026)
+- Qwen Team, [Group Sequence Policy Optimization](https://arxiv.org/abs/2507.18071)
+- On whether RLVR adds capability, abstracts and excerpts only: Yue et al., [Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?](https://arxiv.org/abs/2504.13837) (NeurIPS 2025); Dragoi et al., [Beyond Pass@k](https://arxiv.org/abs/2510.08325); Yao et al., [The Debate on RLVR Reasoning Capability Boundary](https://arxiv.org/abs/2510.04028); [Does RL Expand the Capability Boundary of LLM Agents? A Pass@(k,T) Analysis](https://arxiv.org/abs/2604.14877)
+- Zhang et al., [The Landscape of Agentic Reinforcement Learning for LLMs](https://arxiv.org/abs/2509.02547) (survey; TMLR 2026)
 - Epstein, [A Scoring System for Probability Forecasts of Ranked Categories](https://journals.ametsoc.org/view/journals/apme/8/6/1520-0450_1969_008_0985_assfpf_2_0_co_2.xml) (1969)
 - TypeSafe, [launch post](https://typesafe.ai/blog/introducing-system-one-models-and-jev), and docs ([AI primer](https://docs.typesafe.ai/introduction/machine-learning-primer), [Confidence](https://docs.typesafe.ai/confidence), [Jev 1.13 jaggedness](https://docs.typesafe.ai/model-jaggedness/jev-1.13)), accessed October 2026
 - Latent Space, [Jev: System One models for Prod, not God](https://www.latent.space/p/jev) (September 2026), and InfoQ, [TypeSafe AI Releases Jev](https://www.infoq.com/news/2026/10/typesafe-ai-jev-released/) (October 2026)
