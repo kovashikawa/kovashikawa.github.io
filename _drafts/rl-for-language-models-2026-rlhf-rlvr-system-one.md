@@ -21,7 +21,7 @@ The last family is why I wrote it. System One models such as TypeSafe's Jev do n
 
 One way to sort the families is by who consumes the output. RLHF targets a person reading a reply, so the thing to optimize is whether they approve. RLVR targets a checker, so it is whether the answer is correct. Calibrated training targets software that will act on the output, so it is whether the number attached to the answer can be trusted. The reward changes because the consumer does.
 
-I got here from [a video on Jev](https://www.youtube.com/watch?v=YGgNBcIgI4s). TypeSafe contrasts RLCD with RLHF and RLVR in its [launch post](https://typesafe.ai/blog/introducing-system-one-models-and-jev). In the sources I read (mid-October 2026) it has not disclosed the reward or the training algorithm, and Latent Space describes it as [a novel, unpublished technique](https://www.latent.space/p/jev). So for Jev I separate three things: what is public, which is the interface; what other labs have disclosed under the same name, which is Cloudflare, the Laya project and independent authors; and what I infer. Everything else comes from papers, and where I only read an abstract I say so.
+I came to this topic because I am building an evaluation feature in Emet, the system I described in [When AI Lies About Your Search Data](/ai/when-ai-lies-about-your-search-data/), that uses a System One model. Reading more, I found how much had changed in the last year. TypeSafe contrasts RLCD with RLHF and RLVR in its [launch post](https://typesafe.ai/blog/introducing-system-one-models-and-jev). In the sources I read (mid-October 2026) it has not disclosed the reward or the training algorithm, and Latent Space describes it as [a novel, unpublished technique](https://www.latent.space/p/jev). So for Jev I separate three things: what is public, which is the interface; what other labs have disclosed under the same name, which is Cloudflare, the Laya project and independent authors; and what I infer. Everything else comes from papers, and where I only read an abstract I say so.
 
 **In short**
 
@@ -557,7 +557,7 @@ $$
 p>\frac{c_{FP}}{c_{FP}+c_{FN}}
 $$
 
-With illustrative numbers, a wrongly issued refund costing 50 and a missed one costing 5, the threshold is $50/55\approx0.91$. In the video that prompted this post, the example cutoff on the returned probability was 0.9, close to this.
+With illustrative numbers, a wrongly issued refund costing 50 and a missed one costing 5, the threshold is $50/55\approx0.91$. In [an explainer video on Jev](https://www.youtube.com/watch?v=YGgNBcIgI4s), the example cutoff on the returned probability was 0.9, with a person involved in the middle band, which is close to this.
 
 Two assumptions sit under the rule. Correct actions and correct skips cost nothing, and the probability is calibrated on your own traffic. Add a human-review cost $c_h$ and a review band exists only when $c_h < c_{FP}c_{FN}/(c_{FP}+c_{FN})$, which is 4.55 here. At $c_h=2$ you review between $p=0.40$ and $p=0.96$ and act automatically only above $1-c_h/c_{FP}=0.96$. Thresholded decisions also depend on how well the score ranks right answers above wrong ones (AUROC, risk-coverage curves), not only on calibration.
 
@@ -699,4 +699,4 @@ for k in [0.5, 1, 1.5, 2, 3, 5]:
 - Epstein, [A Scoring System for Probability Forecasts of Ranked Categories](https://journals.ametsoc.org/view/journals/apme/8/6/1520-0450_1969_008_0985_assfpf_2_0_co_2.xml) (1969)
 - TypeSafe, [launch post](https://typesafe.ai/blog/introducing-system-one-models-and-jev), and docs ([AI primer](https://docs.typesafe.ai/introduction/machine-learning-primer), [Confidence](https://docs.typesafe.ai/confidence), [Jev 1.13 jaggedness](https://docs.typesafe.ai/model-jaggedness/jev-1.13)), accessed October 2026
 - Latent Space, [Jev: System One models for Prod, not God](https://www.latent.space/p/jev) (September 2026), and InfoQ, [TypeSafe AI Releases Jev](https://www.infoq.com/news/2026/10/typesafe-ai-jev-released/) (October 2026)
-- [The video](https://www.youtube.com/watch?v=YGgNBcIgI4s) that started this post
+- [Explainer video on Jev](https://www.youtube.com/watch?v=YGgNBcIgI4s) (the support-email example and the 0.9 cutoff)
