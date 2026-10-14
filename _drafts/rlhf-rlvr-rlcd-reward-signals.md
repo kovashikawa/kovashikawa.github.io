@@ -227,7 +227,7 @@ $$
 \mathbb{E}_{y\sim p}\big[\log q(y)\big]=-H(p)-\mathrm{KL}(p\,\Vert\,q)
 $$
 
-is maximized at $q=p$. If that is roughly the shape of RLCD, it sits close to classical probabilistic classification, and the new part is the interface. Natural-language state in, typed questions (Choice, Score, Noul) out, in a single query. TypeSafe's launch post describes parallel sampling, and I do not know whether the probabilities come from a softmax head or from sample frequencies, which changes what a scoring rule would be applied to. I do not know the reward, and I would not cite any of this as TypeSafe's method.
+is maximized at $q=p$. If that is roughly the shape of RLCD, it sits close to classical probabilistic classification, and the new part is the interface. Natural-language state in, typed questions (Choice, Score, Noul) out, in a single query. TypeSafe's launch post describes parallel sampling, and I do not know whether the probabilities come from a softmax head or from sample frequencies, which changes what a scoring rule would be applied to. I do not know the reward, and I would not cite any of this as TypeSafe's method. Published work on adjacent systems narrows the options, and I collect it in the next subsection.
 
 What is public is the interface, and it makes calibration usable. A Choice answer returns a probability per option, and TypeSafe reports a `confidence` derived from that distribution. For $n$ options with top probability $p_{\max}$ the [documented formula](https://docs.typesafe.ai/confidence) is
 
@@ -238,6 +238,25 @@ $$
 and for a Noul with probability $p$ it is $\lvert 2p-1\rvert$. Only the top probability counts, so $(0.6,0.3,0.1)$ and $(0.6,0.2,0.2)$ both come out at 0.4. This is a rescaled margin over chance, not the probability of being right. A confidence of 0.9 means $p_{\max}=0.95$ for two options and 0.933 for three, through $p_{\max}=\text{confidence}\cdot(1-1/n)+1/n$. Decision thresholds belong on the probabilities.
 
 A typed output cannot be a malformed type, but it can still be a wrong valid value. [InfoQ](https://www.infoq.com/news/2026/10/typesafe-ai-jev-released/) reports that objection from Hacker News against TypeSafe's "can't hallucinate" line, and quotes Armin Ronacher saying the design "delegates the hallucination problem a little bit to the user".
+
+### Clues from adjacent work
+
+Nobody has published an RLCD recipe, but four lines of work train a model to emit a probability under a proper scoring rule. Read together, they bound what the recipe could look like.
+
+| Work | What is trained | Objective | Output | Reported calibration |
+|---|---|---|---|---|
+| [Turtel et al., 2025](https://arxiv.org/abs/2505.17989) | 14B reasoning model, RL (GRPO variants, ReMax) | $R=-(\hat p-y)^2$, Brier on a resolved event | One probability for a binary question | Matches o1 on Brier (0.193), beats it on ECE (0.042, $p<0.001$); arXiv v2 abstract |
+| [Generative Verifiers](https://arxiv.org/abs/2408.15240) | LLM, supervised next-token loss | $-\log p_\theta(\text{Yes}\mid x,y^+)$ and $-\log p_\theta(\text{No}\mid x,y^-)$ | $p_\theta(\text{Yes})$ as a one-token score | Not reported in the parts I read |
+| [Kadavath et al., 2022](https://arxiv.org/abs/2207.05221) | LLM plus a value head ("P(IK)") | Binary classification of whether the model answers correctly | A probability from the head | Well calibrated on the training distribution, poorly on new tasks |
+| [PFNs](https://arxiv.org/abs/2112.10510) and [TabPFN](https://www.nature.com/articles/s41586-024-08328-6) | Transformer, supervised on synthetic datasets | $\mathbb{E}\big[-\log q_\theta(y\mid x, D_{\text{train}})\big]$ | A class distribution in one forward pass | ECE 0.025 (the BNN-prior PFN) against 0.066 for XGBoost, on tabular subsets with 30 training samples |
+
+Kadavath et al. also report that large pretrained models are well calibrated on lettered multiple-choice and true/false formats before any such training, which is the token-probability baseline from the GPT-4 report above. The accepted TMLR version of Turtel et al. reports different figures on a smaller hold-out set (Brier 0.190, ECE 0.062).
+
+Three things follow. First, a bounded Brier reward works as an RL reward when the model is not choosing between answers. Turtel et al. found that standard GRPO pushed policies toward extreme overconfidence or collapse on noisy, delayed outcomes. They dropped the standard deviation division and used ReMax, which keeps gradients proportional to the Brier loss and matches the standardization caveat in the GRPO section. Second, when labels already exist, ordinary cross-entropy is a log score, so a typed probability gets a proper scoring rule from supervised training alone. GenRM and PFNs do exactly that. It makes it plausible that part of RLCD is not RL at all, though TypeSafe calls it RL and I do not know. Third, the calibration is conditional on the training distribution. Kadavath et al.'s P(IK) lost calibration on new tasks, and a PFN is calibrated with respect to its synthetic prior. That is the same warning as the base-rate paragraph below.
+
+The retrofit route is also published. [Leng et al. (2025)](https://arxiv.org/abs/2410.09724) show that RLHF reward models are biased toward high verbalized confidence regardless of answer quality, and their PPO-M and PPO-C variants lower ECE without losing accuracy. That adds calibration to a preference reward. The four works above start from a proper scoring rule instead.
+
+What none of them shows is an LLM that reads free-text state and returns several typed answers in one pass, or any calibration result under adversarial state. The interface is still the part I cannot place.
 
 ## How each one gets gamed
 
@@ -347,6 +366,11 @@ for k in [0.5, 1, 1.5, 2, 3, 5]:
 - Sharma et al., [Towards Understanding Sycophancy in Language Models](https://arxiv.org/abs/2310.13548) (ICLR 2024) and Kirk et al., [Understanding the Effects of RLHF on LLM Generalisation and Diversity](https://arxiv.org/abs/2310.06452) (ICLR 2024)
 - Kalai et al., [Why Language Models Hallucinate](https://arxiv.org/abs/2509.04664) (OpenAI, 2025)
 - Hugging Face, [TRL GRPO trainer docs](https://huggingface.co/docs/trl/en/grpo_trainer) (default $\beta=0$)
+- Turtel et al., [Outcome-based reinforcement learning to predict the future](https://arxiv.org/abs/2505.17989) (TMLR 2025; Brier reward, GRPO without std scaling, ReMax)
+- [Generative Verifiers: Reward Modeling as Next-Token Prediction](https://arxiv.org/abs/2408.15240) (p(Yes) as a verifier score)
+- Kadavath et al., [Language Models (Mostly) Know What They Know](https://arxiv.org/abs/2207.05221) (P(True), P(IK))
+- Müller et al., [Transformers Can Do Bayesian Inference](https://arxiv.org/abs/2112.10510) (PFNs, ICLR 2022) and Hollmann et al., [TabPFN](https://www.nature.com/articles/s41586-024-08328-6) (Nature 2025)
+- Leng et al., [Taming Overconfidence in LLMs: Reward Calibration in RLHF](https://arxiv.org/abs/2410.09724) (ICLR 2025; PPO-M, PPO-C)
 - Tian et al., [Just Ask for Calibration](https://aclanthology.org/2023.emnlp-main.330/)
 - TypeSafe, [launch post](https://typesafe.ai/blog/introducing-system-one-models-and-jev), and docs ([AI primer](https://docs.typesafe.ai/introduction/machine-learning-primer), [Confidence](https://docs.typesafe.ai/confidence), [Jev 1.13 jaggedness](https://docs.typesafe.ai/model-jaggedness/jev-1.13)), accessed October 2026
 - Latent Space, [Jev: System One models for Prod, not God](https://www.latent.space/p/jev) (September 2026), and InfoQ, [TypeSafe AI Releases Jev](https://www.infoq.com/news/2026/10/typesafe-ai-jev-released/) (October 2026)
