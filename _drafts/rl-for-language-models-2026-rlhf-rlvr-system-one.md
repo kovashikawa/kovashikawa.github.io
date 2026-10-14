@@ -111,6 +111,8 @@ $$
 
 [Constitutional AI (Bai et al., 2022)](https://arxiv.org/abs/2212.08073) uses the same move with written principles. In the supervised stage the model critiques and revises its own outputs against the principles, and in the RL stage the preference labels come from an AI judging against them. I have read that abstract and not the full paper.
 
+Tülu 3's DPO stage is RLAIF-style preference data at scale. [Lambert et al. (2024)](https://arxiv.org/html/2411.15124v3) sample completions for each prompt from several models, including their own SFT model, and have GPT-4o-2024-08-06 rate each from 1 to 5 on helpfulness, instruction following, honesty and truthfulness. With $\bar s$ the mean of the four ratings, the highest-rated response is the chosen one and the rejected one is drawn at random from the responses with a lower mean. The result is 354,192 preference instances. Compared with Lee et al., this keeps only the ordering. The rating magnitudes and the judge's uncertainty are discarded, and DPO then trains on a hard pair. [Ai2's write-up](https://allenai.org/blog/tulu-3-technical) says DPO and PPO gave roughly similar results after tuning, and that it used DPO throughout for simplicity and cost.
+
 What matters for the rest of this post is the shape of the label. In both RLAIF variants the training signal starts as a probability distribution over a small closed set of tokens, "1" or "2" in one, "1" to "10" in the other, read off a model that was trained to generate text. That is the token-probability route to a typed probability. A System One model returns a distribution over declared options as its output, instead of having it recovered from token probabilities afterwards.
 
 ## RLVR: verifiable rewards replace the reward model
@@ -648,7 +650,7 @@ for k in [0.5, 1, 1.5, 2, 3, 5]:
 - Ouyang et al., [Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155) (InstructGPT; reward model loss, PPO-ptx objective)
 - Rafailov et al., [Direct Preference Optimization](https://arxiv.org/abs/2305.18290) (closed-form optimal policy, DPO loss)
 - Gao et al., [Scaling Laws for Reward Model Overoptimization](https://arxiv.org/abs/2210.10760)
-- Lambert et al., [Tülu 3](https://arxiv.org/html/2411.15124v3) (RLVR, $\alpha=10$, benchmark gains)
+- Lambert et al., [Tülu 3](https://arxiv.org/html/2411.15124v3) (RLVR, $\alpha=10$, benchmark gains, GPT-4o-labelled preference pairs)
 - Shao et al., [DeepSeekMath](https://arxiv.org/abs/2402.03300) (GRPO, advantage in section 4.1.2)
 - Yu et al., [DAPO](https://arxiv.org/abs/2503.14476) (dynamic sampling)
 - Damani et al., [Beyond Binary Rewards: Training LMs to Reason About Their Uncertainty](https://arxiv.org/abs/2507.16806) (RLCR; ICLR 2026)
