@@ -162,7 +162,7 @@ $$
 
 The second form, a rescaled group-centered reward, is shown in the Dr. GRPO paper, and I also checked it numerically on one binary group of 8.
 
-[Liu et al. (2025)](https://arxiv.org/abs/2503.20783) argue that GRPO's objective adds two biases relative to PPO with a Monte Carlo baseline. Dividing each completion's loss by its length $|o_i|$ gives correct short answers larger per-token updates and penalizes long wrong answers less, so wrong answers drift longer. Dividing by the group standard deviation weights questions whose rewards are nearly all 0 or all 1 more heavily, a difficulty bias. With $\ell_{i,t}$ the clipped probability-ratio term for token $t$ of completion $i$, the weight each method puts on it is
+[Liu et al. (2025)](https://arxiv.org/abs/2503.20783) argue that GRPO's objective adds two biases relative to PPO with a Monte Carlo baseline. Dividing each completion's loss by its length $\lvert o_i\rvert$ gives correct short answers larger per-token updates and penalizes long wrong answers less, so wrong answers drift longer. Dividing by the group standard deviation weights questions whose rewards are nearly all 0 or all 1 more heavily, a difficulty bias. With $\ell_{i,t}$ the clipped probability-ratio term for token $t$ of completion $i$, the weight each method puts on it is
 
 $$
 \text{GRPO: }\ \frac{1}{|o_i|}\cdot\frac{R_i-\bar R}{\operatorname{std}(R)}
@@ -323,11 +323,16 @@ Reported results. On in-domain tasks RLCR matches RLVR accuracy while cutting EC
 
 Group-relative training also gets more signal. In an all-correct group of 8 where the model states different confidences, binary advantages are all zero. Under RLCR the rewards differ, so the advantages are nonzero and the model is pushed toward higher confidence when every sample is right. These advantages use the population standard deviation. The sample standard deviation shrinks every one of them by about 6.5%, a factor of $\sqrt{7/8}$.
 
-```
-confidences  .99  .90  .80  .70  .95  .60  .85  .50
-rlcr reward  1.00 .99  .96  .91  .997 .84  .978 .75
-advantage    +.85 +.73 +.38 -.21 +.82 -1.04 +.58 -2.11
-```
+| Stated confidence | RLCR reward | Advantage |
+|---:|---:|---:|
+| 0.99 | 1.0000 | +0.85 |
+| 0.90 | 0.9900 | +0.73 |
+| 0.80 | 0.9600 | +0.38 |
+| 0.70 | 0.9100 | -0.21 |
+| 0.95 | 0.9975 | +0.82 |
+| 0.60 | 0.8400 | -1.04 |
+| 0.85 | 0.9775 | +0.58 |
+| 0.50 | 0.7500 | -2.11 |
 
 The rewards here span only 0.75 to 1.00, and standardization stretches that to advantages between +0.85 and -2.11. The nudge toward higher confidence is right on average over many prompts, but any single group is noisy.
 
