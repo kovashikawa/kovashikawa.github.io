@@ -1,9 +1,9 @@
 ---
 layout: single
-title: "Reinforcement learning for language models in 2026, and what System One models changed"
-excerpt: "A map of how language models are trained with RL today, from RLHF and RLAIF to RLVR, process rewards and calibrated RL, with the equation each one optimizes and what System One models like Jev change."
-description: "RL for language models in 2026: the objective behind RLHF, RLAIF, RLVR, GRPO, process rewards and calibrated RL, and what System One models like Jev change."
-tags: [reinforcement-learning, llm, calibration, statistics, post-training, rlhf, rlaif, rlvr, grpo, system-one]
+title: "RL for language models in 2026: RLHF, RLVR and System One"
+excerpt: "The equation each method optimizes, from RLHF and RLAIF to RLVR, process rewards and calibrated RL, and where System One models like Jev fit."
+description: "RL post-training for LLMs in 2026, with the math for RLHF, RLAIF, RLVR and GRPO, and what a typed-probability model like Jev changes."
+tags: [reinforcement-learning, llm, calibration, rlhf, rlvr, grpo, rlcd, jev, typesafe, system-one]
 categories: [ai]
 author_profile: true
 toc: true
@@ -12,7 +12,7 @@ read_time: true
 mathjax: true
 last_modified_at: 2026-10-14
 header:
-  og_image: /assets/images/og/rlhf-rlvr-rlcd-reward-signals.jpg
+  og_image: /assets/images/og/rl-for-language-models-2026-rlhf-rlvr-system-one.jpg
 ---
 
 Most of what happens to a language model after pretraining is reinforcement learning, and what separates one recipe from another sits in two places: where the reward comes from, and how the policy is updated against it. This post goes through the main families in use today with the equation each one optimizes. They are RLHF (reinforcement learning from human feedback) and its direct-preference cousin DPO, RLAIF (from AI feedback), RLVR (with verifiable rewards) and its GRPO-style optimizers, outcome and process rewards, execution feedback, rubric rewards, and calibrated training, meaning RLCR (calibration rewards) and RLCD (reinforcement learning for calibrated decisions). A section on reasoning and agentic RL covers DeepSeek-R1, sequence-level optimizers, the debate over whether RLVR adds capability, and the move to multi-turn environments.
@@ -22,6 +22,12 @@ The last family is why I wrote it. System One models such as TypeSafe's Jev do n
 One way to sort the families is by who consumes the output. RLHF targets a person reading a reply, so the thing to optimize is whether they approve. RLVR targets a checker, so it is whether the answer is correct. Calibrated training targets software that will act on the output, so it is whether the number attached to the answer can be trusted. The reward changes because the consumer does.
 
 I got here from [a video on Jev](https://www.youtube.com/watch?v=YGgNBcIgI4s). TypeSafe contrasts RLCD with RLHF and RLVR in its [launch post](https://typesafe.ai/blog/introducing-system-one-models-and-jev). In the sources I read (mid-October 2026) it has not disclosed the reward or the training algorithm, and Latent Space describes it as [a novel, unpublished technique](https://www.latent.space/p/jev). So for Jev I separate three things: what is public, which is the interface; what other labs have disclosed under the same name, which is Cloudflare, the Laya project and independent authors; and what I infer. Everything else comes from papers, and where I only read an abstract I say so.
+
+**In short**
+
+- Free-text RL (RLHF, RLAIF, RLVR and relatives) scores a sampled response. The methods differ in where the reward comes from, which is human comparisons, an AI labeler, a checker or a rubric, and in how the update is computed, which is PPO, DPO, or GRPO and its variants.
+- RLCR adds a bounded proper score on a stated confidence to the correctness reward, so confidence is trained along with accuracy.
+- System One models such as Jev return a probability over declared options. That output contract lets a proper scoring rule apply to the distribution directly, under conditions the post spells out. TypeSafe has not published how Jev is trained. Other labs have published recipes under the same name, and the ones I found range from supervised training only to supervised training plus RL.
 
 ## One objective, and what separates the methods
 
@@ -172,7 +178,7 @@ This is the same incentive [Kalai et al. (2025)](https://arxiv.org/abs/2509.0466
 
 Other papers report the same failure. An [ACL Findings 2026 study](https://aclanthology.org/2026.findings-acl.610.pdf) finds that RLVR produces extremely overconfident models while SFT stays better calibrated, and [DCPO](https://arxiv.org/abs/2603.09117) describes calibration degeneration under RLVR. I have read those two abstracts, not the papers.
 
-## Outcome, process and environment rewards
+## Outcome, process and execution rewards
 
 RLVR scores the final answer. Two other designs change where the reward attaches.
 
@@ -278,9 +284,7 @@ $$
 
 so the minimum is at $q=p$. Log loss is also proper. So you can train a stated probability to be honest by making the reward a proper scoring rule, which is the move behind everything that follows.
 
-### Three things called confidence
-
-Papers use "confidence" for three different objects. A token probability is read off the model's output distribution, and the GPT-4 report measures this. A verbalized confidence is text the model writes ("I am 80% sure"), which Tian et al. and RLCR use. Because it is generated, training shapes it directly and can distort it. A typed-head probability is a distribution over a fixed set of options returned by a model that writes no text, which is the Jev interface. They differ in what is scored, what can be gamed, and how they behave under distribution shift, so a calibration result for one does not carry over to another.
+**Three things called confidence.** Papers use "confidence" for three different objects. A token probability is read off the model's output distribution, and the GPT-4 report measures this. A verbalized confidence is text the model writes ("I am 80% sure"), which Tian et al. and RLCR use. Because it is generated, training shapes it directly and can distort it. A typed-head probability is a distribution over a fixed set of options returned by a model that writes no text, which is the Jev interface. They differ in what is scored, what can be gamed, and how they behave under distribution shift, so a calibration result for one does not carry over to another.
 
 ## RLCR: correctness plus a Brier calibration term
 
@@ -346,17 +350,25 @@ Accuracy never moves, so RLVR's reward cannot tell any of these six models apart
 
 The baseline this table ignores is post-hoc recalibration. Because $k$ is a temperature ($q=\sigma(\operatorname{logit}(p)/T)$ with $T=1/k$), a single parameter fit on held-out data, which is the temperature scaling Guo et al. describe, would remove every row of miscalibration here without touching the model's weights. Any monotone remap also leaves ranking, and so AUROC, unchanged. Training-time calibration earns its cost when the model's confidence is poorly ordered, which a remap cannot fix, or when confidence has to be produced alongside the reasoning. I would treat the head-to-head as an open question.
 
-## System One and RLCD: what changed, what is public, what I infer
+## System One and RLCD: what changed and what is public {#system-one-rlcd}
+
+Three layers are easy to confuse here, so they are separated up front.
+
+| Layer | What it contains |
+|---|---|
+| Documented by TypeSafe | The interface, with typed questions in, a probability per option out and no generated text, the `confidence` formula, and the statement that Jev is trained with RLCD |
+| Disclosed by others under the same name | Recipes from Cloudflare, Laya, OpenJev-RLCD, JevRL and the Datawhale cookbook, compared below |
+| My inference | Jev is closest to a typed head trained against a proper score, possibly with an RL stage for rewards a loss cannot express |
 
 TypeSafe's [primer](https://docs.typesafe.ai/introduction/machine-learning-primer) describes RLCD in three points. The model does not generate text. It returns decisions and probabilities. Higher probability should correspond to a greater chance the answer is correct. Their docs define calibration as outcomes assigned 0.2 happening about 20% of the time, and say it describes groups of predictions, not any single answer. The docs also credit cofounder Diogo Almeida with co-inventing RLHF. He is an author of InstructGPT (Ouyang et al., 2022). He is not an author of Christiano et al. (2017), the paper that introduced deep RL from human preferences.
 
-In my searches for a TypeSafe technical report, paper, repository or model card I found no publication of the reward itself. [OpenJev-RLCD](https://arxiv.org/abs/2609.38850) says TypeSafe discloses no training algorithm, and the [Datawhale cookbook](https://datawhalechina.github.io/jev-cookbook/materials/02-nanojev/pages/docs/RLCD_EXPERIMENT/) calls its own formula \"an independent research candidate, not a recovered official recipe\". My reading, and it is only that, is that the output contract makes the problem simpler than RLCR's. RLCR has the model choose an answer and attach a confidence, so the reward must couple them, and a bounded rule is needed to stop the model trading accuracy for score. A model that emits the full distribution $q(\cdot\mid x)$ over a fixed answer set can be scored directly with a proper rule against the observed label, with no answer-versus-confidence trade, which is why a log score would not hit the problem above. For the log score,
+In my searches for a TypeSafe technical report, paper, repository or model card I found no publication of the reward itself. [OpenJev-RLCD](https://arxiv.org/abs/2609.38850) says TypeSafe discloses no training algorithm, and the [Datawhale cookbook](https://datawhalechina.github.io/jev-cookbook/materials/02-nanojev/pages/docs/RLCD_EXPERIMENT/) calls its own formula "an independent research candidate, not a recovered official recipe". My reading, and it is only that, is that the output contract makes the problem simpler than RLCR's. RLCR has the model choose an answer and attach a confidence, so the reward must couple them, and a bounded rule is needed to stop the model trading accuracy for score. A model that emits the full distribution $q(\cdot\mid x)$ over a fixed answer set can be scored directly with a proper rule against the observed label, with no answer-versus-confidence trade, which is why a log score would not hit the problem above. For the log score,
 
 $$
 \mathbb{E}_{y\sim p}\big[\log q(y)\big]=-H(p)-\mathrm{KL}(p\,\Vert\,q)
 $$
 
-is maximized at $q=p$. If that is roughly the shape of RLCD, it sits close to classical probabilistic classification, and the new part is the interface. Natural-language state in, typed questions (Choice, Score, Noul) out, in a single query. TypeSafe's launch post describes parallel sampling, and I do not know whether the probabilities come from a softmax head or from sample frequencies, which changes what a scoring rule would be applied to. I do not know the reward, and I would not cite any of this as TypeSafe's method. Published work on adjacent systems narrows the options, and I collect it in \"Clues from adjacent work\" below.
+is maximized at $q=p$. If that is roughly the shape of RLCD, it sits close to classical probabilistic classification, and the new part is the interface. Natural-language state in, typed questions (Choice, Score, Noul) out, in a single query. TypeSafe's launch post describes parallel sampling, and I do not know whether the probabilities come from a softmax head or from sample frequencies, which changes what a scoring rule would be applied to. I do not know the reward, and I would not cite any of this as TypeSafe's method. Published work on adjacent systems narrows the options, and I collect it in "Adjacent work on calibrated probabilities" below.
 
 What is public is the interface, and it makes calibration usable. A Choice answer returns a probability per option, and TypeSafe reports a `confidence` derived from that distribution. For $n$ options with top probability $p_{\max}$ the [documented formula](https://docs.typesafe.ai/confidence) is
 
@@ -406,7 +418,7 @@ which is the property the logarithmic loss $-\log q_y$, the Brier loss $\lVert q
 
 The cost of the second column is the label. RLVR on math also needs a reference answer for every prompt, but code and constraint checkers need no label at all, and a free-text answer has many valid strings, so a checker has to judge equivalence. A typed option has one label per state. The price is that the label must be the true outcome for every training state, and for real decisions that outcome is often delayed, noisy or counterfactual, since a blocked action never shows what would have happened. The recipes below differ mostly in how they respond to that.
 
-### Clues from adjacent work
+### Adjacent work on calibrated probabilities
 
 TypeSafe has not disclosed its RLCD recipe in the sources I read. Four earlier lines of work train a model to emit a probability under a proper scoring rule. The next two subsections cover newer decision models and independent RLCD implementations. Read together, they bound what TypeSafe's could look like.
 
@@ -425,7 +437,7 @@ The retrofit route is also published. [Leng et al. (2025)](https://arxiv.org/abs
 
 None of these four is an LLM that reads free-text state and returns several typed answers in one pass, and I did not see calibration under adversarial input reported in the parts I read. The decision models in the next subsection do the first part.
 
-### Recipes other labs have disclosed
+### RLCD recipes other labs have disclosed
 
 Jev is no longer alone. Since its launch, other groups have shipped models with the same interface, a state plus typed questions in and probabilities out. They differ in how much they say about training, and that is what is useful here, because it shows what the recipes behind the name contain. The table lists only what each project says about training. I read each project's own pages.
 
@@ -462,7 +474,7 @@ with $R$ a scoring rule applied to the reported distribution. Here is my own inf
 
 Two things follow.
 
-1. **Supervised loss first.** Cloudflare uses label-smoothed cross-entropy and Brier before RL. Kev uses no RL at all and reaches usable probabilities with cross-entropy plus one temperature, the post-hoc fix from [Guo et al.](https://arxiv.org/abs/1706.04599). A fitted $T$ above 1 flattens a softmax, so I read that as the raw head having been overconfident.
+1. **Supervised loss first.** Cloudflare uses label-smoothed cross-entropy and Brier before RL. Kev uses no RL at all and reaches usable probabilities with cross-entropy plus one temperature, the post-hoc fix from [Guo et al. (2017)](https://arxiv.org/abs/1706.04599). A fitted $T$ above 1 flattens a softmax, so I read that as the raw head having been overconfident.
 2. **"RLCD" is now several recipes.** Cloudflare's rewards ordinal closeness, exact records and staying near a reference model. Laya's rewards a proper score on the whole distribution. The next subsection adds independent ones. None says it is TypeSafe's, and I found no public TypeSafe recipe.
 
 ### Independent RLCD implementations
@@ -495,21 +507,17 @@ and when each answer is one-hot it becomes $J(\bar u)=2\,\mathrm{acc}-2+\big(1-\
 
 One caveat on the one-hot form. With $M$ one-hot samples drawn from a distribution $q$ and observed label $y$, the expected reward works out to $2q_y-1-(1-\tfrac1M)\lVert q\rVert^2-\tfrac1M$. Against a true distribution $p$ it is maximized not at $p$ but at the projection of $p/(1-1/M)$ onto the simplex, so it sharpens at small $M$ and is proper only as $M\to\infty$. For $p=(0.5,0.3,0.2)$ and $M=2$ the maximizer is $(0.667,0.267,0.067)$. I checked this numerically. JevRL's $\mathbb{1}[A=B]$ term is the unbiased estimate of $\lVert q\rVert^2$, which is why its expectation is exactly one minus the Brier score.
 
-### Jev as a component inside RL
-
-Everything above puts a calibrated distribution at the end of training. One paper puts it inside an RL loop. [Ma et al. (2026)](https://arxiv.org/abs/2610.11692) use a frozen, untrained Jev at three positions in a standard agent's training, as a reference policy, an exploration judge and a replay rater, on nine MiniGrid tasks and three Atari games. They report that training with Jev outperforms a standard learner, including where the learner makes no progress alone. Their analysis of what each RL object demands of the answers it consumes concludes that Jev can fill all of them except the cardinal use of a value function. My reading of that exception is that a probability over options can rank actions but does not give a return in the units a value function needs. I read the abstract only.
+**Jev as a component inside RL.** Everything above puts a calibrated distribution at the end of training. One paper puts it inside an RL loop. [Ma et al. (2026)](https://arxiv.org/abs/2610.11692) use a frozen, untrained Jev at three positions in a standard agent's training, as a reference policy, an exploration judge and a replay rater, on nine MiniGrid tasks and three Atari games. They report that training with Jev outperforms a standard learner, including where the learner makes no progress alone. Their analysis of what each RL object demands of the answers it consumes concludes that Jev can fill all of them except the cardinal use of a value function. My reading of that exception is that a probability over options can rank actions but does not give a return in the units a value function needs. I read the abstract only.
 
 ### Where Jev sits on this map
 
-What is public about Jev is the interface: typed questions in, a distribution over declared options out, no generated text. That puts its action in the second column of the comparison table in \"What changes in the math\". What I cannot place is the training. The disclosed recipes run from a supervised proper loss only (Kev), through supervised then RL (Cloudflare), to RL with a proper-score reward (Laya, OpenJev-RLCD). My read, as inference, is that Jev is closest to a typed-head model trained against a proper score, possibly with an RL stage for rewards a loss cannot express. Cloudflare, Laya and independent authors each use the name RLCD for their own recipes, and nothing I read says any of them matches TypeSafe's.
+What is public about Jev is the interface: typed questions in, a distribution over declared options out, no generated text. That puts its action in the second column of the comparison table in "What changes in the math". What I cannot place is the training. The disclosed recipes run from a supervised proper loss only (Kev), through supervised then RL (Cloudflare), to RL with a proper-score reward (Laya, OpenJev-RLCD). My read, as inference, is that Jev is closest to a typed-head model trained against a proper score, possibly with an RL stage for rewards a loss cannot express. Cloudflare, Laya and independent authors each use the name RLCD for their own recipes, and nothing I read says any of them matches TypeSafe's.
 
 Two public facts would change my read. A technical report with the loss would settle it directly. A comparison of calibration before and after the RL stage would show whether that stage adds anything over supervised training on the same labels.
 
-### What I would test first
+**What I would test first.** This is my suggestion and not something from a source. On a labeled sample from your own traffic, compare Jev against a plain cross-entropy head with one fitted temperature, the Kev recipe, and report ECE, Brier and log loss per task and not only pooled. Check reliability within slices of different base rates, since that is where the independent study found the error. Perturb the option names, their order and the JSON key order, and count how often decisions flip. Pin the model version, and repeat the checks after any version change. Whether you have outcome labels at all, and how late they arrive, decides whether any of this is possible.
 
-This is my suggestion and not something from a source. On a labeled sample from your own traffic, compare Jev against a plain cross-entropy head with one fitted temperature, the Kev recipe, and report ECE, Brier and log loss per task and not only pooled. Check reliability within slices of different base rates, since that is where the independent study found the error. Perturb the option names, their order and the JSON key order, and count how often decisions flip. Pin the model version, and repeat the checks after any version change. Whether you have outcome labels at all, and how late they arrive, decides whether any of this is possible.
-
-## How each one gets gamed
+## Failure modes by method
 
 **RLHF.** The reward model is a proxy, and pushing the policy hard against it eventually costs real quality (Gao et al., above). A rater who cannot check a claim can still prefer the confident phrasing, so a proxy trained on those choices can reward sounding right.
 
@@ -519,11 +527,11 @@ This is my suggestion and not something from a source. On a labeled sample from 
 
 **Process rewards.** The product score penalizes long solutions even when every step is individually likely, as in the 50-step example above, and the large PRM in Lightman et al. leans toward calling steps correct. An outcome label can mark a right answer reached by wrong reasoning as correct.
 
-**RLCR.** Properness is a statement about the optimum, not about optimization. A [paper on confidence rewards](https://arxiv.org/abs/2607.04332) describes confidence reward hacking, where a poorly designed scheme lets the model gain by answering wrongly so that it can be confident the answer is wrong, and reports that it occurs on practical datasets. Two more papers put the problem in the optimizer. DCPO reports a gradient conflict between maximizing accuracy and minimizing calibration error, and [CAPO](https://arxiv.org/abs/2604.12632) argues that GRPO's uncertainty-agnostic advantage degrades relative calibration. Again, I have read abstracts.
+**RLCR.** Properness is a statement about the optimum, not about optimization. The [confidence-reward-hacking paper](https://arxiv.org/abs/2607.04332) describes confidence reward hacking, where a poorly designed scheme lets the model gain by answering wrongly so that it can be confident the answer is wrong, and reports that it occurs on practical datasets. Two more papers put the problem in the optimizer. DCPO reports a gradient conflict between maximizing accuracy and minimizing calibration error, and [CAPO](https://arxiv.org/abs/2604.12632) argues that GRPO's uncertainty-agnostic advantage degrades relative calibration. Again, I have read abstracts.
 
 **RLCD.** Unknown for TypeSafe, because I found no published reward. Partly known for the others, since Cloudflare, Laya and independent authors describe recipes. Two caveats come from outside the reward. Calibration is an average-case property, not a guarantee against crafted input. Two independent studies, which I read as abstracts only, show how that fails. [Liu (2026)](https://arxiv.org/abs/2610.11436) found that adding one colon to a candidate raised Jev's false acceptance as a judge from 1.0% to 26.0% on 200 clusters, but only when the request's JSON keys were sorted, and both variants were rejected under insertion order. The cause is unmeasured. [Azizi et al. (2026)](https://arxiv.org/abs/2610.12292) did not test Jev. On seven open-weight typed models used as agent guardrails, they report allow-or-block accuracy of 36% to 72% against a 50% chance level, six lines of irrelevant log text raising fail-open from 0% to 63% on one synthetic suite, and a misleading option name raising it to 93% to 100% on the four models that put the label in their input. They also report that escalating the least confident decisions does not help, because a decision an attack has reversed is no less confident than the one it replaced. For guardrails and routing the state often contains untrusted text, and so do the option names and definitions, which are an input channel too. Treat all of it as hostile. Azizi et al. report that parsing a policy field into a typed value and applying a deterministic rule reached 100% accuracy on their six policies, which also makes the model unnecessary, and they conclude these models should not be the component that decides. Typed outputs also do not prevent wrong valid values, as above.
 
-## Where each one belongs
+## Where each method belongs
 
 Calibration is what lets software choose a threshold with arithmetic. Say an automated action costs $c_{FP}$ when it fires wrongly and skipping a true positive costs $c_{FN}$. If $p$ is a calibrated probability, the expected cost of acting is $(1-p)\,c_{FP}$ and of not acting is $p\,c_{FN}$, so act when
 
@@ -558,10 +566,6 @@ Calibrated confidence has uses beyond the table. These apply to calibrated confi
 - **Test-time compute.** Spend more samples where confidence is low.
 - **Tool-call gating in agents.** Allow, ask, or block based on a probability, only where the state is trusted. See the guardrail study above.
 - **Retrieval-augmented answers.** Answer, or say the sources do not contain it.
-
-## The methods in short
-
-Each family answers the question of who the output is for. RLHF optimizes a model of what people prefer. RLAIF distills a model's preferences in their place. RLVR and RLEF optimize what a program accepts. A process reward model optimizes a learned verifier of each step. RLCR adds a proper scoring rule to a verifiable reward so that stated confidence means something. System One models change the action, from a sampled string to a distribution over declared options, so a proper score can be the objective directly and the label replaces the verdict. How much of what TypeSafe calls RLCD is reinforcement learning, and how much is supervised training on a proper score, is the part I found no outside check of.
 
 ## Appendix: notation
 
