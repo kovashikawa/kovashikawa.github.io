@@ -445,10 +445,17 @@ Jev is no longer alone. Since its launch, other groups have shipped models with 
 
 | Recipe | Backbone | Supervised stage | RL stage |
 |---|---|---|---|
-| [Cloudflare Clef and Clef-flash](https://blog.cloudflare.com/clef-decision-models/) | Frozen Qwen3.8-27B and Qwen3.5-9B, routing head, rank-256 LoRA | Label-smoothed cross-entropy plus a Brier loss | "RLCD" as a secondary stage: partial credit for adjacent ordinal choices, a reward for exactly right records, a reference penalty |
-| [Kev-4B](https://huggingface.co/jaredpalmer/kev-4b) | Frozen Qwen3.5-4B-Base, LoRA rank 16, pointer head | Cross-entropy over the options in four stages, then one temperature $T=2.41$ fitted by negative log-likelihood | None |
-| [Laya](https://huggingface.co/convaiinnovations/laya-typed-decisions) | ModernBERT-large encoder, 421M, no text generation | Soft cross-entropy against a teacher | Group-mean baseline, noise on the logits, reward from strictly proper scores (log, spherical, ranked score for ordinal questions) |
-| [OpenAI Decisions](https://developers.openai.com/api/docs/guides/decisions), [Microsoft-Decision-1](https://commandline.microsoft.com/microsoft-decision-1-model-foundry/), [QwenCloud](https://docs.qwencloud.com/api-reference/decision-model-api) | Microsoft: Qwen3.5-9B. Others not stated | Microsoft: public datasets plus synthetic data. Others not stated | None stated in the pages I read |
+| [Cloudflare Clef](https://blog.cloudflare.com/clef-decision-models/) | Frozen Qwen, routing head, LoRA | Label-smoothed cross-entropy plus Brier | "RLCD" as a secondary stage |
+| [Kev-4B](https://huggingface.co/jaredpalmer/kev-4b) | Frozen Qwen3.5-4B, LoRA, pointer head | Cross-entropy, then one fitted temperature | None |
+| [Laya](https://huggingface.co/convaiinnovations/laya-typed-decisions) | ModernBERT-large encoder | Soft cross-entropy against a teacher | REINFORCE-style, proper-score reward |
+| [OpenAI Decisions](https://developers.openai.com/api/docs/guides/decisions), [Microsoft-Decision-1](https://commandline.microsoft.com/microsoft-decision-1-model-foundry/), [QwenCloud](https://docs.qwencloud.com/api-reference/decision-model-api) | Microsoft: Qwen3.5-9B. Others not stated | Not stated | None stated in the pages I read |
+
+The details behind the table, from each project's own pages:
+
+- **Cloudflare Clef and Clef-flash.** Frozen Qwen3.8-27B and Qwen3.5-9B backbones, a routing head and rank-256 LoRA adapters. The RL stage gives partial credit for adjacent ordinal choices, a reward for exactly right records and a reference penalty.
+- **Kev-4B.** LoRA rank 16 and a pointer head. Cross-entropy over the options in four stages, then one temperature $T=2.41$ fitted by negative log-likelihood.
+- **Laya.** A 421M encoder with no text generation. The RL stage uses a group-mean baseline, noise on the logits, and a reward from strictly proper scores (log, spherical, and a ranked score for ordinal questions).
+- **Microsoft, OpenAI and QwenCloud.** Microsoft says it post-trained Qwen3.5-9B on publicly available datasets plus synthetic data. I found no training detail in the OpenAI or QwenCloud pages I read.
 
 The recipes use three losses between them, with $K$ options, a reported distribution $q$ and an observed label $y$.
 
@@ -483,13 +490,22 @@ Two things follow.
 
 Since the launch, authors with no tie to TypeSafe have published their own implementations of RLCD. I read the abstracts and, for OpenJev-RLCD, the algorithm section. I did not reproduce any result.
 
-Three independent implementations, with the reward each one uses:
+Three independent implementations, with the reward each one uses and what each reports:
 
-| Work | Model | Reward or objective | What they report |
-|---|---|---|---|
-| [OpenJev-RLCD](https://arxiv.org/abs/2609.38850) (Gao and Wang) | Qwen3-1.7B reasoning model | Each sampled rationale is scored by a strictly proper score of the answer distribution the model commits to afterwards. Stage 1 trains that readout with the proper score. Stage 2 reinforces the reasoning with the same score as reward, plus a KL anchor to the stage-1 model | Matches or beats SFT, RFT/STaR and GRPO (each temperature-scaled) on accuracy and beats them on selective prediction. On GSM8K answer verification, one query decides 81% of items at 5% error or less, against 19% for GRPO (HTML version) |
-| [JevRL](https://jevrl.github.io/output/pdf/jevrl_paper.pdf) (Tegong, one-seed technical report) | Frozen Qwen2.5-0.5B-Instruct and a 142K-parameter typed head | Two sampled answers $A, B$, rewarded $\mathbb{1}[A=y]+\mathbb{1}[B=y]-\mathbb{1}[A=B]$ | On a synthetic set of 300 test items: accuracy 0.611, Brier 0.093, ECE 0.040. Cross-entropy and Brier heads trained on the same labels score 0.688 and 0.700 accuracy, Brier 0.058 and 0.038, ECE 0.054 and 0.060. A single-sample accuracy reward gives ECE 0.393 |
-| [Jev Cookbook](https://datawhalechina.github.io/jev-cookbook/materials/02-nanojev/pages/docs/RLCD_EXPERIMENT/) (Datawhale) | A Qwen3-0.6B based checkpoint and a small MLP | A sampled paired proper reward against direct cross-entropy and Brier controls | "The evidence does not establish that the sampled method is better than direct controls." The paired reward has the lowest error in one run and direct Brier has lower out-of-distribution NLL |
+**[OpenJev-RLCD](https://arxiv.org/abs/2609.38850)** (Gao and Wang), on a Qwen3-1.7B reasoning model.
+
+- *Reward.* Each sampled rationale is scored by a strictly proper score of the answer distribution the model commits to afterwards. Stage 1 trains that readout with the proper score. Stage 2 reinforces the reasoning with the same score as reward, plus a KL anchor to the stage-1 model.
+- *Reported.* It matches or beats SFT, RFT/STaR and GRPO (each temperature-scaled) on accuracy and beats them on selective prediction. On GSM8K answer verification, one query decides 81% of items at 5% error or less, against 19% for GRPO (HTML version).
+
+**[JevRL](https://jevrl.github.io/output/pdf/jevrl_paper.pdf)** (Tegong, a one-seed technical report), on a frozen Qwen2.5-0.5B-Instruct with a 142K-parameter typed head.
+
+- *Reward.* Two sampled answers $A, B$, rewarded $\mathbb{1}[A=y]+\mathbb{1}[B=y]-\mathbb{1}[A=B]$.
+- *Reported.* On a synthetic set of 300 test items, accuracy 0.611, Brier 0.093, ECE 0.040. Cross-entropy and Brier heads trained on the same labels score 0.688 and 0.700 accuracy, Brier 0.058 and 0.038, ECE 0.054 and 0.060. A single-sample accuracy reward gives ECE 0.393.
+
+**[Jev Cookbook](https://datawhalechina.github.io/jev-cookbook/materials/02-nanojev/pages/docs/RLCD_EXPERIMENT/)** (Datawhale), on a Qwen3-0.6B based checkpoint with a small MLP.
+
+- *Reward.* A sampled paired proper reward, against direct cross-entropy and Brier controls.
+- *Reported.* "The evidence does not establish that the sampled method is better than direct controls." The paired reward has the lowest error in one run and direct Brier has lower out-of-distribution NLL.
 
 Two of the three papers also say outright that TypeSafe has not disclosed its algorithm, and the cookbook calls its formula "an independent research candidate, not a recovered official recipe".
 
