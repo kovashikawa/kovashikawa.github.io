@@ -239,6 +239,23 @@ and for a Noul with probability $p$ it is $\lvert 2p-1\rvert$. Only the top prob
 
 A typed output cannot be a malformed type, but it can still be a wrong valid value. [InfoQ](https://www.infoq.com/news/2026/10/typesafe-ai-jev-released/) reports that objection from Hacker News against TypeSafe's "can't hallucinate" line, and quotes Armin Ronacher saying the design "delegates the hallucination problem a little bit to the user".
 
+### What each approach hands back for the same question
+
+Take one question, "is this message a refund request?", and ask it five ways. What you can read off the response differs a lot.
+
+| Approach | What comes back | Is it the probability of being right? | Main catch |
+|---|---|---|---|
+| Ask the model to say how sure it is | Text such as "Yes, 85% sure" | It is a number the model wrote | Trained behavior shapes it, and post-training can push it toward overconfidence |
+| OpenAI logprobs | `logprobs.content[]`, one entry per output token, each with `token`, `logprob` and a ranked `top_logprobs` list | It is the probability of a token, such as "Yes" against "No" if you force a one-word answer | OpenAI's own cookbook notes that it shows certainty in the classification, not whether the classification is correct |
+| Gemini logprobs | `logprobsResult` with `chosenCandidates` and `topCandidates` per step, plus `avgLogprobs` | Same as above | Google's reference marks the `logprobs` parameters deprecated for Gemini 3.x |
+| Claude (Anthropic Messages API) | No token probabilities that I could find | Not available | Use a verbalized score, a sampling-based method, or another provider |
+| Cleanlab TLM | `{response, trustworthiness_score}` with a score from 0 to 1 | A score estimated from several LLM calls on top of a base model (the docs list consistency, self-evaluation and token probabilities) | Not deterministic, results are cached, and Cleanlab says to pick thresholds per application |
+| TypeSafe Jev | One answer per question id. Choice returns `choice`, `probabilities` (one per option) and `confidence`. Noul returns one number from 0 to 1 | It is meant to be, per TypeSafe, and the probabilities are the primary output | Calibration claims are the vendor's, and wrong but valid answers remain possible |
+
+I have not called any of these APIs for this post. The field names come from each provider's documentation. The Claude row rests on a gateway's documentation and a maintainer's reply on an SDK issue, not on Anthropic's API reference. Cleanlab also publishes benchmarks claiming its score beats logprobs and LLM-as-judge at catching wrong answers, and those are the vendor's numbers.
+
+The practical difference is where the probability lives. Logprobs are a byproduct of a model trained to write text, so you get the probability of the next token, and you have to engineer the prompt so that one token carries the decision. A wrapper such as TLM estimates trust from the outside. Jev returns the probability as the answer itself.
+
 ### Clues from adjacent work
 
 Nobody has published an RLCD recipe, but four lines of work train a model to emit a probability under a proper scoring rule. Read together, they bound what the recipe could look like.
@@ -257,6 +274,20 @@ Three things follow. First, a bounded Brier reward works as an RL reward when th
 The retrofit route is also published. [Leng et al. (2025)](https://arxiv.org/abs/2410.09724) show that RLHF reward models are biased toward high verbalized confidence regardless of answer quality, and their PPO-M and PPO-C variants lower ECE without losing accuracy. That adds calibration to a preference reward. The four works above start from a proper scoring rule instead.
 
 What none of them shows is an LLM that reads free-text state and returns several typed answers in one pass, or any calibration result under adversarial state. The interface is still the part I cannot place.
+
+### Where Jev seems to lean
+
+Putting the interface and the adjacent work side by side, here is what points where. This is inference, since the training recipe is not public.
+
+| Observation | Leans toward |
+|---|---|
+| The answer is a distribution over options or levels you declared, one per question id | The typed-head family: GenRM, P(IK), PFNs. Not a reasoning model that writes a number, and not a wrapper |
+| TypeSafe's docs describe training decision models on calibrated probabilities instead of generated text | A probability that is trained for, not read off a text model afterward |
+| `confidence` is computed from the returned distribution with a fixed formula | No separate uncertainty head. Everything downstream comes from the distribution |
+| You can send many questions in one call, including speculative ones | A cheap per-question cost. Whether that is one forward pass or parallel sampling is unclear, since the launch post says sampling |
+| TypeSafe calls the method RL, and its launch post contrasts it with RLHF and RLVR | Some RL stage, but nothing says its reward is a proper scoring rule |
+
+My read is that Jev is closest to a typed-head model trained against a proper score, possibly with an RL stage on top, and furthest from token logprobs or an external wrapper. Two public facts would change it. A technical report with the loss would settle it directly. A comparison of calibration before and after the RL stage would show whether the RL step adds anything over supervised training on the same labels. The calibration claims in the meantime are the vendor's.
 
 ## How each one gets gamed
 
@@ -371,6 +402,7 @@ for k in [0.5, 1, 1.5, 2, 3, 5]:
 - Kadavath et al., [Language Models (Mostly) Know What They Know](https://arxiv.org/abs/2207.05221) (P(True), P(IK))
 - Müller et al., [Transformers Can Do Bayesian Inference](https://arxiv.org/abs/2112.10510) (PFNs, ICLR 2022) and Hollmann et al., [TabPFN](https://www.nature.com/articles/s41586-024-08328-6) (Nature 2025)
 - Leng et al., [Taming Overconfidence in LLMs: Reward Calibration in RLHF](https://arxiv.org/abs/2410.09724) (ICLR 2025; PPO-M, PPO-C)
+- Provider outputs: OpenAI, [Using logprobs](https://developers.openai.com/cookbook/examples/using_logprobs) and the [chat completions reference](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/list); Google Cloud, [Gemini GenerateContent reference](https://docs.cloud.google.com/gemini-enterprise-agent-platform/reference/models/inference); Cleanlab, [TLM docs](https://help.cleanlab.ai/tlm/) and [FAQ](https://help.cleanlab.ai/tlm/faq/); TypeSafe, [quick start](https://docs.typesafe.ai/introduction/quickstart); on Claude, [an SDK issue](https://github.com/anthropics/anthropic-sdk-python/issues/392) and [Spice AI's Anthropic notes](https://spiceai.org/docs/components/models/anthropic)
 - Tian et al., [Just Ask for Calibration](https://aclanthology.org/2023.emnlp-main.330/)
 - TypeSafe, [launch post](https://typesafe.ai/blog/introducing-system-one-models-and-jev), and docs ([AI primer](https://docs.typesafe.ai/introduction/machine-learning-primer), [Confidence](https://docs.typesafe.ai/confidence), [Jev 1.13 jaggedness](https://docs.typesafe.ai/model-jaggedness/jev-1.13)), accessed October 2026
 - Latent Space, [Jev: System One models for Prod, not God](https://www.latent.space/p/jev) (September 2026), and InfoQ, [TypeSafe AI Releases Jev](https://www.infoq.com/news/2026/10/typesafe-ai-jev-released/) (October 2026)
