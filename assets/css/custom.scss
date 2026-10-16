@@ -14,6 +14,9 @@
   --blue-3:     #2a78d6;
   --blue-4:     #184f95;  /* darkest, step 4 */
   --baseline:   #c9c9c4;  /* non-model bars / neutral */
+  --page:       #ffffff;  /* page background */
+  --rule-soft:  #ececec;  /* hairlines */
+  --surface:    #ffffff;  /* inline code, inputs, callouts */
 }
 
 /* Metadata Sidebar */
@@ -24,9 +27,9 @@
 
 .metadata-header {
   font-size: 0.75rem;
-  color: #888 !important;
+  color: var(--muted-lt) !important;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--rule-soft);
   padding-bottom: 0.5rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -39,7 +42,7 @@
 
 .metadata-label {
   font-size: 0.7rem;
-  color: #888;
+  color: var(--muted-lt);
   margin-bottom: 0.25rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -48,31 +51,31 @@
 .metadata-value {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #1E1E1E;
+  color: var(--ink);
 }
 
 .metadata-tag {
   display: inline-block;
   font-size: 0.8rem;
-  color: #1E1E1E;
+  color: var(--ink);
   text-decoration: none;
-  border-bottom: 1px dotted #1E1E1E;
+  border-bottom: 1px dotted var(--ink);
   margin-bottom: 0.25rem;
 }
 
 .metadata-tag:hover {
-  background-color: #1E1E1E;
-  color: #fff;
+  background-color: var(--ink);
+  color: var(--page);
 }
 
 .btn--share {
-  color: #1E1E1E;
+  color: var(--ink);
   font-size: 1.2rem;
   margin-right: 1rem;
 }
 
 .btn--share:hover {
-  color: #555;
+  color: var(--muted);
 }
 
 /* Tables
@@ -80,7 +83,7 @@
    Override to a light rule color so headers are readable. */
 thead {
   background-color: var(--rule, #e6e6e3);
-  color: var(--ink, #1E1E1E);
+  color: var(--ink, var(--ink));
 }
 
 thead th {
@@ -101,7 +104,7 @@ td {
 
 /* Grid Background */
 body {
-  background-color: #ffffff;
+  background-color: var(--page);
   background-image: none;
 }
 
@@ -110,7 +113,7 @@ body {
 /* Typography Overrides */
 body {
   font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  color: #1E1E1E;
+  color: var(--ink);
   font-size: 17px;
   line-height: 1.65;
 }
@@ -123,7 +126,7 @@ h5,
 h6 {
   font-family: inherit;
   letter-spacing: -0.01em;
-  color: #1E1E1E;
+  color: var(--ink);
   font-weight: 600;
 }
 
@@ -147,7 +150,7 @@ samp {
 /* Navigation & Header */
 .masthead {
   background: transparent;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--rule-soft);
 }
 
 .masthead__inner-wrap {
@@ -177,13 +180,13 @@ samp {
 .masthead-quiet__label {
   font-size: 18px;
   font-weight: 600;
-  color: #1E1E1E;
+  color: var(--ink);
   line-height: 1.2;
 }
 
 .masthead-quiet__sub {
   font-size: 13px;
-  color: #555;
+  color: var(--muted);
   line-height: 1.3;
 }
 
@@ -224,7 +227,7 @@ samp {
 .lc-toggle .lc-a,
 .lc-toggle .lc-A {
   font-weight: 400;
-  color: #1E1E1E;
+  color: var(--ink);
 }
 
 body:not(.lc) .lc-toggle .lc-A {
@@ -255,13 +258,13 @@ body.lc .lc-toggle {
 }
 
 .social-icons-row a {
-  color: #1E1E1E;
+  color: var(--ink);
   font-size: 1.35rem;
   line-height: 1;
 }
 
 .social-icons-row a:hover {
-  color: #555;
+  color: var(--muted);
 }
 
 /* Footer: follow me label + bigger all-black minimal icons.
@@ -269,7 +272,7 @@ body.lc .lc-toggle {
    (blue LinkedIn, orange RSS), so force the glyph itself black here. */
 .page__footer-follow-label {
   font-size: 0.8rem;
-  color: #555;
+  color: var(--muted);
   margin: 0 0 16px;
   text-transform: lowercase;
   letter-spacing: 0.06em;
@@ -291,14 +294,14 @@ body.lc .lc-toggle {
 .page__footer-follow .social-icons a i {
   padding: 0;
   font-weight: normal;
-  color: #1E1E1E;
+  color: var(--ink);
   font-size: 1.5rem;
   line-height: 1;
 }
 
 .page__footer-follow .social-icons a:hover,
 .page__footer-follow .social-icons a:hover i {
-  color: #555;
+  color: var(--muted);
 }
 
 /* Keep the follow block close to the page content without crowding the
@@ -422,7 +425,7 @@ body.lc .lc-toggle {
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    border-bottom: 1px solid #ececec;
+    border-bottom: 1px solid var(--rule-soft);
 
     i {
       display: none;
@@ -472,7 +475,7 @@ body.lc .lc-toggle {
   padding: 64px 24px 32px;
   font-family: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 18px;
-  color: #1E1E1E;
+  color: var(--ink);
 }
 
 .home-quiet__title {
@@ -480,7 +483,7 @@ body.lc .lc-toggle {
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.01em;
-  color: #1E1E1E;
+  color: var(--ink);
   margin: 0 0 48px;
   max-width: 16ch;
   font-family: inherit;
@@ -488,7 +491,7 @@ body.lc .lc-toggle {
 
 .home-quiet__title em {
   font-style: normal;
-  color: #555;
+  color: var(--muted);
 }
 
 .home-quiet__list {
@@ -499,7 +502,7 @@ body.lc .lc-toggle {
 }
 
 .home-quiet__item {
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--rule-soft);
 }
 
 .home-quiet__link {
@@ -507,7 +510,7 @@ body.lc .lc-toggle {
   align-items: baseline;
   gap: 18px;
   padding: 18px 0;
-  color: #1E1E1E;
+  color: var(--ink);
   text-decoration: none;
 }
 
@@ -531,7 +534,7 @@ body.lc .lc-toggle {
 
 .home-quiet__subtitle {
   font-size: 15px;
-  color: #555;
+  color: var(--muted);
   line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -541,7 +544,7 @@ body.lc .lc-toggle {
 
 .home-quiet__date {
   font-size: 14px;
-  color: #555;
+  color: var(--muted);
   margin-left: auto;
   flex: none;
   font-variant-numeric: tabular-nums;
@@ -553,7 +556,7 @@ body.lc .lc-toggle {
 }
 
 .home-quiet__all a {
-  color: #1E1E1E;
+  color: var(--ink);
 }
 
 @media (max-width: 560px) {
