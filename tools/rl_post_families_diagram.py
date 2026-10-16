@@ -39,7 +39,7 @@ groups = [
     ("A proper scoring rule", "Confidence is part of the reward", True, [
         ("RLCR", "Checker plus a Brier term on stated confidence"),
         ("RLCD recipes", "Disclosed by others; scoring rule on the whole distribution"),
-        ("System One: Jev", "Typed distribution out; TypeSafe says RLCD, reward unpublished"),
+        ("System One: Jev", "Typed probabilities out; reward not published"),
     ]),
 ]
 lineage = [  # (from, to, label, accent)
