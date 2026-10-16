@@ -37,7 +37,7 @@ $$
 \max_{\theta}\; \mathbb{E}_{x\sim D,\; y\sim \pi_\theta(\cdot\mid x)}\big[\,R(x,y)\,\big] \;-\; \beta\,\mathrm{KL}\big(\pi_\theta(\cdot\mid x)\,\Vert\,\pi_{\text{ref}}(\cdot\mid x)\big)
 $$
 
-This is a conceptual lens, not a description of the algorithms. InstructGPT and Tülu 3 both use PPO with a learned value model. GRPO, covered below, drops the critic, clips a per-token probability ratio, and adds KL as a separate penalty. Many open GRPO recipes drop the KL term entirely. TRL's trainer now defaults to $\beta=0$ and cites Open-Reasoner-Zero, Dr. GRPO and DAPO as showing the term is not essential ([TRL docs](https://huggingface.co/docs/trl/en/grpo_trainer)). Whether RLCD has a reference policy and a KL term at all is unknown, because Jev does not generate text. What the methods do share is that everything interesting is in $R$.
+This is a conceptual lens, not a description of the algorithms. InstructGPT ([Ouyang et al., 2022](https://arxiv.org/abs/2203.02155)) and the RLVR stage of Tülu 3 ([Lambert et al., 2024](https://arxiv.org/html/2411.15124v3)) both use PPO with a learned value model. GRPO, covered below, drops the critic, clips a per-token probability ratio, and adds KL as a separate penalty. Many open GRPO recipes drop the KL term entirely. TRL's trainer now defaults to $\beta=0$ and cites Open-Reasoner-Zero, Dr. GRPO and DAPO as showing the term is not essential ([TRL docs](https://huggingface.co/docs/trl/en/grpo_trainer)). [Korbak et al. (2022)](https://arxiv.org/abs/2205.11275) make the case for the term in general: plain reward maximisation collapses a language model into a degenerate distribution, and the KL penalty is what keeps it a distribution. That argument is about reward maximisation as such, and I do not claim it settles the GRPO case. Whether RLCD has a reference policy and a KL term at all is unknown, because Jev does not generate text. What the methods do share is that everything interesting is in $R$.
 
 The methods differ on the two axes the surveys use, where $R$ comes from and how the update is computed, and on a third that this post adds, what the model's action is.
 
@@ -81,7 +81,7 @@ $$
 \pi^*(y\mid x)=\frac{1}{Z(x)}\,\pi_{\text{ref}}(y\mid x)\,\exp\!\big(r(x,y)/\beta\big)
 $$
 
-where $Z(x)$ normalizes. The reference model is tilted toward high-reward outputs, and $\beta$ sets how hard.
+where $Z(x)$ normalizes. The reference model is tilted toward high-reward outputs, and $\beta$ sets how hard. Korbak et al. derive the same target earlier, as a Bayesian posterior that updates the reference model by the evidence $\exp(r/\beta)$, and show that KL-regularised RL is variational inference toward it.
 
 That closed form is also what DPO builds on. Solve it for $r$, substitute into the Bradley-Terry model, and the partition function cancels, leaving a loss on the policy itself:
 
@@ -117,7 +117,7 @@ $$
 
 [Constitutional AI (Bai et al., 2022)](https://arxiv.org/abs/2212.08073) uses the same move with written principles. In the supervised stage the model critiques and revises its own outputs against the principles. In the RL stage a feedback model is shown a pair of responses as a multiple-choice question, and the normalized probabilities of the two options become the target of a preference model, the same soft-label idea as above. Only the harmlessness labels come from the model, and the helpfulness labels stay human. With chain-of-thought the probabilities come out close to 0 or 1, which the authors call not well calibrated, so they clamp them to the 40 to 60 percent range, and report that without the clamping the RL-CAI models learned to output more extreme responses.
 
-Tülu 3's DPO stage is RLAIF-style preference data at scale. [Lambert et al. (2024)](https://arxiv.org/html/2411.15124v3) sample completions for each prompt from several models, including their own SFT model, and have GPT-4o-2024-08-06 rate each from 1 to 5 on helpfulness, instruction following, honesty and truthfulness. With $\bar s$ the mean of the four ratings, the highest-rated response is the chosen one and the rejected one is drawn at random from the responses with a lower mean. The result is 354,192 preference instances. Compared with Lee et al., this keeps only the ordering. The rating magnitudes and the judge's uncertainty are discarded, and DPO then trains on a hard pair. [Ai2's write-up](https://allenai.org/blog/tulu-3-technical) says DPO and PPO gave roughly similar results after tuning, and that it used DPO throughout for simplicity and cost.
+Tülu 3's DPO stage is RLAIF-style preference data at scale. [Lambert et al. (2024)](https://arxiv.org/html/2411.15124v3) sample completions for each prompt from several models, including their own SFT model, and have GPT-4o-2024-08-06 rate each from 1 to 5 on helpfulness, instruction following, honesty and truthfulness. With $\bar s$ the mean of the four ratings, the highest-rated response is the chosen one and the rejected one is drawn at random from the responses with a lower mean. The result is 354,192 preference instances. Compared with Lee et al., this keeps only the ordering. The rating magnitudes and the judge's uncertainty are discarded, and DPO then trains on a hard pair. In a controlled comparison the Tülu 3 paper finds PPO reaching a comparable level of performance to DPO, albeit slightly lower, at about 28 hours on two nodes against about 4 hours on one, and says the team used length-normalized DPO throughout development for simplicity and speed.
 
 What matters for the rest of this post is the shape of the label. In both RLAIF variants the training signal starts as a probability distribution over a small closed set of tokens, "1" or "2" in one, "1" to "10" in the other, read off a model that was trained to generate text. That is the token-probability route to a typed probability. A System One model returns a distribution over declared options as its output, instead of having it recovered from token probabilities afterwards.
 
@@ -166,7 +166,7 @@ $$
 A_i^{\text{RLOO}}=R_i-\frac{1}{G-1}\sum_{j\ne i}R_j=\frac{G}{G-1}\big(R_i-\bar R\big)
 $$
 
-The second form, a rescaled group-centered reward, is shown in the Dr. GRPO paper, and I also checked it numerically on one binary group of 8.
+The second form, a rescaled group-centered reward, is shown in the [Dr. GRPO paper](https://arxiv.org/abs/2503.20783), and I also checked it numerically on one binary group of 8.
 
 [Liu et al. (2025)](https://arxiv.org/abs/2503.20783) argue that GRPO's objective adds two biases relative to PPO with a Monte Carlo baseline. Dividing each completion's loss by its length $\lvert o_i\rvert$ gives correct short answers larger per-token updates and penalizes long wrong answers less, so wrong answers drift longer. Dividing by the group standard deviation weights questions whose rewards are nearly all 0 or all 1 more heavily, a difficulty bias. With $\ell_{i,t}$ the clipped probability-ratio term for token $t$ of completion $i$, the weight each method puts on it is
 
@@ -214,7 +214,7 @@ In RLHF, RLAIF, RLVR and these three, the policy emits text, and the reward scor
 
 The sections above are about the reward. This one is about what current reasoning and agent training puts around it. It is a map, not a census. It leaves out preference-optimization variants beyond DPO, multi-agent RL and RL for non-text models.
 
-**DeepSeek-R1.** [DeepSeek-R1](https://arxiv.org/abs/2501.12948) applies GRPO to a base model with a rule-based reward, an accuracy term and a format term combined with equal weight,
+**DeepSeek-R1.** In its R1-Zero run, [DeepSeek-R1](https://arxiv.org/abs/2501.12948) applies GRPO to a base model with a rule-based reward, an accuracy term and a format term combined with equal weight,
 
 $$
 R_{\text{rule}}=R_{\text{acc}}+R_{\text{format}}
@@ -256,7 +256,7 @@ $$
 \text{pass@}k=1-(1-p)^k
 $$
 
-[Yue et al.](https://arxiv.org/abs/2504.13837) find that RLVR-trained models win at $k=1$ but the base model wins at large $k$, and conclude that RLVR mostly sharpens sampling over reasoning paths the base model already has, while distillation does expand the boundary. Others dispute the reading or its scope. [Dragoi et al.](https://arxiv.org/abs/2510.08325) note that large-$k$ pass@$k$ rewards lucky guesses on numeric answers and propose Cover@$\tau$, the fraction of problems with success rate at least $\tau$. A [2026 agent study](https://arxiv.org/abs/2604.14877) reports a small expansion on multi-hop retrieval, 5 problems newly solved and 1 lost out of 100, from one training run. The direct measurements mostly show the base model at or above the RLVR model at large $k$, and the question is not settled.
+[Yue et al.](https://arxiv.org/abs/2504.13837) find that RLVR-trained models win at $k=1$ but the base model wins at large $k$, and conclude that RLVR mostly sharpens sampling over reasoning paths the base model already has, while distillation does expand the boundary. Others dispute the reading or its scope. [Dragoi et al.](https://arxiv.org/abs/2510.08325) note that large-$k$ pass@$k$ rewards lucky guesses on numeric answers and propose Cover@$\tau$, the fraction of problems with success rate at least $\tau$. A [2026 agent study](https://arxiv.org/abs/2604.14877) of one 7B model finds no expansion on MATH-500 but an expansion with search tools on HotpotQA. On both comparison and bridge questions, tool-use RL newly solved 5 problems out of 100 and lost 1, which the authors call small for comparison questions and substantial for bridge questions. For static math the direct measurements mostly show the base model at or above the RLVR model at large $k$. The agent study points the other way, and the question is not settled.
 
 **Agentic RL.** A [survey of agentic RL](https://arxiv.org/abs/2509.02547) states the formal difference. The survey formalizes single-turn, preference-based LLM RL as a degenerate Markov decision process with horizon $T=1$, a prompt as the state, a text sequence as the action and the objective $\mathbb{E}\_{a\sim\pi_\theta}[r(a)]$. Agentic RL is a partially observable one with $T>1$, observations $o_t=O(s_t)$, actions that include environment actions, and the objective
 
@@ -373,7 +373,7 @@ Three layers are easy to confuse here, so they are separated up front.
 | Disclosed by others under the same name | Recipes from Cloudflare, Laya, OpenJev-RLCD, JevRL and the Datawhale cookbook, compared below |
 | My inference | Jev is closest to a typed head trained against a proper score, possibly with an RL stage for rewards a loss cannot express |
 
-TypeSafe's [primer](https://docs.typesafe.ai/introduction/machine-learning-primer) describes RLCD in three points. The model does not generate text. It returns decisions and probabilities. Higher probability should correspond to a greater chance the answer is correct. Their docs define calibration as outcomes assigned 0.2 happening about 20% of the time, and say it describes groups of predictions, not any single answer. The docs also credit cofounder Diogo Almeida with co-inventing RLHF. He is an author of InstructGPT (Ouyang et al., 2022). He is not an author of Christiano et al. (2017), the paper that introduced deep RL from human preferences.
+TypeSafe's [primer](https://docs.typesafe.ai/introduction/machine-learning-primer) describes RLCD in three points. The model does not generate text. It returns decisions and probabilities. Higher probability should correspond to a greater chance the answer is correct. Their docs define calibration as outcomes assigned 0.2 happening about 20% of the time, and say it describes groups of predictions, not any single answer. The docs also credit cofounder Diogo Almeida with co-inventing RLHF. He is an author of InstructGPT (Ouyang et al., 2022).
 
 In my searches for a TypeSafe technical report, paper, repository or model card I found no publication of the reward itself. [OpenJev-RLCD](https://arxiv.org/abs/2609.38850) says TypeSafe discloses no training algorithm, and the [Datawhale cookbook](https://datawhalechina.github.io/jev-cookbook/materials/02-nanojev/pages/docs/RLCD_EXPERIMENT/) calls its own formula "an independent research candidate, not a recovered official recipe". My reading, and it is only that, is that the output contract makes the problem simpler than RLCR's. RLCR has the model choose an answer and attach a confidence, so the reward must couple them, and a bounded rule is needed to stop the model trading accuracy for score. A model that emits the full distribution $q(\cdot\mid x)$ over a fixed answer set can be scored directly with a proper rule against the observed label, with no answer-versus-confidence trade, which is why a log score would not hit the problem above. For the log score,
 
@@ -381,7 +381,7 @@ $$
 \mathbb{E}_{y\sim p}\big[\log q(y)\big]=-H(p)-\mathrm{KL}(p\,\Vert\,q)
 $$
 
-is maximized at $q=p$. If that is roughly the shape of RLCD, it sits close to classical probabilistic classification, and the new part is the interface. Natural-language state in, typed questions (Choice, Score, Noul) out, in a single query. TypeSafe's launch post describes parallel sampling, and I do not know whether the probabilities come from a softmax head or from sample frequencies, which changes what a scoring rule would be applied to. I do not know the reward, and I would not cite any of this as TypeSafe's method. Published work on adjacent systems narrows the options, and I collect it in "Adjacent work on calibrated probabilities" below.
+is maximized at $q=p$. If that is roughly the shape of RLCD, it sits close to classical probabilistic classification, and the new part is the interface. Natural-language state in, typed questions ([Choice, Score, Noul](https://docs.typesafe.ai/confidence)) out, in a single query. TypeSafe's [launch post](https://typesafe.ai/blog/introducing-system-one-models-and-jev) describes parallel sampling, and I do not know whether the probabilities come from a softmax head or from sample frequencies, which changes what a scoring rule would be applied to. I do not know the reward, and I would not cite any of this as TypeSafe's method. Published work on adjacent systems narrows the options, and I collect it in "Adjacent work on calibrated probabilities" below.
 
 What is public is the interface, and it makes calibration usable. A Choice answer returns a probability per option, and TypeSafe reports a `confidence` derived from that distribution. For $n$ options with top probability $p_{\max}$ the [documented formula](https://docs.typesafe.ai/confidence) is
 
@@ -454,7 +454,7 @@ Jev is no longer alone. Since its launch, other groups have shipped models with 
 
 The details behind the table, from each project's own pages:
 
-- **Cloudflare Clef and Clef-flash.** Frozen Qwen3.8-27B and Qwen3.5-9B backbones, a routing head and rank-256 LoRA adapters. The RL stage gives partial credit for adjacent ordinal choices, a reward for exactly right records and a reference penalty.
+- **Cloudflare Clef and Clef-flash.** Per [Cloudflare's Clef post](https://blog.cloudflare.com/clef-decision-models/), frozen Qwen3.8-27B and Qwen3.5-9B backbones, a routing head and rank-256 LoRA adapters. The RL stage gives partial credit for adjacent ordinal choices, a reward for exactly right records and a reference penalty.
 - **Kev-4B.** LoRA rank 16 and a pointer head. Cross-entropy over the options in four stages, then one temperature $T=2.41$ fitted by negative log-likelihood.
 - **Laya.** A 421M encoder with no text generation. The RL stage uses a group-mean baseline, noise on the logits, and a reward from strictly proper scores (log, spherical, and a ranked score for ordinal questions).
 - **Microsoft, OpenAI and QwenCloud.** Microsoft says it post-trained Qwen3.5-9B on publicly available datasets plus synthetic data. I found no training detail in the OpenAI or QwenCloud documentation.
@@ -547,7 +547,7 @@ Two public facts would change my read. A technical report with the loss would se
 
 **RLCR.** Properness is a statement about the optimum, not about optimization. The [confidence-reward-hacking paper](https://arxiv.org/abs/2607.04332) shows that some schemes pay more for a wrong answer with near-zero stated confidence than for an honest best-effort answer. RLCR's own Brier reward is proved free of the problem there, so the risk sits in variants such as larger Brier weights or unclipped log rewards, and the paper says when it appears in practice is still open. One more paper puts the problem in the optimizer. DCPO derives, under stated assumptions, that when a model is overconfident the accuracy and calibration gradients point against each other.
 
-**RLCD.** Unknown for TypeSafe, because I found no published reward. Partly known for the others, since Cloudflare, Laya and independent authors describe recipes. Two caveats come from outside the reward. Calibration is an average-case property, not a guarantee against crafted input, and an independent study shows that passing ordinary checks does not rule out a crafted-input weakness. [Liu (2026)](https://arxiv.org/abs/2610.11436) tested Jev as an answer judge on 200 clusters and found that adding one colon to a candidate with a wrong final answer raised false acceptance from 1.0% to 26.0%. That happened when the request was serialized with recursively sorted JSON keys, both variants were rejected under the builder's own key order, and the cause is unmeasured. For guardrails and routing the state often contains untrusted text, so treat all of it as hostile. Typed outputs also do not prevent wrong valid values, as above.
+**RLCD.** Unknown for TypeSafe, because I found no published reward. Partly known for the others, since Cloudflare, Laya and independent authors describe recipes. Two caveats come from outside the reward. Calibration is an average-case property, not a guarantee against crafted input, and an independent study shows that passing ordinary checks does not rule out a crafted-input weakness. [Liu (2026)](https://arxiv.org/abs/2610.11436) tested Jev as an answer judge on 200 clusters and found that adding one colon to a candidate with a wrong final answer raised false acceptance from 1.0% to 26.0% under three-label grading, and from 3.0% to 26.5% under the published four-label instruction. That happened when the request was serialized with recursively sorted JSON keys, both variants were rejected under the builder's own key order, and the cause is unmeasured. For guardrails and routing the state often contains untrusted text, so treat all of it as hostile. Typed outputs also do not prevent wrong valid values, as above.
 
 ## Where each method belongs
 
@@ -567,7 +567,7 @@ Calibration is also conditional on the task and the data distribution. An indepe
 
 | Method | Use it for | Evidence in this post | Watch for |
 |---|---|---|---|
-| RLHF | Open-ended assistants, tone, refusals, anything with no ground truth | InstructGPT's 1.3B model preferred over 175B GPT-3 by labelers | Reward model over-optimization, and calibration loss after post-training |
+| RLHF | Open-ended assistants, tone, refusals, anything with no ground truth | InstructGPT's 1.3B model ([Ouyang et al.](https://arxiv.org/abs/2203.02155)) preferred over 175B GPT-3 by labelers | Reward model over-optimization, and calibration loss after post-training |
 | RLAIF | Preference data at scale when a strong labeler model exists | Soft labels from the logprobs of "1" and "2"; direct RLAIF needs no reward model | Labeler bias passes into the reward |
 | RLVR | Math, code, formats, constraints a program can check | Tülu 3 gains on GSM8K, MATH, IFEval | Overconfidence, zero-gradient prompts, only works with a verifier |
 | Process reward models | Step-structured reasoning, mainly to rank or filter samples | Product of step scores, 78.2% in best-of-1860 on a MATH subset | Penalizes long solutions; step labels are costly |
@@ -664,10 +664,11 @@ for k in [0.5, 1, 1.5, 2, 3, 5]:
 
 - Ouyang et al., [Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155) (InstructGPT; reward model loss, PPO-ptx objective)
 - Rafailov et al., [Direct Preference Optimization](https://arxiv.org/abs/2305.18290) (closed-form optimal policy, DPO loss)
+- Korbak et al., [RL with KL penalties is better viewed as Bayesian inference](https://arxiv.org/abs/2205.11275) (Findings of EMNLP 2022; distribution collapse, KL-regularised RL as a Bayesian posterior)
 - Gao et al., [Scaling Laws for Reward Model Overoptimization](https://arxiv.org/abs/2210.10760)
 - Lambert et al., [Tülu 3](https://arxiv.org/html/2411.15124v3) (RLVR, $\alpha=10$, benchmark gains, GPT-4o-labelled preference pairs)
 - Shao et al., [DeepSeekMath](https://arxiv.org/abs/2402.03300) (GRPO, advantage in section 4.1.2)
-- Yu et al., [DAPO](https://arxiv.org/abs/2503.14476) (dynamic sampling)
+- Yu et al., [DAPO](https://arxiv.org/abs/2503.14476) (dynamic sampling and the four-technique recipe)
 - Damani et al., [Beyond Binary Rewards: Training LMs to Reason About Their Uncertainty](https://arxiv.org/abs/2507.16806) (RLCR; ICLR 2026)
 - Bani-Harouni et al., [Rewarding Doubt](https://arxiv.org/abs/2503.02623) (log-score reward; ICLR 2026)
 - [DCPO](https://arxiv.org/abs/2603.09117), [confidence reward hacking](https://arxiv.org/abs/2607.04332) and the [ACL Findings 2026 study of RLVR overconfidence](https://aclanthology.org/2026.findings-acl.610.pdf)
@@ -676,9 +677,9 @@ for k in [0.5, 1, 1.5, 2, 3, 5]:
 - Sharma et al., [Towards Understanding Sycophancy in Language Models](https://arxiv.org/abs/2310.13548) (ICLR 2024)
 - Hugging Face, [TRL GRPO trainer docs](https://huggingface.co/docs/trl/en/grpo_trainer) (default $\beta=0$)
 - Turtel et al., [Outcome-based reinforcement learning to predict the future](https://arxiv.org/abs/2505.17989) (TMLR 2025; Brier reward, GRPO without std scaling, ReMax)
-- Kadavath et al., [Language Models (Mostly) Know What They Know](https://arxiv.org/abs/2207.05221) (P(True), P(IK))
+- Kadavath et al., [Language Models (Mostly) Know What They Know](https://arxiv.org/abs/2207.05221) (P(IK))
 - Tian et al., [Just Ask for Calibration](https://aclanthology.org/2023.emnlp-main.330/)
-- Decision models: OpenAI, [Decisions guide](https://developers.openai.com/api/docs/guides/decisions); Cloudflare, [Introducing Clef](https://blog.cloudflare.com/clef-decision-models/) and the [clef-flash model page](https://developers.cloudflare.com/workers-ai/models/clef-flash/); Microsoft, [Microsoft-Decision-1](https://ai.azure.com/catalog/models/Microsoft-Decision-1); [Kev-4B](https://huggingface.co/jaredpalmer/kev-4b); [Laya](https://github.com/NandhaKishorM/laya)
+- Decision models: OpenAI, [Decisions guide](https://developers.openai.com/api/docs/guides/decisions); Cloudflare, [Introducing Clef](https://blog.cloudflare.com/clef-decision-models/); Microsoft, [Microsoft-Decision-1](https://commandline.microsoft.com/microsoft-decision-1-model-foundry/); [Kev-4B](https://huggingface.co/jaredpalmer/kev-4b); [Laya](https://huggingface.co/convaiinnovations/laya-typed-decisions)
 - Gneiting and Raftery, [Strictly Proper Scoring Rules, Prediction, and Estimation](https://www.tandfonline.com/doi/abs/10.1198/016214506000001437) (JASA 2007)
 - Independent RLCD work: Gao and Wang, [OpenJev-RLCD](https://arxiv.org/abs/2609.38850); Tegong, [JevRL](https://jevrl.github.io/output/pdf/jevrl_paper.pdf); Datawhale, [Jev Cookbook, RLCD experiment](https://datawhalechina.github.io/jev-cookbook/materials/02-nanojev/pages/docs/RLCD_EXPERIMENT/)
 - Independent tests of decision models, cited for one result each: Guo et al. (2026), [Just Ask Jev](https://arxiv.org/abs/2609.29429); Liu (2026), [Adversarial Cues in Decision Models Used as Judges: The Role of Request Presentation](https://arxiv.org/abs/2610.11436)
