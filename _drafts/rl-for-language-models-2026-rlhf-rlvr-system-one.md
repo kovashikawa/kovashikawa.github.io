@@ -41,6 +41,8 @@ This is a conceptual lens, not a description of the algorithms. InstructGPT and 
 
 The methods differ on the two axes the surveys use, where $R$ comes from and how the update is computed, and on a third that this post adds, what the model's action is.
 
+![A tree. One objective, maximize expected reward while staying near a reference model, branches into four sources of reward. Human comparisons lead to DPO and RLHF. An LLM as labeler or judge leads to RLAIF and Constitutional AI, and to rubric rewards. A checker or verifier leads to outcome and process rewards, execution feedback and RLVR. A proper scoring rule leads to RLCR, to RLCD recipes disclosed by other labs, and to System One with the Jev model, drawn with a dashed outline because its training is not public. Dashed arrows mark RLAIF building on RLHF, RLCR on RLVR and RLCD on RLCR, and Jev sharing the RLCD name without a published recipe.](/assets/images/rl-for-language-models/rl-families.png)
+
 | Method | $R$ comes from | Update | What the reward scores |
 |---|---|---|---|
 | RLHF | A reward model fit to human comparisons | PPO with a KL penalty | One sampled response |
@@ -52,6 +54,10 @@ The methods differ on the two axes the surveys use, where $R$ comes from and how
 | Rubric rewards (RaR) | A weighted checklist, each item judged by an LLM | GRPO | One sampled response |
 | RLCR | A checker plus a proper scoring rule on stated confidence | GRPO | A sampled answer and its stated confidence |
 | RLCD recipes | A proper scoring rule on the returned distribution, per the recipes disclosed | Supervised loss, then sometimes REINFORCE-style RL | The whole distribution over declared options |
+
+The figure below puts the reward signal of RLHF, RLVR and RLCR side by side. Moving left to right, the reward goes from a learned preference, to a binary check that gives no gradient when a whole group agrees, to a score that also depends on stated confidence.
+
+![Three panels. RLHF: the Bradley-Terry curve, where a reward gap becomes a preference probability, rising from 0.5 at a gap of 0 to 0.982 at a gap of 4. RLVR with GRPO: the probability that all G rewards in a group are equal, which is high for rare or near-certain successes and falls toward zero near p = 0.5, faster for larger G. RLCR: expected reward against stated confidence at p = 0.7, flat for RLVR and peaking at q = p with value 0.49 for RLCR.](/assets/images/rl-for-language-models/rl-reward-signals.png)
 
 ## RLHF: preferences through a reward model
 
@@ -348,6 +354,8 @@ To see how the metrics behave, I simulated 200,000 questions with true success p
 | 2.0 | 0.624 | 0.100 | 0.191 | 0.599 | 0.624 | 0.433 |
 | 3.0 | 0.624 | 0.148 | 0.205 | 0.735 | 0.624 | 0.419 |
 | 5.0 | 0.624 | 0.194 | 0.225 | 1.067 | 0.624 | 0.400 |
+
+![Two panels. Left: mean reward against confidence sharpness k. The RLVR reward is flat at the accuracy of 0.624, while the RLCR reward peaks at k = 1 and falls on both sides. Right: a reliability diagram in which k = 1 follows the diagonal and k = 3 falls below it at high stated confidence.](/assets/images/rl-for-language-models/rl-toy-calibration.png)
 
 Accuracy never moves, so RLVR's reward cannot tell any of these six models apart. The RLCR reward is accuracy minus Brier here, so those two columns carry one signal, and ECE and log loss rank the models the same way. A few details are easy to misread:
 
