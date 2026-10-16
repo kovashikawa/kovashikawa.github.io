@@ -11,7 +11,7 @@
           <span class="masthead-quiet__sub">(posts and projects)</span>
         </a>
         <button class="lc-toggle" type="button" aria-pressed="false" aria-label="Toggle lowercase" title="Toggle lowercase"><span class="lc-a">a</span>/<span class="lc-A">A</span></button>
-        <button class="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="theme-toggle__fill" d="M8 1.75a6.25 6.25 0 0 1 0 12.5z"/></svg></button>
+        <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Toggle dark mode" title="Toggle dark mode"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="theme-toggle__fill" d="M8 1.75a6.25 6.25 0 0 1 0 12.5z"/></svg></button>
       </div>
     </nav>
   </div>
@@ -20,10 +20,15 @@
 (function () {
   var tbtn = document.querySelector('.theme-toggle');
   if (tbtn) {
+    var root = document.documentElement;
+    var sync = function () {
+      tbtn.setAttribute('aria-pressed', root.getAttribute('data-theme') === 'dark' ? 'true' : 'false');
+    };
+    sync();
     tbtn.addEventListener('click', function () {
-      var root = document.documentElement;
       var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       root.setAttribute('data-theme', next);
+      sync();
       try { localStorage.setItem('theme', next); } catch (e) {}
     });
   }

@@ -13,6 +13,9 @@ html[data-theme="light"] {
   color-scheme: light;
 }
 
+/* Print always uses the light palette: the theme's print rules force a white
+   page, so none of the dark rules may apply there. */
+@media not print {
 html[data-theme="dark"] {
   color-scheme: dark;
   background-color: var(--page);
@@ -56,6 +59,11 @@ html[data-theme="dark"] {
 
   a:hover {
     color: var(--muted);
+  }
+
+  /* The theme colors title links directly, so they do not inherit --ink. */
+  .page__title a {
+    color: var(--ink);
   }
 
   button:focus,
@@ -218,6 +226,7 @@ html[data-theme="dark"] {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.12);
   }
 }
+}
 
 /* ==========================================================================
    Theme toggle (sits beside the a/A toggle in the masthead)
@@ -260,6 +269,7 @@ html[data-theme="dark"] .theme-toggle svg {
   transform: scaleX(-1);
 }
 
+@media not print {
 /* The Volatility Smile explorer is a hand-built Tailwind tool with white cards
    and fixed light chart colors. Keep it as a light panel on the dark page
    instead of half-converting it. */
@@ -281,4 +291,5 @@ html[data-theme="dark"] .layout--volatility-smile .page__content {
   img {
     filter: none;
   }
+}
 }

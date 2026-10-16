@@ -83,7 +83,7 @@
    Override to a light rule color so headers are readable. */
 thead {
   background-color: var(--rule, #e6e6e3);
-  color: var(--ink, var(--ink));
+  color: var(--ink, #1E1E1E);
 }
 
 thead th {
