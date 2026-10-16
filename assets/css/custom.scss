@@ -559,6 +559,15 @@ body.lc .lc-toggle {
   color: var(--ink);
 }
 
+/* The masthead row is full from about 400 to 440px once the theme toggle is
+   in it, which leaves no room for the right padding. Put the Home group on its
+   own row in that range instead of letting it sit on the edge. */
+@media (max-width: 460px) {
+  .masthead-quiet__right {
+    flex-basis: 100%;
+  }
+}
+
 @media (max-width: 560px) {
   .home-quiet__title {
     font-size: 40px;
