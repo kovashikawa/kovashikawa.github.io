@@ -1,0 +1,295 @@
+/* ==========================================================================
+   Dark mode
+   Activated by <html data-theme="dark">, set in head/custom.html from the
+   saved choice or the system preference. Light mode is untouched: every rule
+   below is scoped to the attribute.
+
+   Two layers:
+   1. Palette variables. custom.scss and the scoped includes read these.
+   2. Overrides for colors the theme compiled in from the stripe skin.
+   ========================================================================== */
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* Print always uses the light palette: the theme's print rules force a white
+   page, so none of the dark rules may apply there. */
+@media not print {
+html[data-theme="dark"] {
+  color-scheme: dark;
+  background-color: var(--page);
+
+  --ink:        #ececea;
+  --muted:      #a8a8a4;
+  --muted-lt:   #7e7e7a;
+  --rule:       #2b2b2b;
+  --rule-soft:  #242424;
+  --bg:         #121212;
+  --bg-white:   #121212;
+  --page:       #121212;
+  --surface:    #1b1b1b;
+  --baseline:   #4a4a47;
+
+  /* Blue ramp keeps its meaning (step 1 quietest, step 4 strongest),
+     but strength now means brighter against the dark page. */
+  --blue-1:     #35598c;
+  --blue-2:     #3f6fae;
+  --blue-3:     #5f9be0;
+  --blue-4:     #a9cdf7;
+}
+
+:where(html[data-theme="dark"]) {
+  /* :where() keeps these at element/class specificity so the site's own
+     classes (for example the muted TOC links) still win. */
+  body {
+    background-color: var(--page);
+    color: var(--ink);
+  }
+
+  ::selection {
+    background: var(--ink);
+    color: var(--page);
+  }
+
+  a,
+  a:visited {
+    color: var(--ink);
+  }
+
+  a:hover {
+    color: var(--muted);
+  }
+
+  /* The theme colors title links directly, so they do not inherit --ink. */
+  .page__title a {
+    color: var(--ink);
+  }
+
+  button:focus,
+  a:focus {
+    outline-color: var(--muted);
+  }
+
+  hr,
+  .page__content h2,
+  .page__share,
+  .page__related,
+  .page__comments-title,
+  .page__content + .pagination,
+  .archive__subtitle,
+  .taxonomy__section:not(:last-child),
+  .taxonomy__index a {
+    border-color: var(--rule);
+  }
+
+  blockquote {
+    border-inline-start-color: var(--muted-lt);
+  }
+
+  figcaption,
+  .page__meta,
+  .page__footer,
+  .page__footer .fas,
+  .page__footer .fab,
+  .page__footer .far,
+  .archive__subtitle,
+  .taxonomy__title,
+  .taxonomy__count,
+  .back-to-top,
+  .footnote,
+  .footnotes {
+    color: var(--muted);
+  }
+
+  /* Tables */
+  table,
+  th,
+  td {
+    border-color: var(--rule);
+  }
+
+  tr:nth-child(2n) {
+    background-color: transparent;
+  }
+
+  /* Code: the theme's blocks are already dark, so give them a quiet frame
+     and keep them distinct from the page. */
+  div.highlighter-rouge,
+  figure.highlight {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+
+  .page__content :not(pre) > code,
+  .notice code {
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  /* Forms, buttons */
+  form {
+    background-color: var(--surface);
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: var(--surface);
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+
+  .btn--primary,
+  .btn--primary:visited {
+    background-color: var(--ink);
+    color: var(--page);
+  }
+
+  .btn--primary:hover {
+    background-color: var(--muted);
+    color: var(--page);
+  }
+
+  /* Callouts */
+  .notice,
+  .notice--primary,
+  .notice--info,
+  .notice--warning,
+  .notice--success,
+  .notice--danger {
+    background-color: var(--surface);
+    color: var(--ink);
+    box-shadow: none;
+    border: 1px solid var(--rule);
+  }
+
+  /* Pagination */
+  .pagination li a,
+  .pagination--pager {
+    color: var(--muted);
+    border-color: var(--rule);
+  }
+
+  .pagination li a.current,
+  .pagination li a.current.disabled {
+    background: var(--ink);
+    color: var(--page);
+  }
+
+  /* Chrome */
+  .masthead,
+  .masthead__inner-wrap {
+    border-color: var(--rule-soft);
+  }
+
+  .greedy-nav,
+  .greedy-nav .hidden-links,
+  .author__urls {
+    background: var(--page);
+    border-color: var(--rule);
+  }
+
+  .navicon,
+  .navicon::before,
+  .navicon::after {
+    background: var(--ink);
+  }
+
+  /* The theme paints each social glyph in its brand color; the site uses
+     plain ink everywhere, and the GitHub mark is near-black. */
+  .social-icons .fas,
+  .social-icons .fab,
+  .social-icons .far,
+  .social-icons .fal,
+  .social-icons .fa-github,
+  .social-icons .fa-github-alt,
+  .social-icons .fa-x-twitter,
+  .social-icons .fa-linkedin,
+  .social-icons .fa-rss {
+    color: var(--ink);
+  }
+
+  .page__footer-follow .social-icons a:hover,
+  .page__footer-follow .social-icons a:hover i,
+  .social-icons-row a:hover {
+    color: var(--muted);
+  }
+
+  /* Images keep their own colors but sit a little softer on the dark page. */
+  .page__content img {
+    filter: brightness(0.92);
+  }
+
+  .page__content a:not(.btn):hover img {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.12);
+  }
+}
+}
+
+/* ==========================================================================
+   Theme toggle (sits beside the a/A toggle in the masthead)
+   ========================================================================== */
+.theme-toggle {
+  background: transparent;
+  border: none;
+  padding: 2px;
+  margin-top: 2px;
+  line-height: 1;
+  cursor: pointer;
+  flex: none;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+
+  svg {
+    width: 15px;
+    height: 15px;
+    display: block;
+  }
+
+  /* No fade on the swap (MM sets a 0.2s transition on many elements). */
+  &,
+  * {
+    transition: none;
+  }
+
+  &:hover {
+    color: var(--muted);
+  }
+}
+
+/* Half-filled disc: the filled half flips side with the theme. */
+.theme-toggle__fill {
+  fill: currentColor;
+}
+
+html[data-theme="dark"] .theme-toggle svg {
+  transform: scaleX(-1);
+}
+
+@media not print {
+/* The Volatility Smile explorer is a hand-built Tailwind tool with white cards
+   and fixed light chart colors. Keep it as a light panel on the dark page
+   instead of half-converting it. */
+html[data-theme="dark"] .layout--volatility-smile .page__content {
+  --ink:        #1E1E1E;
+  --muted:      #555555;
+  --muted-lt:   #888888;
+  --rule:       #e6e6e3;
+  --rule-soft:  #ececec;
+  --page:       #ffffff;
+  --surface:    #ffffff;
+  --baseline:   #c9c9c4;
+
+  background: var(--page);
+  color: var(--ink);
+  padding: 24px;
+  border-radius: 4px;
+
+  img {
+    filter: none;
+  }
+}
+}
