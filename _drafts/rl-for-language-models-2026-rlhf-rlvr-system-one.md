@@ -41,7 +41,7 @@ This is a conceptual lens, not a description of the algorithms. InstructGPT ([Ou
 
 The methods differ on the two axes the surveys use, where $R$ comes from and how the update is computed, and on a third that this post adds, what the model's action is.
 
-![A tree. One objective, maximize expected reward while staying near a reference model, branches into four sources of reward. Human comparisons lead to DPO and RLHF. An LLM as labeler or judge leads to RLAIF and Constitutional AI, and to rubric rewards. A checker or verifier leads to outcome and process rewards, execution feedback and RLVR. A proper scoring rule leads to RLCR, to RLCD recipes disclosed by other labs, and to System One with the Jev model, drawn with a dashed outline because its training is not public. Dashed arrows mark RLAIF building on RLHF, RLCR on RLVR and RLCD on RLCR, and Jev sharing the RLCD name without a published recipe.](/assets/images/rl-for-language-models/rl-families.png)
+![A tree. One objective, maximize expected reward while staying near a reference model, branches into four sources of reward. Human comparisons lead to DPO and RLHF. An LLM as labeler or judge leads to RLAIF and Constitutional AI, and to rubric rewards. A checker or verifier, programmed or learned, leads to outcome and process rewards, execution feedback and RLVR. A proper scoring rule leads to RLCR, to RLCD recipes disclosed by other labs, and to System One with the Jev model, drawn with a dashed outline because its training is not public. Dashed arrows mark RLAIF building on RLHF and RLCR on RLVR, RLCD recipes as related to RLCR without being derived from it, and Jev sharing the RLCD name without a published recipe.](/assets/images/rl-for-language-models/rl-families.png)
 
 | Method | $R$ comes from | Update | What the reward scores |
 |---|---|---|---|
@@ -55,7 +55,7 @@ The methods differ on the two axes the surveys use, where $R$ comes from and how
 | RLCR | A checker plus a proper scoring rule on stated confidence | GRPO | A sampled answer and its stated confidence |
 | RLCD recipes | A proper scoring rule on the returned distribution, per the recipes disclosed | Supervised loss, then sometimes REINFORCE-style RL | The whole distribution over declared options |
 
-The figure below puts the reward signal of RLHF, RLVR and RLCR side by side. Moving left to right, the reward goes from a learned preference, to a binary check that gives no gradient when a whole group agrees, to a score that also depends on stated confidence.
+The figure below puts the reward signals of RLHF and RLCR next to what a binary reward does inside a GRPO group. Moving left to right, it goes from a learned preference, to a binary check that gives no gradient when a whole group agrees, to a score that also depends on stated confidence.
 
 ![Three panels. RLHF: the Bradley-Terry curve, where a reward gap becomes a preference probability, rising from 0.5 at a gap of 0 to 0.982 at a gap of 4. RLVR with GRPO: the probability that all G rewards in a group are equal, which is high for rare or near-certain successes and falls toward zero near p = 0.5, faster for larger G. RLCR: expected reward against stated confidence at p = 0.7, flat for RLVR and peaking at q = p with value 0.49 for RLCR.](/assets/images/rl-for-language-models/rl-reward-signals.png)
 
@@ -156,9 +156,10 @@ I computed it for a few cases.
 | 0.05 | 0.815 | 0.663 | 0.440 |
 | 0.20 | 0.411 | 0.168 | 0.028 |
 | 0.50 | 0.125 | 0.008 | 0.000 |
+| 0.80 | 0.411 | 0.168 | 0.028 |
 | 0.95 | 0.815 | 0.663 | 0.440 |
 
-In a degenerate group the reward gives no gradient, and the KL term, if there is one, is the only thing left. For prompts with rare success at small $G$ that is most groups. [DAPO](https://arxiv.org/abs/2503.14476) responds by over-sampling and filtering out prompts whose accuracy is 0 or 1 ("dynamic sampling"), and reports reaching the same performance faster. Standardization has a second effect. With one success in 16, the lone success gets an advantage of about +3.9 and each failure about -0.26, so rare wins are amplified. For accuracy that concentration on the edge of the model's ability is the point.
+In a degenerate group the reward gives no gradient, and the KL term, if there is one, is the only thing left. For prompts with rare success at small $G$ that is most groups. [DAPO](https://arxiv.org/abs/2503.14476) responds by over-sampling and filtering out prompts whose accuracy is 0 or 1 ("dynamic sampling"), and reports reaching the same performance faster. Standardization has a second effect. With one success in 16, the lone success gets an advantage of about +3.9 and each failure about -0.26, so rare wins are amplified. Those two numbers use the population standard deviation. The sample standard deviation, which [TRL's GRPO trainer](https://huggingface.co/docs/trl/en/grpo_trainer) applies by default through `scale_rewards="group"`, gives +3.75 and -0.25. For accuracy that concentration on the edge of the model's ability is the point.
 
 ### Critic-free variants: RLOO and Dr. GRPO
 
@@ -355,7 +356,7 @@ To see how the metrics behave, I simulated 200,000 questions with true success p
 | 3.0 | 0.624 | 0.148 | 0.205 | 0.735 | 0.624 | 0.419 |
 | 5.0 | 0.624 | 0.194 | 0.225 | 1.067 | 0.624 | 0.400 |
 
-![Two panels. Left: mean reward against confidence sharpness k. The RLVR reward is flat at the accuracy of 0.624, while the RLCR reward peaks at k = 1 and falls on both sides. Right: a reliability diagram in which k = 1 follows the diagonal and k = 3 falls below it at high stated confidence.](/assets/images/rl-for-language-models/rl-toy-calibration.png)
+![Two panels. Left: mean reward against confidence sharpness k. The RLVR reward is flat at the accuracy of 0.624, while the RLCR reward peaks at k = 1 and falls on both sides. Right: a reliability diagram in which k = 1 follows the diagonal and k = 3 sits above it at low stated confidence and below it at high stated confidence.](/assets/images/rl-for-language-models/rl-toy-calibration.png)
 
 Accuracy never moves, so RLVR's reward cannot tell any of these six models apart. The RLCR reward is accuracy minus Brier here, so those two columns carry one signal, and ECE and log loss rank the models the same way. A few details are easy to misread:
 

@@ -31,7 +31,7 @@ groups = [
         ("RLAIF, Constitutional AI", "AI-labeled preferences, or a direct LLM reward"),
         ("Rubric rewards (RaR)", "LLM-judged weighted checklist, GRPO"),
     ]),
-    ("A checker or verifier", "Something that can say right or wrong", False, [
+    ("A checker or verifier", "Right or wrong, programmed or learned", False, [
         ("Outcome and process rewards", "Learned verifier of answer or steps; mostly reranks"),
         ("Execution feedback (RLEF)", "Run the code against tests, over several turns"),
         ("RLVR", "Deterministic checker; PPO, GRPO, RLOO, Dr. GRPO"),
@@ -45,7 +45,7 @@ groups = [
 lineage = [  # (from, to, label, accent)
     ("RLHF", "RLAIF, Constitutional AI", "the labeler\nbecomes a model", False),
     ("RLVR", "RLCR", "adds a confidence\nterm to the reward", True),
-    ("RLCR", "RLCD recipes", "scores the whole\ndistribution", True),
+    ("RLCR", "RLCD recipes", "related, not derived;\nscores the distribution", False),
     ("RLCD recipes", "System One: Jev", "same name, recipe\nnot published", False),
 ]
 DASHED = {"System One: Jev"}
@@ -129,10 +129,10 @@ ly = H - 30
 svg.append(f'<rect x="{ROOT_X}" y="{ly-13}" width="18" height="18" rx="4" fill="{ACCENT_BG}" stroke="{ACCENT}" stroke-width="1.8"/>')
 svg.append(f'<text x="{ROOT_X+28}" y="{ly+2}" class="leg">Reward includes calibration</text>')
 svg.append(f'<path d="M{ROOT_X+300} {ly-4} H{ROOT_X+340}" stroke="{MUTED}" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ahg)"/>')
-svg.append(f'<text x="{ROOT_X+352}" y="{ly+2}" class="leg">Builds on, or shares a name with</text>')
+svg.append(f'<text x="{ROOT_X+352}" y="{ly+2}" class="leg">Builds on, relates to, or shares a name with</text>')
 
-svg.append(f'<rect x="{ROOT_X+620}" y="{ly-13}" width="18" height="18" rx="4" fill="#fff" stroke="{ACCENT_LT}" stroke-width="1.8" stroke-dasharray="4 3"/>')
-svg.append(f'<text x="{ROOT_X+648}" y="{ly+2}" class="leg">Output contract documented, training not public</text>')
+svg.append(f'<rect x="{ROOT_X+720}" y="{ly-13}" width="18" height="18" rx="4" fill="#fff" stroke="{ACCENT_LT}" stroke-width="1.8" stroke-dasharray="4 3"/>')
+svg.append(f'<text x="{ROOT_X+748}" y="{ly+2}" class="leg">Output contract documented, training not public</text>')
 
 html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
 html,body{{margin:0;background:#fff}}
