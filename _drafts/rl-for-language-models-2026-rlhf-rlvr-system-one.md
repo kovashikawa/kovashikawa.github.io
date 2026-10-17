@@ -109,11 +109,13 @@ $$
 
 which is the RLHF loss when $\hat p$ is 0 or 1. The paper states the training as cross-entropy on the softmax of the reward model's scores, and the form above is that written out. The authors also note that training on AI labels can be viewed as a form of distillation of the labeler.
 
-They propose a second variant, direct RLAIF, which drops the reward model. The LLM rates a response from 1 to 10, the likelihood of each score token is normalized to a distribution $P(i\mid y,x)$, and the reward is the expected rating, rescaled to the range $[-1,1]$:
+They propose a second variant, direct RLAIF, which drops the reward model. The LLM rates a response from 1 to 10, the likelihood of each score token is normalized to a distribution $P(i\mid y,x)$, and the weighted score is
 
 $$
 s(y\mid x)=\sum_{i=1}^{10} i\,P(i\mid y,x)
 $$
+
+The paper then normalizes this score to the range $[-1,1]$ and uses it as the reward.
 
 [Constitutional AI (Bai et al., 2022)](https://arxiv.org/abs/2212.08073) uses the same move with written principles. In the supervised stage the model critiques and revises its own outputs against the principles. In the RL stage a feedback model is shown a pair of responses as a multiple-choice question, and the normalized probabilities of the two options become the target of a preference model, the same soft-label idea as above. Only the harmlessness labels come from the model, and the helpfulness labels stay human. With chain-of-thought the probabilities come out close to 0 or 1, which the authors call not well calibrated, so they clamp them to the 40 to 60 percent range, and report that without the clamping the RL-CAI models learned to output more extreme responses.
 
@@ -182,7 +184,7 @@ where $L$ is a constant, such as the generation budget. Dr. GRPO removes both te
 
 The reward is the same whether the model was sure or guessing. In the notation of the [RLCR paper](https://arxiv.org/abs/2507.16806), $R_{\text{correctness}}=\mathbb{1}_{y\equiv y^*}$, and the authors point out that it rewards a confident correct answer and a lucky guess identically, and penalizes an abstention and a wrong answer identically. Any confidence the model states is unconstrained by the reward. They cite prior work showing models drift toward overconfidence after RL, and note that reasoning models in particular show worse calibration and more hallucination than their base models.
 
-Other papers report overconfidence after RL. An [ACL Findings 2026 study](https://aclanthology.org/2026.findings-acl.610.pdf) of Qwen3 models up to 8B on decision tasks finds the base models already extremely overconfident, GRPO adding accuracy but leaving that overconfidence in place ("little to no improvement in calibration"), and cross-entropy SFT on the decision token calibrating much better with smaller accuracy gains. [DCPO](https://arxiv.org/abs/2603.09117) reports that GRPO training of Qwen3-8B raises average confidence from about 0.88 to above 0.98, though the base model was already overconfident and plain ECE can fall as accuracy rises.
+Other papers report overconfidence after RL. [Yaldiz et al. (2026)](https://aclanthology.org/2026.findings-acl.610.pdf), in ACL Findings, study Qwen3 models up to 8B on decision tasks and find the base models already extremely overconfident, GRPO adding accuracy but leaving that overconfidence in place ("little to no improvement in calibration"), and cross-entropy SFT on the decision token calibrating much better with smaller accuracy gains. They then propose a calibration-aware RL formulation that adjusts the decision-token probabilities, keeps RLVR's accuracy and reduces ECE by up to 9 points. [DCPO](https://arxiv.org/abs/2603.09117) reports that GRPO training of Qwen3-8B raises average confidence from about 0.88 to above 0.98, though the base model was already overconfident and plain ECE can fall as accuracy rises.
 
 ## Outcome, process and execution rewards
 
@@ -329,7 +331,7 @@ Group-relative training also gets more signal. In an all-correct group of 8 wher
 
 | Stated confidence | RLCR reward | Advantage |
 |---:|---:|---:|
-| 0.99 | 1.0000 | +0.85 |
+| 0.99 | 0.9999 | +0.85 |
 | 0.90 | 0.9900 | +0.73 |
 | 0.80 | 0.9600 | +0.38 |
 | 0.70 | 0.9100 | -0.21 |
@@ -383,13 +385,13 @@ $$
 
 is maximized at $q=p$. If that is roughly the shape of RLCD, it sits close to classical probabilistic classification, and the new part is the interface. Natural-language state in, typed questions ([Choice, Score, Noul](https://docs.typesafe.ai/confidence)) out, in a single query. TypeSafe's [launch post](https://typesafe.ai/blog/introducing-system-one-models-and-jev) describes parallel sampling, and I do not know whether the probabilities come from a softmax head or from sample frequencies, which changes what a scoring rule would be applied to. I do not know the reward, and I would not cite any of this as TypeSafe's method. Published work on adjacent systems narrows the options, and I collect it in "Adjacent work on calibrated probabilities" below.
 
-What is public is the interface, and it makes calibration usable. A Choice answer returns a probability per option, and TypeSafe reports a `confidence` derived from that distribution. For $n$ options with top probability $p_{\max}$ the [documented formula](https://docs.typesafe.ai/confidence) is
+What is public is the interface, and it makes calibration usable. A Choice or Score answer returns a probability per option or level, and TypeSafe reports a `confidence` derived from that distribution. For a Choice with $n$ options and top probability $p_{\max}$ the [documented formula](https://docs.typesafe.ai/confidence) is
 
 $$
 \text{confidence}=\frac{p_{\max}-1/n}{1-1/n}
 $$
 
-and for a Noul with probability $p$ it is $\lvert 2p-1\rvert$. Only the top probability counts, so $(0.6,0.3,0.1)$ and $(0.6,0.2,0.2)$ both come out at 0.4. This is a rescaled margin over chance, not the probability of being right. A confidence of 0.9 means $p_{\max}=0.95$ for two options and 0.933 for three, through $p_{\max}=\text{confidence}\cdot(1-1/n)+1/n$. Decision thresholds belong on the probabilities.
+Only the top probability counts, so $(0.6,0.3,0.1)$ and $(0.6,0.2,0.2)$ both come out at 0.4. This is a rescaled margin over chance, not the probability of being right. A confidence of 0.9 means $p_{\max}=0.95$ for two options and 0.933 for three, through $p_{\max}=\text{confidence}\cdot(1-1/n)+1/n$. A Noul is a single probability and carries no `confidence`. The docs suggest $\lvert 2p-1\rvert$ for anyone who wants one, which is the Choice formula with two options. A Score's levels are ordered, so its formula also counts how far probability sits from the most likely level, and probability on a neighboring level lowers confidence less than the same probability further away. Decision thresholds belong on the probabilities.
 
 A typed output cannot be a malformed type, but it can still be a wrong valid value. [InfoQ](https://www.infoq.com/news/2026/10/typesafe-ai-jev-released/) reports that objection from Hacker News against TypeSafe's "can't hallucinate" line, and quotes Armin Ronacher saying the design "delegates the hallucination problem a little bit to the user".
 
@@ -671,7 +673,7 @@ for k in [0.5, 1, 1.5, 2, 3, 5]:
 - Yu et al., [DAPO](https://arxiv.org/abs/2503.14476) (dynamic sampling and the four-technique recipe)
 - Damani et al., [Beyond Binary Rewards: Training LMs to Reason About Their Uncertainty](https://arxiv.org/abs/2507.16806) (RLCR; ICLR 2026)
 - Bani-Harouni et al., [Rewarding Doubt](https://arxiv.org/abs/2503.02623) (log-score reward; ICLR 2026)
-- [DCPO](https://arxiv.org/abs/2603.09117), [confidence reward hacking](https://arxiv.org/abs/2607.04332) and the [ACL Findings 2026 study of RLVR overconfidence](https://aclanthology.org/2026.findings-acl.610.pdf)
+- [DCPO](https://arxiv.org/abs/2603.09117), [confidence reward hacking](https://arxiv.org/abs/2607.04332) and [Yaldiz et al. on RLVR overconfidence](https://aclanthology.org/2026.findings-acl.610.pdf)
 - Guo et al., [On Calibration of Modern Neural Networks](https://arxiv.org/abs/1706.04599) (calibration, ECE, temperature scaling)
 - OpenAI, [GPT-4 Technical Report](https://arxiv.org/pdf/2303.08774v6) (calibration before and after post-training)
 - Sharma et al., [Towards Understanding Sycophancy in Language Models](https://arxiv.org/abs/2310.13548) (ICLR 2024)
