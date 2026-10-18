@@ -32,7 +32,7 @@ The docs also warn against using a Noul for a degree. A Noul of 0.5 means yes an
 
 The entity alignment cookbook grades a pair of product records as different, related or the same. It uses a Score, and says a Choice "would lose the ordered relationship of the three outcomes".
 
-My rule is to use a Score when a near miss is better than a far one in how you read the answer, and a Choice when a wrong option is simply wrong. With a Choice or a Score, I keep the full probabilities, because the chosen option or the score alone hides how the model split.
+The docs add a test for a Score. Keep each Score question to one dimension, with levels you can describe distinctly. If there is no in-between and the answer is one of a few discrete categories, they say to use a Choice. I keep the full probabilities for a Choice or a Score, because the chosen option or the score alone hides how the model split.
 
 ## Choice and Score confidence
 
