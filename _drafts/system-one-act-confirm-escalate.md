@@ -53,8 +53,6 @@ Inverting it gives $p_{\max} = \text{confidence} \cdot (1 - 1/n) + 1/n$. A confi
 
 The cost rule is stated in probability, so convert confidence to $p_{\max}$ or threshold $p_{\max}$ directly. On a three-option Choice, where the action is the top option, the two cutoffs above of 0.50 and 0.99 are confidences of 0.25 and 0.985. The docs' routing example thresholds confidence, not probability.
 
-A Noul has no confidence field, so it needs no conversion. Its page says where to set the threshold depends on the cost of being wrong: raise it when acting on a false yes is expensive, and lower it when missing a true yes is.
-
 ## Setting the thresholds
 
 For each action, write down what a wrong call costs and what asking costs, and set its threshold at $p \ge 1 - c/C$. Then check on your own data that a probability of 0.9 means about 90%.
