@@ -101,17 +101,16 @@ fig, axs = plt.subplots(1, 2, figsize=(10.5, 4.1), gridspec_kw={"width_ratios": 
 fig.subplots_adjust(wspace=0.28, top=0.76, bottom=0.16, left=0.07, right=0.985)
 
 ax = axs[0]
-ax.plot(ks, np.full_like(ks, acc), color=LIGHT, lw=2, ls=(0, (5, 3)))
 ax.plot(ks, rl, color=ACCENT, lw=2.2)
 ax.scatter([1], [(y - (conf(1) - y) ** 2).mean()], color=ACCENT, s=30, zorder=3)
 ax.set_xscale("log")
 ax.set_xticks([0.5, 1, 2, 5]); ax.set_xticklabels(["0.5", "1", "2", "5"])
 ax.minorticks_off()
-ax.text(0.42, acc + 0.008, f"RLVR reward = accuracy = {acc:.3f}", color=LIGHT, fontsize=9)
+ax.text(0.42, 0.352, f"RLVR reward = accuracy = {acc:.3f} at every k (off this scale)", color=MUTED, fontsize=9)
 ax.text(1.05, (y - (conf(1) - y) ** 2).mean() + 0.012, "k = 1, calibrated by construction",
         color=ACCENT, fontsize=8.5)
 ax.text(2.6, rl[-12] + 0.012, "RLCR reward", color=ACCENT, fontsize=9)
-ax.set_ylim(0.38, 0.68)
+ax.set_ylim(0.34, 0.47)
 ax.set_xlabel("confidence sharpness  k   (k > 1 sharper than truth, k < 1 flatter)")
 ax.set_ylabel("mean reward")
 ax.set_title("Same accuracy, different rewards", loc="left", pad=34)

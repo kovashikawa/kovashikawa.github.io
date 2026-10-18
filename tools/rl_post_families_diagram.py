@@ -72,7 +72,7 @@ def curve(x1, y1, x2, y2, color, w=1.8):
 
 svg = []
 # column labels
-for x, t in [(ROOT_X, "THE OBJECTIVE"), (GRP_X, "WHAT THE REWARD IS BUILT FROM"), (M_X, "METHOD AND WHAT IT DOES")]:
+for x, t in [(ROOT_X, "THE OBJECTIVE"), (GRP_X, "THE REWARD IS BUILT FROM"), (M_X, "METHOD AND WHAT IT DOES")]:
     svg.append(f'<text x="{x}" y="46" class="col">{t}</text>')
 
 # edges first (under nodes)

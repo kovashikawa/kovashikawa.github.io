@@ -356,7 +356,7 @@ To see how the metrics behave, I simulated 200,000 questions with true success p
 | 3.0 | 0.624 | 0.148 | 0.205 | 0.735 | 0.624 | 0.419 |
 | 5.0 | 0.624 | 0.194 | 0.225 | 1.067 | 0.624 | 0.400 |
 
-![Two panels. Left: mean reward against confidence sharpness k. The RLVR reward is flat at the accuracy of 0.624, while the RLCR reward peaks at k = 1 and falls on both sides. Right: a reliability diagram in which k = 1 follows the diagonal and k = 3 sits above it at low stated confidence and below it at high stated confidence.](/assets/images/rl-for-language-models/rl-toy-calibration.png)
+![Two panels. Left: mean reward against confidence sharpness k. The RLVR reward is the accuracy, 0.624 at every k, and is noted as off the scale, while the RLCR reward peaks at k = 1 and falls on both sides. Right: a reliability diagram in which k = 1 follows the diagonal and k = 3 sits above it at low stated confidence and below it at high stated confidence.](/assets/images/rl-for-language-models/rl-toy-calibration.png)
 
 Accuracy never moves, so RLVR's reward cannot tell any of these six models apart. The RLCR reward is accuracy minus Brier here, so those two columns carry one signal, and ECE and log loss rank the models the same way. A few details are easy to misread:
 
