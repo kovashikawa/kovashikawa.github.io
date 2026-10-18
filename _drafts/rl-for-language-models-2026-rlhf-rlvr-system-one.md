@@ -679,7 +679,7 @@ for k in [0.5, 1, 1.5, 2, 3, 5]:
 - OpenAI, [GPT-4 Technical Report](https://arxiv.org/pdf/2303.08774v6) (calibration before and after post-training)
 - Sharma et al., [Towards Understanding Sycophancy in Language Models](https://arxiv.org/abs/2310.13548) (ICLR 2024)
 - Hugging Face, [TRL GRPO trainer docs](https://huggingface.co/docs/trl/en/grpo_trainer) (default $\beta=0$)
-- Turtel et al., [Outcome-based reinforcement learning to predict the future](https://arxiv.org/abs/2505.17989) (TMLR 2025; Brier reward, GRPO without std scaling, ReMax)
+- Turtel et al., [Outcome-based reinforcement learning to predict the future](https://arxiv.org/abs/2505.17989) (Brier reward, GRPO without std scaling, ReMax)
 - Kadavath et al., [Language Models (Mostly) Know What They Know](https://arxiv.org/abs/2207.05221) (P(IK))
 - Tian et al., [Just Ask for Calibration](https://aclanthology.org/2023.emnlp-main.330/)
 - Decision models: OpenAI, [Decisions guide](https://developers.openai.com/api/docs/guides/decisions); Cloudflare, [Introducing Clef](https://blog.cloudflare.com/clef-decision-models/); Microsoft, [Microsoft-Decision-1](https://commandline.microsoft.com/microsoft-decision-1-model-foundry/); [Kev-4B](https://huggingface.co/jaredpalmer/kev-4b); [Laya](https://huggingface.co/convaiinnovations/laya-typed-decisions)

@@ -38,7 +38,7 @@ groups = [
     ]),
     ("A proper scoring rule", "Confidence is part of the reward", True, [
         ("RLCR", "Checker plus a Brier term on stated confidence"),
-        ("RLCD recipes", "Disclosed by others; scoring rule on the whole distribution"),
+        ("RLCD recipes", "Disclosed by others; calibration loss on the whole distribution"),
         ("System One: Jev", "Typed probabilities out; reward not published"),
     ]),
 ]
@@ -72,7 +72,7 @@ def curve(x1, y1, x2, y2, color, w=1.8):
 
 svg = []
 # column labels
-for x, t in [(ROOT_X, "THE OBJECTIVE"), (GRP_X, "WHERE THE REWARD COMES FROM"), (M_X, "METHOD AND WHAT IT DOES")]:
+for x, t in [(ROOT_X, "THE OBJECTIVE"), (GRP_X, "WHAT THE REWARD IS BUILT FROM"), (M_X, "METHOD AND WHAT IT DOES")]:
     svg.append(f'<text x="{x}" y="46" class="col">{t}</text>')
 
 # edges first (under nodes)

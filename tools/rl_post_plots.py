@@ -112,7 +112,7 @@ ax.text(1.05, (y - (conf(1) - y) ** 2).mean() + 0.012, "k = 1, calibrated by con
         color=ACCENT, fontsize=8.5)
 ax.text(2.6, rl[-12] + 0.012, "RLCR reward", color=ACCENT, fontsize=9)
 ax.set_ylim(0.38, 0.68)
-ax.set_xlabel("confidence sharpness  k   (k > 1 overconfident, k < 1 underconfident)")
+ax.set_xlabel("confidence sharpness  k   (k > 1 sharper than truth, k < 1 flatter)")
 ax.set_ylabel("mean reward")
 ax.set_title("Same accuracy, different rewards", loc="left", pad=34)
 sub(ax, "Same answers in every model;\nonly the stated confidence changes")
