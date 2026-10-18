@@ -45,10 +45,10 @@ The docs' worked example uses three levels. I ran both formulas in Python on the
 | (0, 0.5, 0.5) | 0.25 | 0.25 |
 | (0.5, 0, 0.5) | 0.25 | 0 |
 
-In the first row the model is torn between two neighbouring levels. In the second it is torn between the two ends, and Score confidence drops to zero. The formula's raw value there is negative, so it is floored at 0. The Choice formula gives both rows 0.25 because it sees only the top probability, 0.5 in each. Both rows tie for the top level. The symmetric rows give the same value whichever tied level counts as the most likely one.
+In the first row the model is torn between two neighbouring levels. In the second it is torn between the two ends, and Score confidence drops to zero. The Choice formula gives both rows 0.25 because it sees only the top probability, 0.5 in each.
 
 The second row also shows why the score alone is not enough. Its score is 1.0, the same as a model that put everything on level 1, yet it gave level 1 no probability. The Score page says to read `probabilities` and `confidence` next to the score, and calls a fractional score a position you can rank by or round. The Jev 1.13 notes add that this version's score levels are weak in numerical calibration, so they advise against using a score to rebuild an exact number between two levels.
 
 A Noul has no confidence field. The docs offer `|2p - 1|` if you want one on the same scale, which is the Choice formula for the options (p, 1 - p).
 
-Sources: TypeSafe docs on [Primitives](https://docs.typesafe.ai/primitives), [Confidence](https://docs.typesafe.ai/confidence), the [entity alignment cookbook](https://docs.typesafe.ai/cookbooks/entity_alignment) and the [Jev 1.13 notes](https://docs.typesafe.ai/model-jaggedness/jev-1.13).
+Sources: TypeSafe docs on [Primitives](https://docs.typesafe.ai/primitives), [Score](https://docs.typesafe.ai/primitives/score), [Confidence](https://docs.typesafe.ai/confidence), the [entity alignment cookbook](https://docs.typesafe.ai/cookbooks/entity_alignment) and the [Jev 1.13 notes](https://docs.typesafe.ai/model-jaggedness/jev-1.13).
