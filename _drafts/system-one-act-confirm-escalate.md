@@ -27,17 +27,19 @@ The Confidence page's own example uses 0.5 and 0.9 instead, and the docs say "Th
 
 ## The rule from decision theory
 
-This part is not TypeSafe's. [Elkan (2001)](https://cseweb.ucsd.edu/~elkan/rescale.pdf) says to predict positive when its expected cost is no higher than the expected cost of predicting negative. Write $C_{FP}$ for the cost of acting when you should not and $C_{FN}$ for the cost of not acting when you should. With no cost for correct decisions, act when $p \ge p^*$, where $p$ is the model's probability that acting is the right call and
+This part is not TypeSafe's. The principle is old and simple, and [Elkan (2001)](https://cseweb.ucsd.edu/~elkan/rescale.pdf) states it for classifiers: take the action whose expected cost is lowest. [Chow (1970)](https://doi.org/10.1109/tit.1970.1054406) applied it to the case of refusing to decide. His rule rejects when the largest probability is below $1 - t$, where $t$ is the cost of rejecting divided by the cost of an error, with one cost for all errors and a correct decision free.
+
+Here asking the user is the rejection. Say asking costs $c$ and the user's answer settles the matter, so asking carries no risk of a wrong action, while a wrong action costs $C$. Acting is cheaper when $(1 - p)\,C \le c$, so act when
 
 $$
-p^* = \frac{C_{FP}}{C_{FP} + C_{FN}}
+p \ge 1 - \frac{c}{C}
 $$
+
+where $p$ is the model's probability that acting is the right call. This is Chow's reject rule with the costs written as $c$ and $C$. With made-up costs, a wrong balance costs 2 and asking costs 1, so act at 0.50 or more. A wrong transfer costs 100 and asking costs 1, so act only at 0.99 or more. The costs are invented, and the cutoffs differ a lot because the error costs do.
 
 The rule needs $p$ to be a calibrated probability. The docs say TypeSafe trains for calibration, measured across groups of predictions, and that this "does not guarantee that an individual answer is correct." They do not say to plug the probabilities into this rule. That step is mine.
 
-Asking the user is also an action with a cost. Say asking costs $c$ and the user's answer settles the matter, so asking carries no risk of a wrong action, while a wrong action costs $C$. Acting is cheaper when $(1 - p)\,C \le c$, which is $p \ge 1 - c/C$. That is my own algebra from the same principle, not Elkan's formula. With made-up costs, a wrong balance costs 2 and asking costs 1, so act at 0.50 or more. A wrong transfer costs 100 and asking costs 1, so act only at 0.99 or more. The costs are invented, and the cutoffs differ a lot because the error costs do.
-
-[Chow (1970)](https://doi.org/10.1109/tit.1970.1054406) covers the third range. When even the best option's probability is too low, the system rejects and lets a person decide. Where that line sits depends on what a rejection costs compared with an error. My reading is that the docs' routing page has the same shape as these two ideas, a floor for the whole question and then a threshold for each action.
+The rule also assumes asking works. When $p$ is very low the question itself may be wrong, and that is where handing the case to a person comes in.
 
 ## Confidence and probability
 
@@ -55,4 +57,4 @@ A Noul has no confidence field, so it needs no conversion. Its page says where t
 
 ## Setting the thresholds
 
-For each action, write down what a wrong call costs and what asking costs, and set its threshold at $p \ge 1 - c/C$. When to escalate to a person instead of asking is a separate call that I do not formalise here. Then check on your own data that a probability of 0.9 means about 90%.
+For each action, write down what a wrong call costs and what asking costs, and set its threshold at $p \ge 1 - c/C$. Then check on your own data that a probability of 0.9 means about 90%.
