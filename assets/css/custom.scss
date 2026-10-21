@@ -589,3 +589,11 @@ body.lc .lc-toggle {
     padding: 16px 20px 12px;
   }
 }
+
+/* Display equations wider than the column scroll inside their own box instead
+   of stretching the page (mobile showed a 700px page with a 390px column). */
+mjx-container[display="true"] {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
