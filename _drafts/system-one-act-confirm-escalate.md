@@ -13,9 +13,11 @@ header:
   og_image: /assets/images/og/system-one-act-confirm-escalate.jpg
 ---
 
-TypeSafe's [System One models](https://docs.typesafe.ai/concepts/system-one), of which Jev is the first, return typed decisions and probabilities instead of generated text. The right confidence threshold depends on what a mistake costs, so it should differ per action. Approving a transfer by mistake and showing the wrong balance by mistake do not cost the same.
+A wrong balance and a wrong transfer do not cost the same, so they should not share a confidence threshold.
 
-The three-range pattern below comes from TypeSafe's docs. The cost rule comes from decision theory, which the docs do not cite.
+TypeSafe's [System One models](https://docs.typesafe.ai/concepts/system-one), of which Jev is the first, return typed decisions and probabilities instead of generated text. The docs suggest three ranges for acting on them, act, confirm and escalate. They leave out how to pick the numbers. Decision theory has a rule for that, and with the made-up costs worked out below it gives very different cutoffs. Act at 0.50 or more to show a balance, but only at 0.99 or more to approve a transfer.
+
+The three-range pattern comes from TypeSafe's docs. The cost rule comes from decision theory, which the docs do not cite.
 
 ## The pattern in the docs
 
