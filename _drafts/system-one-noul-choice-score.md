@@ -12,9 +12,11 @@ header:
   og_image: /assets/images/og/system-one-noul-choice-score.jpg
 ---
 
-A System One model does not write text. You give it a state, which is the content to judge, and typed questions about that state. It returns probabilities. Jev, TypeSafe's model, is my example. The descriptions of the question types come from TypeSafe's public docs, and sentences that start with "I" or "my" are mine.
+Two Jev questions can see the same model split and report different confidence.
 
-The question type fixes the shape of the answer. Choice and Score both return a distribution, so they can look interchangeable, but they measure confidence differently, because a Score's levels have an order.
+Take three levels and put half the probability on two of them. On a Score, confidence is 0.25 if the two levels are neighbours and 0 if they sit at opposite ends. The Choice formula gives 0.25 both times, because it only sees the top probability.
+
+That is the reason to care which question type you pick. Choice and Score both return a distribution, so they can look interchangeable, but a Score's levels have an order and a Choice's options do not. A System One model does not write text. You give it a state, which is the content to judge, and typed questions about that state, and it returns probabilities. Jev is TypeSafe's model and my example. The descriptions of the question types come from TypeSafe's public docs.
 
 ## What each type returns
 
