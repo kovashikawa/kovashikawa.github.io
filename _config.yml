@@ -114,7 +114,7 @@ analytics:
 
 # Site Author
 author:
-  name             : # "Rafael Kovashikawa"
+  name             : "Rafael Kovashikawa"
   avatar           : '/assets/images/selfie-avatar.webp'
   bio              : "AI Engineer @ FUSE. Previously macro quant @ JGP. MIT MicroMasters. Washington, DC."
   location         : "Washington DC"
