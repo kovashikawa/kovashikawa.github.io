@@ -14,9 +14,9 @@ header:
 
 A System One model answers questions with probabilities, not text. You give it a piece of content to judge, called the state, and one or more typed questions about it. For each question it returns a probability for every possible answer, and it never writes a reply. Jev, from TypeSafe, is the model I use as the example.
 
-The question type decides the shape of the answer. This post covers the three main types. A Noul asks a yes/no question and returns one number. A Choice asks which of several options and returns a probability for each. A Score asks where something falls on an ordered scale and returns a probability for each level. The figure shows all three on one message.
+The question type decides the shape of the answer. This post covers the three main types, Noul, Choice and Score, as TypeSafe's docs describe them, and the figure shows all three on one message.
 
-![Diagram. One message, "My flight was cancelled. Can I get a refund?", goes into three typed questions. A Noul asks whether the message requests a refund and returns one probability: yes 0.92. A Choice asks for the main request and returns a probability per option, with no order: refund 0.80, rebooking 0.15, information 0.05. A Score asks how frustrated the customer appears and returns a probability per ordered level: 0 calm 0.30, 1 concerned 0.55, 2 very angry 0.15, plus a score of 0.85. The probabilities are illustrative.](/assets/images/system-one-noul-choice-score/question-types.png)
+{% include figure image_path="/assets/images/system-one-noul-choice-score/question-types.png" alt="One message goes into three typed questions. A Noul returns one probability, a Choice one probability per option with no order, and a Score one probability per ordered level plus a score." caption="Illustrative probabilities. The state and the three questions follow the example on TypeSafe's [Primitives page](https://docs.typesafe.ai/primitives)." popup=true %}
 
 Choice and Score both return a distribution, so they can look interchangeable, but a Score's levels have an order and a Choice's options do not. That changes how each one reports confidence.
 
