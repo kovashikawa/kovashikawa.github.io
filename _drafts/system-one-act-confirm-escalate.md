@@ -45,16 +45,16 @@ The rule compares acting with asking only. It also assumes the user's answer set
 
 ## Confidence and probability
 
-TypeSafe defines Choice confidence, for $n$ options, as
+TypeSafe defines [Choice confidence](/ai/system-one-noul-choice-score/), for $n$ options and top probability $p_{\max}$, as
 
 $$
 \text{confidence} = \frac{p_{\max} - 1/n}{1 - 1/n}
 $$
 
-Inverting it gives $p_{\max} = \text{confidence} \cdot (1 - 1/n) + 1/n$. A confidence of 0.9 is a top probability of 0.95 with two options, 0.9333 with three, and 0.9013 with 75. For a fixed question the two are the same knob on different scales, and the scale depends on the number of options. The docs list the top probability as an alternative to confidence and say its meaning depends on the number of options, so its threshold should be set per question.
+Inverting it gives $p_{\max} = \text{confidence} \cdot (1 - 1/n) + 1/n$. A confidence of 0.9 is a top probability of 0.95 with two options, 0.9333 with three, and 0.9013 with 75. For a fixed Choice the two are the same knob on different scales, and the scale depends on the number of options. The docs list the top probability as an alternative to confidence and say its meaning depends on the number of options, so its threshold should be set per question.
 
 The cost rule is stated in probability, so convert a Choice's confidence to $p_{\max}$ or threshold $p_{\max}$ directly. On a three-option Choice, where the action is the top option, the two cutoffs above of 0.50 and 0.99 are confidences of 0.25 and 0.985. The docs' routing example thresholds confidence, not probability.
 
 ## Setting the thresholds
 
-For each action, write down what a wrong call costs and what asking costs, and set its threshold at $p \ge 1 - c/C$. Then check on your own data that a probability of 0.9 means about 90%.
+For each action, write down what a wrong call costs and what asking costs, and set its threshold at $p \ge 1 - c/C$. Then check on your own data that a probability of 0.9 means about 90%. Pin the model version you checked against: the SDK default `jev-latest` is an alias that moves when a new release ships.
