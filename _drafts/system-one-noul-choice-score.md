@@ -12,11 +12,13 @@ header:
   og_image: /assets/images/og/system-one-noul-choice-score.jpg
 ---
 
-Two Jev questions can see the same model split and report different confidence.
+A System One model answers questions with probabilities, not text. You give it a piece of content to judge, called the state, and one or more typed questions about it. For each question it returns a probability for every possible answer, and it never writes a reply. Jev, from TypeSafe, is the model I use as the example.
 
-Take three levels and put half the probability on two of them. On a Score, confidence is 0.25 if the two levels are neighbours and 0 if they sit at opposite ends. The Choice formula gives 0.25 both times, because it only sees the top probability.
+The question type decides the shape of the answer. This post covers the three main types. A Noul asks a yes/no question and returns one number. A Choice asks which of several options and returns a probability for each. A Score asks where something falls on an ordered scale and returns a probability for each level. The figure shows all three on one message.
 
-That is the reason to care which question type you pick. Choice and Score both return a distribution, so they can look interchangeable, but a Score's levels have an order and a Choice's options do not. A System One model does not write text. You give it a state, which is the content to judge, and typed questions about that state, and it returns probabilities. Jev is TypeSafe's model and my example. The descriptions of the question types come from TypeSafe's public docs.
+![Diagram. One message, "My flight was cancelled. Can I get a refund?", goes into three typed questions. A Noul asks whether the message requests a refund and returns one probability: yes 0.92. A Choice asks for the main request and returns a probability per option, with no order: refund 0.80, rebooking 0.15, information 0.05. A Score asks how frustrated the customer appears and returns a probability per ordered level: 0 calm 0.30, 1 concerned 0.55, 2 very angry 0.15, plus a score of 0.85. The probabilities are illustrative.](/assets/images/system-one-noul-choice-score/question-types.png)
+
+Choice and Score both return a distribution, so they can look interchangeable, but a Score's levels have an order and a Choice's options do not. That changes how each one reports confidence.
 
 ## What each type returns
 
