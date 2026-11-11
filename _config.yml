@@ -91,7 +91,7 @@ baidu_site_verification  :
 
 # Social Sharing
 twitter:
-  username               :
+  username               : rafaelkov
 facebook:
   username               :
   app_id                 :
@@ -115,6 +115,7 @@ analytics:
 # Site Author
 author:
   name             : "Rafael Kovashikawa"
+  twitter          : rafaelkov
   avatar           : '/assets/images/selfie-avatar.webp'
   bio              : "AI Engineer @ FUSE. Previously macro quant @ JGP. MIT MicroMasters. Washington, DC."
   location         : "Washington DC"
@@ -126,9 +127,9 @@ author:
     - label: "Website"
       icon: "fas fa-fw fa-link"
       # url: "https://your-website.com"
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      # url: "https://twitter.com/"
+    - label: "X"
+      icon: "fa-brands fa-fw fa-x-twitter"
+      url: "https://x.com/rafaelkov"
     - label: "Facebook"
       icon: "fab fa-fw fa-facebook-square"
       # url: "https://facebook.com/"
@@ -148,6 +149,9 @@ footer:
     - label: "LinkedIn"
       icon: "fab fa-fw fa-linkedin"
       url: "https://www.linkedin.com/in/rkovashikawa/"
+    - label: "X"
+      icon: "fa-brands fa-fw fa-x-twitter"
+      url: "https://x.com/rafaelkov"
     - label: "Threads"
       icon: "fa-brands fa-fw fa-threads"
       url: "https://www.threads.com/@kovashikawa"
