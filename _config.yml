@@ -100,9 +100,13 @@ og_image                 : "/assets/images/og/site-card-v2.jpg"
 # For specifying social profiles
 # - https://developers.google.com/structured-data/customize/social-profiles
 social:
-  type                   : # Person or Organization (defaults to Person)
-  name                   : # If the user or organization name differs from the site's name
+  type                   : Person # Person or Organization (defaults to Person)
+  name                   : Rafael Kovashikawa # If the user or organization name differs from the site's name
   links: # An array of links to social media profiles
+    - https://x.com/rafaelkov
+    - https://github.com/kovashikawa
+    - https://www.linkedin.com/in/rkovashikawa/
+    - https://www.threads.com/@kovashikawa
 
 # Analytics
 analytics:
