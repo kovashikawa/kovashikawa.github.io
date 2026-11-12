@@ -32,9 +32,9 @@ The automatic settings matter to me. I don't want to trade the time saved on tra
 
 ## What stays the same
 
-e-means still optimizes the k-means objective. Section 3.1 explicitly says it “assigns each point to its nearest centroid.” Algorithm 1 has no separate noise label.[1]
+e-means still optimizes the k-means objective. Every point goes to its nearest centroid, and there is no noise label for points that fit nowhere.[1]
 
-The geometric limitation follows from that assignment rule. With fixed centroids, nearest-centroid regions are convex. This is still not density-based clustering, and lower loss does not necessarily mean more meaningful categories.
+So the old geometric limit stays. Nearest-centroid regions are convex, which means this is still not density-based clustering, and a lower loss does not necessarily mean more meaningful categories.
 
 ## Try it in the browser
 
