@@ -5,7 +5,7 @@ title: "e-means Makes k-means Worth Another Look"
 excerpt: "e-means reaches standard k-means quality in far fewer passes. What changes, what stays the same, and why cheaper clustering is worth another look."
 description: "e-means reaches standard k-means quality in far fewer passes. What changes, what stays the same, and why cheaper clustering is worth another look."
 date: 2026-11-11
-last_modified_at: 2026-11-11
+last_modified_at: 2026-11-12
 categories:
   - ai
 tags:
