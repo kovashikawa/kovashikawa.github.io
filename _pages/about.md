@@ -19,7 +19,7 @@ I'm Rafael Kovashikawa. I build LLM systems and the checks that keep their answe
 I will use this space to post about things that I've found interesting along the journey and, of course, my projects.
 
 ### What I do best
-* **Data Science & Modeling** · Develop and productionize time‑series (ARIMA, VaR), tree‑based and econometric models for CPI forecasts, credit risk and trading signals.
+* **Data Science & Modeling** · Develop and productionize time-series (ARIMA, VaR), tree-based and econometric models for CPI forecasts, credit risk and trading signals.
 * **Data Engineering** · Build and orchestrate ETL on Airflow + Kubernetes.
 * **ML in Production** · Deploy credit-risk and anomaly-detection models (FastAPI, Docker).
 * **LLM Systems** · MCP servers, agent orchestration, verification of model output, RAG pipelines.
@@ -33,7 +33,7 @@ I will use this space to post about things that I've found interesting along the
 
 ### Professional Experience
 **[Fuse](https://fuse.is/) (AI Data Strategy for Marketers), Data Scientist & AI Engineer**  
-_Jan 2026 – Present_  
+_Jan 2026 - Present_  
 - Built Emet, a verification pipeline for LLM answers. It matches the numbers in an answer against the JSON returned by the tools that produced it, then runs semantic and repair agents on claims that cannot be matched numerically. Each answer gets a verdict of verified, partial or failed. In production since August 2026.
 - Architected the enterprise **Salesforce integration** as an outbound hosted-MCP client: OAuth 2.0 + PKCE authorization flow, cross-tenant refresh-token assertions, and an untrusted-content envelope guarding against prompt injection from CRM record text. Shipped as a distributable 2GP managed package.
 - Built 6 production MCP servers (Klaviyo, SEO, Salesforce, TikTok Ads, LinkedIn Ads, Exa) exposing 30+ analytics tools to LLM agents.
@@ -44,39 +44,39 @@ _Jan 2026 – Present_
 
 
 **[GYRA+](https://gyramais.com.br/), Head of Data**  
-_Aug 2024 – Jan 2025 · Brazil_  
-- Led the strategic re‑architecture of data models and ETL/ELT pipelines (Python, Airflow, AWS), cutting AWS costs for the data team by **50 %**.  
-- Built a high‑performance simulation API (FastAPI, Polars, MongoDB) deployed on Kubernetes, enabling rapid credit‑portfolio stress testing.  
-- Delivered a production‑ready RAG pipeline (LangChain, MongoDB) that extracts and structures key information from legal documents.
+_Aug 2024 - Jan 2025 · Brazil_  
+- Led the strategic re-architecture of data models and ETL/ELT pipelines (Python, Airflow, AWS), cutting AWS costs for the data team by **50%**.  
+- Built a high-performance simulation API (FastAPI, Polars, MongoDB) deployed on Kubernetes, enabling rapid credit-portfolio stress testing.  
+- Delivered a production-ready RAG pipeline (LangChain, MongoDB) that extracts and structures key information from legal documents.
 
 **[JGP Asset Management](https://www.jgp.com.br/en/home/), Macro Data Scientist**  
-_Jan 2021 – Jul 2024 · Brazil_  
-- Designed LATAM CPI forecasting models and global macro dashboards that out‑sped Bloomberg.  
+_Jan 2021 - Jul 2024 · Brazil_  
+- Designed LATAM CPI forecasting models and global macro dashboards that out-sped Bloomberg.  
 - Engineered resilient pipelines (Python, SQL, Airflow) to ingest and curate macro datasets for trading research.  
 - Developed NLP models to score Brazilian Central Bank communications and integrate sentiment into trading strategies.  
 - Automated data workflows, eliminating manual steps and improving data timeliness.
 
 **[Órama](https://orama.com.br/) (acquired by BTG Pactual), Data Analytics**  
-_Sep 2019 – Aug 2020_  
-- Mined client data with Python and SQL, applying NLP and k‑means clustering to improve investment recommendations.
+_Sep 2019 - Aug 2020_  
+- Mined client data with Python and SQL, applying NLP and k-means clustering to improve investment recommendations.
 
 **[IBM](https://www.ibm.com/), Data Operations**  
-_Apr 2019 – Aug 2019_
-- Automated ticket‑management workflows with Python, Selenium, and SQL, eliminating +90% of manual effort
+_Apr 2019 - Aug 2019_
+- Automated ticket-management workflows with Python, Selenium, and SQL, eliminating +90% of manual effort
 
 ### Education
 **[MIT, Data Science & Statistics MicroMasters (edX)](https://micromasters.mit.edu/ds/)**  
-_May 2024 – Feb 2026_
+_May 2024 - Feb 2026_
 
 **[Fundação Getúlio Vargas (EPGE)](https://epge.fgv.br/en), B.Sc. Economics**  
-_2017 – 2021_
+_2017 - 2021_
 
 ### Awards
 
 | Award | What I Built |
 |-------|-------------|
 | **Google Cloud AI Hackathon** (Dec 2025) | Built MedAnnotator, a multimodal medical annotation system. [[Post](/projects/ai/google-cloud-ai-hackathon-winner/)] [[Code](https://github.com/ODSCGoogleHackhathon/googol)] |
-| **Big Data Hackathon** (Sep 2021) | XP Inc. & Microsoft Azure. Built a 14 GB big‑data application on Azure. |
+| **Big Data Hackathon** (Sep 2021) | XP Inc. & Microsoft Azure. Built a 14 GB big-data application on Azure. |
 | **Cryptocurrency Datathon** (Sep 2020) | FGV & Ripple. ML strategies for Bitcoin trading with NLP on news and Reddit. |
 
 ----
@@ -90,4 +90,4 @@ I was born and raised in Rio de Janeiro and now live in Washington, DC. I like d
 </div>
 
 > **Need a hand with AI and data problems?**  
-> Hit me on [LinkedIn](https://www.linkedin.com/in/rkovashikawa/) or open an [issue](https://github.com/kovashikawa/kovashikawa.github.io/issues) and let’s chat.
+> Hit me on [LinkedIn](https://www.linkedin.com/in/rkovashikawa/) or open an [issue](https://github.com/kovashikawa/kovashikawa.github.io/issues) and let's chat.
