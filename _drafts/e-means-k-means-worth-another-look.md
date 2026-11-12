@@ -20,7 +20,7 @@ toc: false
 
 I used and researched k-means a lot, so e-means caught my attention. It solves the same familiar problem: choose k centroids and minimize the squared distance from each point to its nearest one. The interesting part is how much faster it gets there.[1]
 
-The authors report clustering 10 billion DINO embeddings into roughly 16.7 million clusters in 2.5 epochs, reaching a slightly lower test loss than standard full-batch k-means at 25 epochs. That is one-tenth as many passes over the training points.[1]
+The authors report clustering 10 billion DINO embeddings into roughly 16.7 million clusters in 2.5 epochs, matching the test loss of standard full-batch k-means at 25 epochs. That is one-tenth as many passes over the training points.[1]
 
 ## What changes
 
@@ -38,15 +38,15 @@ The geometric limitation follows from that assignment rule. With fixed centroids
 
 ## Try it in the browser
 
-The [project website](https://e-means.github.io) explains the method with animations.[2] There is also an [interactive playground](https://e-means.github.io/playground.html) where you can change the data shape, cluster count, and epoch budgets, then compare the centroid movements and training and test loss. It is a 2D illustration, not a reproduction of the large-scale benchmark; the demo also disables dead-cluster revival for these low-dimensional examples.[3]
+The [project website](https://e-means.github.io) explains the method with animations.[2] There is also an [interactive playground](https://e-means.github.io/playground.html) where you can change the data shape, cluster count, and epoch budgets, then compare the centroid movements and training and test loss. It is a 2D illustration, not a reproduction of the large-scale benchmark; the demo also disables dead-cluster revival for these low-dimensional examples.[3] The authors also caution that their scaling laws are not optimal for tiny, very low-dimensional datasets.[1]
 
-## Why I care
+## Cheaper runs, more runs
 
-For me, the useful part is being able to try more values of k or rerun the analysis after changing the features. A faster run gives me more room to experiment.
+A k-means run that costs a tenth as much does not mean I spend a tenth as much. It means I stop picking k once. I would try ten values, change the features, and run it again.
 
-Jev, TypeSafe's System One model, interests me for a related reason. It returns typed decisions and probabilities rather than generated text.[4] If my code needs a decision, I don't need a paragraph explaining it. The connection I see is practical, not a claim that the methods work the same way.
+That is Jevons on coal: steam engines got more efficient, and Britain burned more of it. TypeSafe named Jev after him.[4] Jev returns a typed decision and a probability and never writes text, which makes a call cheap enough that the docs tell you to ask a lot of small questions.[5] It gives up prose to get there. e-means gives up nothing: same objective, same data, fewer passes.
 
-e-means still uses the same dataset; it needs fewer passes.[1] The authors caution that their scaling laws are not optimal for tiny, very low-dimensional datasets, so I would not assume the same gains everywhere.[1] Still, it makes me want to revisit some of my old work.
+I don't expect my compute bill to drop. I expect to stop settling for the first k.
 
 ## Sources
 
@@ -56,4 +56,6 @@ e-means still uses the same dataset; it needs fewer passes.[1] The authors cauti
 
 [3] <https://e-means.github.io/playground.html>
 
-[4] <https://docs.typesafe.ai/concepts/system-one.md>
+[4] <https://typesafe.ai/blog/introducing-system-one-models-and-jev>
+
+[5] <https://docs.typesafe.ai/concepts/how-to-build-with-system-one.md>
