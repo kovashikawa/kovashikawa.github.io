@@ -18,44 +18,32 @@ header:
 toc: false
 ---
 
-I used and researched k-means a lot, so e-means caught my attention. It solves the same familiar problem: choose k centroids and minimize the squared distance from each point to its nearest one. The interesting part is how much faster it gets there.[1]
+I used and researched k-means a lot, so e-means caught my attention. It solves the same familiar problem: choose k centroids and minimize the squared distance from each point to its nearest one. The interesting part is how much faster it gets there.
 
-The authors report clustering 10 billion DINO embeddings into roughly 16.7 million clusters in 2.5 epochs, matching the test loss of standard full-batch k-means at 25 epochs. That is one-tenth as many passes over the training points.[1]
+[The paper](https://arxiv.org/html/2611.09501) reports clustering 10 billion DINO embeddings into roughly 16.7 million clusters in 2.5 epochs, matching the test loss of standard full-batch k-means at 25 epochs. That is one-tenth as many passes over the training points.
 
 ## What changes
 
-Standard full-batch k-means assigns the whole dataset to centroids before updating them. e-means updates throughout each pass, using mini-batches and exponential moving averages of each cluster’s counts and sums. Older assignments gradually lose weight.[1]
+Standard full-batch k-means assigns the whole dataset to centroids before updating them. e-means updates throughout each pass, using mini-batches and exponential moving averages of each cluster's counts and sums. Older assignments gradually lose weight.
 
-Mini-batches and moving averages already existed. The contribution is the recipe around them: a decaying update schedule, improved initialization, revival of underused centroids by splitting active clusters, and a finalization step. Fitted scaling laws choose the batch size and update rate from the dataset size, cluster count, and epoch budget. Its GPU kernels keep each pass efficient, so fewer passes translate into runtime savings.[1]
+Mini-batches and moving averages already existed. The contribution is the recipe around them: a decaying update schedule, improved initialization, revival of underused centroids by splitting active clusters, and a finalization step. Fitted scaling laws choose the batch size and update rate from the dataset size, cluster count, and epoch budget. Its GPU kernels keep each pass efficient, so fewer passes translate into runtime savings.
 
 The automatic settings matter to me. I don't want to trade the time saved on training for another hyperparameter search.
 
 ## What stays the same
 
-e-means still optimizes the k-means objective. Every point goes to its nearest centroid, and there is no noise label for points that fit nowhere.[1]
+e-means still optimizes the k-means objective. Every point goes to its nearest centroid, and there is no noise label for points that fit nowhere.
 
 So the old geometric limit stays. Nearest-centroid regions are convex, which means this is still not density-based clustering, and a lower loss does not necessarily mean more meaningful categories.
 
 ## Try it in the browser
 
-The [project website](https://e-means.github.io) explains the method with animations.[2] There is also an [interactive playground](https://e-means.github.io/playground.html) where you can change the data shape, cluster count, and epoch budgets, then compare the centroid movements and training and test loss. It is a 2D illustration, not a reproduction of the large-scale benchmark; the demo also disables dead-cluster revival for these low-dimensional examples.[3] The authors also caution that their scaling laws are not optimal for tiny, very low-dimensional datasets.[1]
+The [project website](https://e-means.github.io) explains the method with animations. There is also an [interactive playground](https://e-means.github.io/playground.html) where you can change the data shape, cluster count, and epoch budgets, then compare the centroid movements and training and test loss. It is a 2D illustration, not a reproduction of the large-scale benchmark; the demo also disables dead-cluster revival for these low-dimensional examples. The authors also caution that their scaling laws are not optimal for tiny, very low-dimensional datasets.
 
 ## Cheaper runs, more runs
 
 A k-means run that costs a tenth as much does not mean I spend a tenth as much. It means I stop picking k once. I would try ten values, change the features, and run it again.
 
-That is Jevons on coal: steam engines got more efficient, and Britain burned more of it. TypeSafe named Jev after him.[4] Jev returns a typed decision and a probability and never writes text, which makes a call cheap enough that the docs tell you to ask a lot of small questions.[5] It gives up prose to get there. e-means gives up nothing: same objective, same data, fewer passes.
+That is Jevons on coal: steam engines got more efficient, and Britain burned more of it. [TypeSafe named Jev after him](https://typesafe.ai/blog/introducing-system-one-models-and-jev). Jev returns a typed decision and a probability and never writes text, which makes a call cheap enough that the docs tell you to [ask a lot of small questions](https://docs.typesafe.ai/concepts/how-to-build-with-system-one.md). It gives up prose to get there. e-means keeps the same objective and data, but needs fewer passes.
 
 I don't expect my compute bill to drop. I expect to stop settling for the first k.
-
-## Sources
-
-[1] <https://arxiv.org/html/2611.09501>
-
-[2] <https://e-means.github.io>
-
-[3] <https://e-means.github.io/playground.html>
-
-[4] <https://typesafe.ai/blog/introducing-system-one-models-and-jev>
-
-[5] <https://docs.typesafe.ai/concepts/how-to-build-with-system-one.md>
