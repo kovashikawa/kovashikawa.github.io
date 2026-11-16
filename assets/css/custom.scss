@@ -202,6 +202,14 @@ samp {
   gap: 12px;
 }
 
+/* a/A + dark mode, kept together so the phone layout can move them as a pair */
+.masthead-quiet__tools {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: none;
+}
+
 .lc-toggle {
   background: transparent;
   border: none;
@@ -559,33 +567,131 @@ body.lc .lc-toggle {
   color: var(--ink);
 }
 
-/* The masthead row is full from about 400 to 440px once the theme toggle is
-   in it, which leaves no room for the right padding. Put the Home group on its
-   own row in that range instead of letting it sit on the edge. */
-@media (max-width: 460px) {
+/* ===============================
+   Phone layout
+   ===============================
+   The masthead and the 58px hero are sized for a wide viewport. Under 640px
+   the four-line masthead stack collapses into two rows (identity, then nav),
+   and the hero and post rows give up their desktop measure. */
+
+@media (max-width: 640px) {
+  .masthead__inner-wrap {
+    padding: 16px 20px 14px;
+  }
+
+  /* Row 1: name (about me) ..... a/A + theme
+     Row 2: Home (posts and projects) */
+  .masthead-quiet {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+  }
+
+  .masthead-quiet__item {
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 2px 6px;
+  }
+
+  .masthead-quiet__label {
+    font-size: clamp(16px, 4.4vw, 18px);
+  }
+
+  .masthead-quiet__sub {
+    font-size: clamp(11px, 3.2vw, 13px);
+  }
+
+  /* Nav reads one step below the site name. */
+  .masthead-quiet__right .masthead-quiet__label {
+    font-size: clamp(15px, 4vw, 17px);
+  }
+
+  /* Controls sit in the top-right corner beside the name; the nav drops to
+     its own row rather than wrapping a third line. */
   .masthead-quiet__right {
+    display: contents;
+  }
+
+  .masthead-quiet__tools {
+    order: 2;
+    margin-left: auto;
+    align-self: center;
+  }
+
+  .masthead-quiet__right .masthead-quiet__item {
+    order: 3;
     flex-basis: 100%;
   }
-}
 
-@media (max-width: 560px) {
-  .home-quiet__title {
-    font-size: 40px;
+  /* dark.scss sets margin-top on both toggles and loads after this file. */
+  .masthead-quiet .lc-toggle,
+  .masthead-quiet .theme-toggle {
+    margin-top: 0;
+    position: relative;
   }
+
+  /* Grow the tap target to ~44px tall without changing the layout box. */
+  .masthead-quiet .lc-toggle::after,
+  .masthead-quiet .theme-toggle::after {
+    content: "";
+    position: absolute;
+    top: -14px;
+    bottom: -14px;
+    left: -5px;
+    right: -5px;
+  }
+
+  /* Hero: scale with the viewport and drop the 16ch measure, which forces
+     ragged lines and an orphaned last word on a phone. */
+  .home-quiet {
+    padding: 36px 20px 28px;
+  }
+
+  .home-quiet__title {
+    font-size: clamp(28px, 8vw, 40px);
+    max-width: none;
+    margin: 0 0 32px;
+    /* no one-word last line on a phone; ignored where unsupported */
+    text-wrap: pretty;
+  }
+
+  .home-quiet__list {
+    max-width: none;
+  }
+
+  .home-quiet__item:first-child {
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  /* Post row: title, excerpt, then the date on its own meta line. */
   .home-quiet__link {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 6px;
+    padding: 20px 0;
   }
+
+  .home-quiet__title-text {
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.25;
+    /* even two-line titles instead of a one-word second line */
+    text-wrap: balance;
+  }
+
+  .home-quiet__subtitle {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
   .home-quiet__date {
     margin-left: 0;
+    margin-top: 2px;
+    font-size: 13px;
   }
-  /* Masthead: let the two items breathe on small screens */
-  .masthead-quiet {
-    flex-wrap: wrap;
-    gap: 12px 24px;
-  }
-  .masthead__inner-wrap {
-    padding: 16px 20px 12px;
+
+  .home-quiet__all {
+    margin-top: 28px;
   }
 }
